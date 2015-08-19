@@ -2,7 +2,7 @@ import shapefile
 import pandas as pd
 import os
 
-def read_file(filepath): 
+def read_file(year, basefile_name): 
 	'''
 	Input: String
 	Output: Pandas DataFrame
@@ -10,11 +10,12 @@ def read_file(filepath):
 	Read in the shapefiles from the given filepath and translate the result into a 
 	pandas dataframe. 
 	'''
-
-	sf = shapefile(filepath)
+	filepath = '../../data/raw_data/MODIS/' + str(year) + '/' + basefile_name
+	
+	sf = shapefile.Reader(filepath)
 	# The first field is simply a spec that we don't actually want. 
 	col_names = [field[0] for field in sf.fields[1:]]
-	df = pd.dataFrame(sf, columns=col_names)
+	df = pd.DataFrame(sf.records(), columns=col_names)
 
 	return df
 
@@ -36,5 +37,7 @@ def get_basefile_name(year):
 
 if __name__ == '__main__': 
 	for year in range(2001, 2016): 
-		print get_basefile_name(year)
+		basefile_name = get_basefile_name(year)
+		shapefile_df = read_file(year, basefile_name)
+		print shapefile_df.columns
 		
