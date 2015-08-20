@@ -97,7 +97,6 @@ def get_reverse_geocode(df):
 
 	return df
 
-
 if __name__ == '__main__': 
 	for year in range(2001, 2002): 
 		basefile_name = get_basefile_name(year)
