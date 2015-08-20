@@ -66,7 +66,12 @@ def format_df(df):
 
 	return df
 
-def pickle_df_sf(year, df, sf): 
+def pickle_df_sf(year, df): 
+	'''
+	Input: Integer, Pandas DataFrame
+	Ouput: Pickled file of DataFrame
+	'''
+	
 	with open('../../data/pickled_data/MODIS/' + 'df_' + str(year) + '.pkl', 'w+') as f: 
 		pickle.dump(df, f)
 
