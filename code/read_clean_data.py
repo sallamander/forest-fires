@@ -2,6 +2,7 @@ import shapefile
 import pandas as pd
 import os
 import numpy as np
+from requests import get
 
 def read_file(year, basefile_name): 
 	'''
@@ -59,12 +60,26 @@ def format_df(df):
 							'T21': 'TEMP', 'UTC': 'GMT', 'SATELLITE': 'SAT_SRC', 'CONFIDENCE': 'CONF'})
 	df['JULIAN'] = df['JDATE'].apply(lambda x: int(str(x)[-3:]))
 	df = df.drop(['T31', 'JDATE'], axis=1)
+	df = get_state(df)
 
 	return df
+
+def get_state(df): 
+	for idx, lat in enumerate(df['LAT']): 
+		lat_coord, long_coord = lat, df.loc[idx]['LONG']
+		url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + str(lat_coord) + ',' + str(long_coord)
+		# Look at the .json method of this and then try to grab the results. 
+		print url 
+		import pdb
+		pdb.set_trace()
+		location_response = get('http://maps.googleapis.com/maps/api.geocode/json?latlng=' + str(lat_coord) + str(long_coord))
 
 if __name__ == '__main__': 
 	for year in range(2001, 2016): 
 		basefile_name = get_basefile_name(year)
 		shapefile_df = read_file(year, basefile_name)
 		print year, shapefile_df.shape[0], len(np.unique(shapefile_df['FIRE_ID']))
+
+maps.googleapis.com/maps/api/geocode/json?latlng=44.4647452,7.3553838&sensor=true
+maps.googleapis.com/maps/api/geocode/json?latlng=49.454,-97.801&sensor=true
 		
