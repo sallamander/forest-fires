@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import numpy as np
 import reverse_geocoder as rg
-from pickle import dump 
+import pickle
 from collections import defaultdict
 
 def read_file(year, basefile_name): 
@@ -27,7 +27,7 @@ def read_file(year, basefile_name):
 		df = df.drop('SRC', axis=1)
 
 	df['year'] = year
-	df = get_state2(df)
+	# df = get_state2(df)
 
 	return df, sf
 
@@ -66,8 +66,9 @@ def format_df(df):
 
 	return df
 
-def pickle_df_sf(df, sf): 
-
+def pickle_df_sf(year, df, sf): 
+	with open('../../data/pickled_data/MODIS/' + 'df_' + str(year) + '.pkl', 'w+') as f: 
+		pickle.dump(df, f)
 
 def get_reverse_geocode(df): 
 	'''
@@ -98,9 +99,9 @@ def get_reverse_geocode(df):
 	return df
 
 if __name__ == '__main__': 
-	for year in range(2001, 2002): 
+	for year in range(2001, 2016): 
 		basefile_name = get_basefile_name(year)
 		shapefile_df, shapefile_sf = read_file(year, basefile_name)
-		pickle_df_sf(shapefile_df, shapefile_sf)
+		pickle_df_sf(year, shapefile_df, shapefile_sf)
 
 		
