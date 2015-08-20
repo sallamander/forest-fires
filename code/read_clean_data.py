@@ -26,8 +26,11 @@ def read_file(year, basefile_name):
 	else: 
 		df = df.drop('SRC', axis=1)
 
-	df['year'] = year
-	# df = get_state2(df)
+	df['year'] = [date[0] for date in df['DATE']]
+	df['month'] = [date[1] for date in df['DATE']]
+	df['day'] = [date[2] for date in df['DATE']]
+
+	df = df.drop('DATE', axis=1)
 
 	return df, sf
 
@@ -71,7 +74,7 @@ def pickle_df_sf(year, df):
 	Input: Integer, Pandas DataFrame
 	Ouput: Pickled file of DataFrame
 	'''
-	
+
 	with open('../../data/pickled_data/MODIS/' + 'df_' + str(year) + '.pkl', 'w+') as f: 
 		pickle.dump(df, f)
 
@@ -107,6 +110,6 @@ if __name__ == '__main__':
 	for year in range(2001, 2016): 
 		basefile_name = get_basefile_name(year)
 		shapefile_df, shapefile_sf = read_file(year, basefile_name)
-		pickle_df_sf(year, shapefile_df, shapefile_sf)
+		pickle_df_sf(year, shapefile_df)
 
 		
