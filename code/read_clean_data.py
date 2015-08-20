@@ -2,7 +2,6 @@ import shapefile
 import pandas as pd
 import os
 import numpy as np
-import reverse_geocoder as rg
 import pickle
 from collections import defaultdict
 
@@ -77,34 +76,6 @@ def pickle_df_sf(year, df):
 
 	with open('../../data/pickled_data/MODIS/' + 'df_' + str(year) + '.pkl', 'w+') as f: 
 		pickle.dump(df, f)
-
-def get_reverse_geocode(df): 
-	'''
-	Input: Pandas DataFrame
-	Output: Pandas DataFrame
-
-	Take the latitude/longitude coordinates for each row in the DataFrame, and get the country, state, 
-	and county information and put those in the DataFrame. 
-	'''
-
-	geo_info = defaultdict(list)
-	df = df.loc[0:50].copy()
-	for idx, lat in enumerate(df['LAT']): 
-		coords = (lat, df.loc[idx, 'LONG'])
-		print idx, coords
-		results = rg.search(coords)[0]
-
-
-		geo_info['country'].append(results['cc'])
-		geo_info['state'].append(results['admin1'])
-		geo_info['county'].append(results['admin2'])
-
-
-	df['country'] = geo_info['country']
-	df['state'] = geo_info['state']
-	df['county'] = geo_info['county']
-
-	return df
 
 if __name__ == '__main__': 
 	for year in range(2001, 2016): 
