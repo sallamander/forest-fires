@@ -39,5 +39,5 @@ if __name__ == '__main__':
 	for year in range(2001, 2016): 
 		basefile_name = get_basefile_name(year)
 		shapefile_df = read_file(year, basefile_name)
-		print year, shapefile_df.columns, len(shapefile_df.columns)
+		print year, shapefile_df.columns, len(shapefile_df.columns), shapefile_df.shape 
 		
