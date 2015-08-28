@@ -1,1 +1,9 @@
-ogr2ogr -f "PostgreSQL" PG:"dbname= forest_fires user=sallamander" "modis_fire_2015_230_conus.shp" -nlt PROMOTE_TO_MULTI -nln forest_fires -append
+ogr2ogr -f "PostgreSQL" PG:"dbname= forest_fires user=sallamander" "/Users/sallamander/galvanize/forest-fires/data/raw_data/MODIS/2014" -nlt PROMOTE_TO_MULTI -nln forest_fires -append
+
+PGCLIENTENCODING=LATIN1 ogr2ogr -f "PostgreSQL" PG:"dbname= forest_fires user=sallamander" "/Users/sallamander/galvanize/forest-fires/data/boundary_files/county/2014" -nlt PROMOTE_TO_MULTI -nln county -append
+
+CREATE TABLE forest_st_cnty AS
+ (SELECT points.*, polys.countyfp, polys.statefp
+ FROM forest_fires as points
+		JOIN county as polys
+ ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry)); 
