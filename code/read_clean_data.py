@@ -10,16 +10,18 @@ from collections import defaultdict
 def create_fire_db(year, basefile_name): 
 	'''
 	Input: String
-	Output: Pandas DataFrame
+	Output: PSQL Table
 
-	Read in the shapefiles from the given filepath and translate the result into a 
-	pandas dataframe. 
+	The basefile_name read in will point to a set of shapefiles. This function will read those shapefiles
+	into a psql table. 
 	'''
 	filepath = '../../data/raw_data/MODIS/' + str(year) + '/' + basefile_name
 
+	# I'm using the overwrite option here because anytime this create_fire step is run I'll be fixing something 
+	# and need to create the database from scratch. Otherwise, I won't be running this function. 
 	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['user'] + \
 						'" "/Users/' + os.environ['user'] + '/galvanize/forest-fires/data/raw_data/MODIS/2014" \
-						-nlt PROMOTE_TO_MULTI -nln forest_fires'
+						-nlt PROMOTE_TO_MULTI -nln ' + str(year) + ' -overwrite'
 	
 	os.system(create_db_command)
 
