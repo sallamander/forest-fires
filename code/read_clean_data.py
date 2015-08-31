@@ -20,9 +20,34 @@ def create_fire_db(year, basefile_name):
 	# I'm using the overwrite option here because anytime this create_fire_db step is run I'll be fixing something 
 	# and need to create the database from scratch. Otherwise, I won't be running this function. 
 	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
-						'" "/Users/' + os.environ['USER'] + '/galvanize/forest-fires/data/raw_data/MODIS/2014" \
-						-nlt PROMOTE_TO_MULTI -nln fires_' + str(year) + ' -overwrite'
+						'" "/Users/' + os.environ['USER'] + '/galvanize/forest-fires/data/raw_data/MODIS/"' + str(year) \
+						+ ' -nlt PROMOTE_TO_MULTI -nln fires_' + str(year) + ' -overwrite'
 	
+	os.system(create_db_command)
+
+def create_shapefile_db(name, year): 
+	'''
+	Input: String, Integer
+	Output: PSQL Table
+
+	For the given string name (county, fire, or urban), read in the shapefile for that geometry and create a 
+	psql table from it. The county shapefile contains state labels as well, so that's why I'm not reading in 
+	any state shapefiles. 
+	'''
+
+	if name == 'fire': 
+		filepath = '../../data/boundary_files/forest_fires/end_boundaries/' + str(year)
+	elif name == 'county': 
+		filepath = '../../data/boundary_files/county/' + str(year)
+	elif name == 'urban': 
+		filepath = '../../data/boundary_files/urban_areas' + str(year)
+	else: 
+		raise Exception('No boundary folder name put in... Try again!')
+
+	create_db_command =  create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
+						'" "/Users/' + os.environ['USER'] + '/galvanize/forest-fires/data/raw_data/MODIS/"' + str(year) \
+						+ ' -nlt PROMOTE_TO_MULTI -nln fires_' + str(year) + ' -overwrite'
+
 	os.system(create_db_command)
 
 def merge_fire_perimeters(year): 
@@ -42,6 +67,7 @@ def merge_fire_perimeters(year):
 							JOIN county as polys
 					 ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry));
 					''')
+
 
 def get_basefile_name(year): 
 	'''
