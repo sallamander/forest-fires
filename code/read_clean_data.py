@@ -17,17 +17,32 @@ def create_fire_db(year, basefile_name):
 	'''
 	filepath = '../../data/raw_data/MODIS/' + str(year) + '/' + basefile_name
 
-	# I'm using the overwrite option here because anytime this create_fire step is run I'll be fixing something 
+	# I'm using the overwrite option here because anytime this create_fire_db step is run I'll be fixing something 
 	# and need to create the database from scratch. Otherwise, I won't be running this function. 
-	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['user'] + \
-						'" "/Users/' + os.environ['user'] + '/galvanize/forest-fires/data/raw_data/MODIS/2014" \
-						-nlt PROMOTE_TO_MULTI -nln ' + str(year) + ' -overwrite'
+	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
+						'" "/Users/' + os.environ['USER'] + '/galvanize/forest-fires/data/raw_data/MODIS/2014" \
+						-nlt PROMOTE_TO_MULTI -nln fires_' + str(year) + ' -overwrite'
 	
 	os.system(create_db_command)
 
 def merge_fire_perimeters(year): 
-	pass
-	
+	'''
+	Input: Integer
+	Output: PSQL Table
+
+	Merge on the fire perimeters for the given year to that years table in the forest_fire database. 
+	'''
+
+	conn = psycopg2.connect('dbname=forest_fires')
+	cursor = conn.cursor()
+
+	cursor.execute('''CREATE TABLE forest_st_cnty AS
+					 (SELECT points.*, polys.countyfp, polys.statefp
+					 FROM forest_fires as points
+							JOIN county as polys
+					 ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry));
+					''')
+
 def get_basefile_name(year): 
 	'''
 	Input: Integer
