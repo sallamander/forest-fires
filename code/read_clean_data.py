@@ -9,7 +9,7 @@ from collections import defaultdict
 
 def create_fire_db(year, basefile_name): 
 	'''
-	Input: String
+	Input: Integer, String
 	Output: PSQL Table
 
 	The basefile_name read in will point to a set of shapefiles. This function will read those shapefiles
@@ -25,6 +25,9 @@ def create_fire_db(year, basefile_name):
 	
 	os.system(create_db_command)
 
+def merge_fire_perimeters(year): 
+	pass
+	
 def get_basefile_name(year): 
 	'''
 	Input: Integer
