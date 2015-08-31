@@ -1,11 +1,13 @@
 import shapefile
 import pandas as pd
-import os
 import numpy as np
 import pickle
+import sys
+import psycopg2
+import os
 from collections import defaultdict
 
-def read_file(year, basefile_name): 
+def create_fire_db(year, basefile_name): 
 	'''
 	Input: String
 	Output: Pandas DataFrame
@@ -14,24 +16,12 @@ def read_file(year, basefile_name):
 	pandas dataframe. 
 	'''
 	filepath = '../../data/raw_data/MODIS/' + str(year) + '/' + basefile_name
+
+	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['user'] + \
+						'" "/Users/' + os.environ['user'] + '/galvanize/forest-fires/data/raw_data/MODIS/2014" \
+						-nlt PROMOTE_TO_MULTI -nln forest_fires'
 	
-	sf = shapefile.Reader(filepath)
-	# The first field is simply a spec that we don't actually want. 
-	col_names = [field[0] for field in sf.fields[1:]]
-	df = pd.DataFrame(sf.records(), columns=col_names)
-
-	if year<=2008: 
-		df = format_df(df)
-	else: 
-		df = df.drop('SRC', axis=1)
-
-	df['year'] = [date[0] for date in df['DATE']]
-	df['month'] = [date[1] for date in df['DATE']]
-	df['day'] = [date[2] for date in df['DATE']]
-
-	df = df.drop('DATE', axis=1)
-
-	return df, sf
+	os.system(create_db_command)
 
 def get_basefile_name(year): 
 	'''
@@ -78,9 +68,9 @@ def pickle_df_sf(year, df):
 		pickle.dump(df, f)
 
 if __name__ == '__main__': 
-	for year in range(2001, 2016): 
-		basefile_name = get_basefile_name(year)
-		shapefile_df, shapefile_sf = read_file(year, basefile_name)
-		pickle_df_sf(year, shapefile_df)
+	year = sys.argv[1]	
+	basefile_name = get_basefile_name(year)
+	create_fire_db(year, basefile_name)
+	# pickle_df_sf(year, shapefile_df)
 
 		
