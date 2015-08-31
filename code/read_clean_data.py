@@ -44,9 +44,24 @@ def create_shapefile_db(name, year):
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
-	create_db_command =  create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
+	create_db_command =  'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
 						'" "/Users/' + os.environ['USER'] + '/galvanize/forest-fires/data/raw_data/MODIS/"' + str(year) \
 						+ ' -nlt PROMOTE_TO_MULTI -nln fires_' + str(year) + ' -overwrite'
+
+	os.system(create_db_command)
+
+def create_db(filepath, db_name): 
+	'''
+	Input: String, String
+	Output: PSQL Table
+
+	Create a data table named db_name in the forest_fires database from the shapefiles located in the folder 
+	at filepath. 
+	''' 
+
+	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
+						'" "/Users/' + os.environ['USER'] + filepath \
+						+ ' -nlt PROMOTE_TO_MULTI -nln ' + db_name + ' -overwrite'
 
 	os.system(create_db_command)
 
