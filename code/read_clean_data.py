@@ -17,13 +17,8 @@ def create_fire_db(year, basefile_name):
 	'''
 	filepath = '../../data/raw_data/MODIS/' + str(year) + '/' + basefile_name
 
-	# I'm using the overwrite option here because anytime this create_fire_db step is run I'll be fixing something 
-	# and need to create the database from scratch. Otherwise, I won't be running this function. 
-	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
-						'" "/Users/' + os.environ['USER'] + '/galvanize/forest-fires/data/raw_data/MODIS/"' + str(year) \
-						+ ' -nlt PROMOTE_TO_MULTI -nln fires_' + str(year) + ' -overwrite'
-	
-	os.system(create_db_command)
+	db_name = 'detected_fires_' + str(year)
+	create_db(filepath, db_name)
 
 def create_shapefile_db(name, year): 
 	'''
@@ -44,11 +39,8 @@ def create_shapefile_db(name, year):
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
-	create_db_command =  'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
-						'" "/Users/' + os.environ['USER'] + '/galvanize/forest-fires/data/raw_data/MODIS/"' + str(year) \
-						+ ' -nlt PROMOTE_TO_MULTI -nln fires_' + str(year) + ' -overwrite'
-
-	os.system(create_db_command)
+	db_name = name + '_shapefiles_' + str(year)
+	create_db(filepath, db_name)
 
 def create_db(filepath, db_name): 
 	'''
@@ -59,6 +51,8 @@ def create_db(filepath, db_name):
 	at filepath. 
 	''' 
 
+	# I'm using the overwrite option here because anytime this I'm creating a db I'll be fixing something 
+	# and need to create the database from scratch. Otherwise, I won't be running this function. 
 	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
 						'" "/Users/' + os.environ['USER'] + filepath \
 						+ ' -nlt PROMOTE_TO_MULTI -nln ' + db_name + ' -overwrite'
