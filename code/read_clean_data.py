@@ -11,7 +11,7 @@ def create_fire_db(year):
 	The basefile_name read in will point to a set of shapefiles. This function will read those shapefiles
 	into a psql table. 
 	'''
-	filepath = '../../data/raw_data/MODIS/' + str(year)
+	filepath = '../data/raw_data/MODIS/' + str(year)
 
 	db_name = 'detected_fires_' + str(year)
 	create_db(filepath, db_name)
@@ -28,13 +28,13 @@ def create_shapefile_db(name, year):
 	latin_encoding = False
 
 	if name == 'fire': 
-		filepath = '../../data/boundary_files/forest_fires/end_boundaries/' + str(year)
+		filepath = '../data/boundary_files/forest_fires/end_boundaries/' + str(year)
 	elif name == 'county': 
-		filepath = '../../data/boundary_files/county/' + str(year)
+		filepath = '../data/boundary_files/county/' + str(year)
 		latin_encoding = True
 	elif name == 'urban': 
 		latin_encoding = True
-		filepath = '../../data/boundary_files/urban_areas/' + str(year)
+		filepath = '../data/boundary_files/urban_areas/' + str(year)
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
@@ -107,12 +107,11 @@ def pickle_df_sf(year, df):
 	Ouput: Pickled file of DataFrame
 	'''
 
-	with open('../../data/pickled_data/MODIS/' + 'df_' + str(year) + '.pkl', 'w+') as f: 
+	with open('../data/pickled_data/MODIS/' + 'df_' + str(year) + '.pkl', 'w+') as f: 
 		pickle.dump(df, f)
 
 if __name__ == '__main__': 
-	year = sys.argv[1]	
-	basefile_name = get_basefile_name(year)
+	year = sys.argv[1]
 	create_fire_db(year)
 	create_shapefile_db('fire', year)
 	create_shapefile_db('county', year)
