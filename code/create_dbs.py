@@ -27,8 +27,10 @@ def create_shapefile_db(name, year):
 	'''
 	latin_encoding = False
 
-	if name == 'fire': 
-		filepath = '../data/boundary_files/forest_fires/end_boundaries/' + str(year)
+	if name == 'end_fire': 
+		filepath = '../data/boundary_files/forest_fires/end_boundaries/' + str(year)	
+	elif name == 'daily_fire': 
+		filepath = '../data/boundary_files/forest_fires/daily_boundaries/' + str(year)
 	elif name == 'county': 
 		filepath = '../data/boundary_files/county/' + str(year)
 		latin_encoding = True
@@ -113,7 +115,8 @@ def pickle_df_sf(year, df):
 if __name__ == '__main__': 
 	year = sys.argv[1]
 	create_fire_db(year)
-	create_shapefile_db('fire', year)
+	create_shapefile_db('end_fire', year)
+	create_shapefile_db('daily_fire', year)
 	create_shapefile_db('county', year)
 	create_shapefile_db('urban', year)
 	# pickle_df_sf(year, shapefile_df)
