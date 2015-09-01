@@ -1,13 +1,9 @@
-import shapefile
-import pandas as pd
-import numpy as np
 import pickle
 import sys
 import psycopg2
 import os
-from collections import defaultdict
 
-def create_fire_db(year, basefile_name): 
+def create_fire_db(year): 
 	'''
 	Input: Integer, String
 	Output: PSQL Table
@@ -86,23 +82,6 @@ def merge_fire_perimeters(year):
 					 ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry));
 					''')
 
-
-def get_basefile_name(year): 
-	'''
-	Input: Integer
-	Output: String
-
-	Take in the given year, navigate to the satellite data for that year, and 
-	pull the basefile name that the shapefile library will need to put all 
-	of the files together. 
-	'''
-	current_dir = '../../data/raw_data/MODIS/' + str(year) + '/'
-	files = os.listdir(current_dir)
-
-	ext_index = files[0].find('.')
-	basefile_name = files[0][:ext_index]
-	return basefile_name
-
 def format_df(df): 
 	'''
 	Input: Pandas DataFrame
@@ -134,7 +113,7 @@ def pickle_df_sf(year, df):
 if __name__ == '__main__': 
 	year = sys.argv[1]	
 	basefile_name = get_basefile_name(year)
-	create_fire_db(year, basefile_name)
+	create_fire_db(year)
 	create_shapefile_db('fire', year)
 	create_shapefile_db('county', year)
 	create_shapefile_db('urban', year)
