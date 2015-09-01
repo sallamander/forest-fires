@@ -7,3 +7,12 @@ CREATE TABLE forest_st_cnty AS
  FROM forest_fires as points
 		JOIN county as polys
  ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry)); 
+
+CREATE UNIQUE INDEX perim_date ON daily_fire_shapefiles_2013 (date_, fire_name);
+
+
+SELECT COUNT(fire_name) as total, fire_name, date_
+FROM daily_fire_shapefiles_2013 
+GROUP BY fire_name, date_
+ORDER BY total DESC
+LIMIT 50; 
