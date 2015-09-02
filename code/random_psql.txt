@@ -23,3 +23,128 @@ CREATE TABLE merged_2013 AS
                     LEFT JOIN daily_fire_shapefiles_2013 as polys
              ON points.date = polys.date_ 
                 AND ST_WITHIN(points.wkb_geometry, polys.wkb_geometry));
+
+CREATE TABLE duplicates_table AS 
+	WITH totals_table AS 
+                (SELECT COUNT(*) as totals, lat, long, date, gmt, src
+                FROM merged_2013
+                GROUP BY lat, long, date, gmt, src)
+                
+                SELECT lat, long, date, gmt, src
+                FROM totals_table 
+                WHERE totals > 1;
+
+CREATE TABLE duplicates_info AS
+	(SELECT m.* 
+	FROM merged_2013 as m
+	JOIN duplicates_table as dup 
+		ON m.lat = dup.lat 
+		AND m.long = dup.long
+		AND m.date = dup.date
+		AND m.gmt = dup.gmt
+		AND m.src = dup.src); 
+
+CREATE TABLE rim_info1 AS 
+	SELECT geom2 as geometry, date, fire_name, fire
+	FROM duplicates_info
+	WHERE fire_name = 'Rim'
+	AND date = '2013-08-19'; 
+
+CREATE TABLE rim_info2 AS 
+	SELECT geom2 as geometry, date, fire_name, fire
+	FROM duplicates_info
+	WHERE fire_name = 'Rim'
+	AND date = '2013-08-20'; 
+
+CREATE TABLE rim_info3 AS 
+	SELECT geom2 as geometry, date, fire_name, fire
+	FROM duplicates_info
+	WHERE fire_name = 'Rim'
+	AND date = '2013-08-21'; 
+
+COPY rim_info1 to '/Users/sallamander/Desktop/rim1.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+COPY rim_info2 to '/Users/sallamander/Desktop/rim2.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+COPY rim_info3 to '/Users/sallamander/Desktop/rim3.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+
+
+CREATE TABLE corral_info1 AS 
+	SELECT geom2 as geometry, date, fire_name, fire
+	FROM duplicates_info
+	WHERE fire_name = 'Corral Complex'
+	AND date = '2013-08-15'; 
+
+CREATE TABLE corral_info2 AS 
+	SELECT geom2 as geometry, date, fire_name, fire
+	FROM duplicates_info
+	WHERE fire_name = 'Corral Complex'
+	AND date = '2013-08-16'; 
+
+CREATE TABLE corral_info3 AS 
+	SELECT geom2 as geometry, date, fire_name, fire
+	FROM duplicates_info
+	WHERE fire_name = 'Corral Complex'
+	AND date = '2013-08-17'; 
+
+CREATE TABLE corral_info4 AS 
+	SELECT geom2 as geometry, date, fire_name, fire
+	FROM duplicates_info
+	WHERE fire_name = 'Corral Complex'
+	AND date = '2013-08-12'; 
+
+CREATE TABLE corral_info5 AS 
+	SELECT geom2 as geometry, date, fire_name, fire
+	FROM duplicates_info
+	WHERE fire_name = 'Corral Complex'
+	AND (date = '2013-08-12' or date = '2013-08-15'); 
+
+COPY corral_info1 to '/Users/sallamander/Desktop/corral1.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+COPY corral_info2 to '/Users/sallamander/Desktop/corral2.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+COPY corral_info3 to '/Users/sallamander/Desktop/corral3.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+COPY corral_info4 to '/Users/sallamander/Desktop/corral4.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+COPY corral_info5 to '/Users/sallamander/Desktop/corral5.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+CREATE TABLE douglas_info1 AS 
+	SELECT wkb_geometry as geometry, date_, fire_name, fire
+	FROM daily_fire_shapefiles_2013
+	WHERE fire_name = 'Douglas Complex'
+	AND (date_ = '2013-07-30' or date_ = '2013-07-31' or 
+		date_ = '2013-08-04'); 
+
+CREATE TABLE douglas_info2 AS 
+	SELECT wkb_geometry as geometry, date_, fire_name, fire
+	FROM daily_fire_shapefiles_2013
+	WHERE fire_name = 'Douglas Complex'
+	AND (fire = 'Malone' or fire ='Malone Creek' or fire = 'McNab'
+		or fire = 'Milo'); 
+
+
+COPY douglas_info1 to '/Users/sallamander/Desktop/douglas1.csv'
+DELIMITER AS ',' CSV HEADER;  
+
+ 
+
+
+
+
+
+
+
+
+
+
+		COPY merged_2013 to '/Users/sallamander/Desktop/merged_20132.csv' DELIMITER AS ',' CSV HEADER;
