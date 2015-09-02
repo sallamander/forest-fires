@@ -12,7 +12,7 @@ def create_fire_db(year):
 	The basefile_name read in will point to a set of shapefiles. This function will read those shapefiles
 	into a psql table. 
 	'''
-	filepath = '../data/raw_data/MODIS/' + str(year)
+	filepath = '../data/detected_fires/MODIS/' + str(year)
 
 	dt_name = 'detected_fires_' + str(year)
 	create_db(filepath, dt_name)
@@ -38,6 +38,9 @@ def create_shapefile_db(name, year):
 	elif name == 'urban': 
 		latin_encoding = True
 		filepath = '../data/boundary_files/urban_areas/' + str(year)
+	elif name == 'region': 
+		latin_encoding = True
+		filepath = '../data/boundary_files/region/' + str(year)
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
@@ -83,14 +86,14 @@ def dt_exist(dt_name):
 	conn = psycopg2.connect(dbname='forest_fires')
 	cursor = conn.cursor()
 
-	cursor.execute('SELECT * \
-					FROM ' + dt_name + ' \
-					LIMIT 1;')
-
-	if cursor.fetchall(): 
-		return True 
-	else: 
+	try: 
+		cursor.execute('SELECT * \
+						FROM ' + dt_name + ' \
+						LIMIT 1;')
+	except: 
 		return False
+
+	return True 
 
 if __name__ == '__main__': 
 	with open(sys.argv[1]) as f: 
@@ -102,5 +105,6 @@ if __name__ == '__main__':
 		create_shapefile_db('daily_fire', year)
 		create_shapefile_db('county', year)
 		create_shapefile_db('urban', year)
+		create_shapefile_db('region', year)
 
 		
