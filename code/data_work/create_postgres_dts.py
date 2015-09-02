@@ -2,6 +2,7 @@ import pickle
 import sys
 import psycopg2
 import os
+import pandas as pd
 
 def create_fire_db(year): 
 	'''
@@ -52,6 +53,9 @@ def create_db(filepath, db_name, latin_encoding=False):
 	at filepath. 
 	''' 
 
+	if db_exist(db_name): 
+		return 
+
 	# I'm using the overwrite option here because anytime this I'm creating a db I'll be fixing something 
 	# and need to create the database from scratch. Otherwise, I won't be running this function. 
 	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
@@ -66,13 +70,40 @@ def create_db(filepath, db_name, latin_encoding=False):
 
 	os.system(create_db_command)
 
+def db_exist(db_name): 
+	'''
+	Input: String
+	Output: Boolean 
+
+	Take in the string of the datatable we are trying to create in the forest_fires 
+	Database, test if that datatable already exists, and return a boolean for whether
+	or not it does. 
+	'''
+
+	conn = psycopg2.conn(dbname='forest_fires')
+	cursor = conn.cursor()
+
+	cursor.execute('SELECT * \
+					FROM ' + db_name + ' \
+					LIMIT 1;')
+
+	if cursor.fetchall(): 
+		return True 
+	else: 
+		return False
+
+
+
+
 if __name__ == '__main__': 
-	year = sys.argv[1]
-	create_fire_db(year)
-	create_shapefile_db('end_fire', year)
-	create_shapefile_db('daily_fire', year)
-	create_shapefile_db('county', year)
-	create_shapefile_db('urban', year)
-	# pickle_df_sf(year, shapefile_df)
+	with open(sys.argv[1]) as f: 
+		year_list = pickle.load(f)
+		
+	for year in year_list: 
+		create_fire_db(year)
+		create_shapefile_db('end_fire', year)
+		create_shapefile_db('daily_fire', year)
+		create_shapefile_db('county', year)
+		create_shapefile_db('urban', year)
 
 		
