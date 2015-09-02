@@ -1,0 +1,25 @@
+<!doctype html> 
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <title>Examining Fire Perimeters</title>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+
+    <style type="text/css">
+      #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+
+  </head>
+
+  <body>
+  	<div id='map'></div>
+	<script type="text/javascript">
+		var api_key = '{{api_key | safe}}'
+		L.mapbox.accessToken = api_key;
+		var map = L.mapbox.map('map', 'mapbox.streets')
+		    .setView([30.25, -97.75], 7);
+	
+	</script>
+  </body>
+</html
