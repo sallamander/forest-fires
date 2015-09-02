@@ -14,8 +14,8 @@ def create_fire_db(year):
 	'''
 	filepath = '../data/raw_data/MODIS/' + str(year)
 
-	db_name = 'detected_fires_' + str(year)
-	create_db(filepath, db_name)
+	dt_name = 'detected_fires_' + str(year)
+	create_db(filepath, dt_name)
 
 def create_shapefile_db(name, year): 
 	'''
@@ -41,36 +41,36 @@ def create_shapefile_db(name, year):
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
-	db_name = name + '_shapefiles_' + str(year)
-	create_db(filepath, db_name, latin_encoding)
+	dt_name = name + '_shapefiles_' + str(year)
+	create_db(filepath, dt_name, latin_encoding)
 
-def create_db(filepath, db_name, latin_encoding=False): 
+def create_db(filepath, dt_name, latin_encoding=False): 
 	'''
 	Input: String, String
 	Output: PSQL Table
 
-	Create a data table named db_name in the forest_fires database from the shapefiles located in the folder 
+	Create a data table named dt_name in the forest_fires database from the shapefiles located in the folder 
 	at filepath. 
 	''' 
 
-	if db_exist(db_name): 
+	if dt_exist(dt_name): 
 		return 
 
 	# I'm using the overwrite option here because anytime this I'm creating a db I'll be fixing something 
 	# and need to create the database from scratch. Otherwise, I won't be running this function. 
 	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
 						'"' + ' ' + filepath \
-						+ ' -nlt PROMOTE_TO_MULTI -nln ' + db_name + ' -overwrite'
+						+ ' -nlt PROMOTE_TO_MULTI -nln ' + dt_name + ' -overwrite'
 
 	# Some of the shapefiles (county and urban area) need to be latin-encoded to read in correctly. 
 	if latin_encoding:
 		create_db_command = 'PGCLIENTENCODING=LATIN1 ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
 					'"' + ' ' + filepath \
-					+ ' -nlt PROMOTE_TO_MULTI -nln ' + db_name + ' -overwrite'
+					+ ' -nlt PROMOTE_TO_MULTI -nln ' + dt_name + ' -overwrite'
 
 	os.system(create_db_command)
 
-def db_exist(db_name): 
+def dt_exist(dt_name): 
 	'''
 	Input: String
 	Output: Boolean 
@@ -80,20 +80,17 @@ def db_exist(db_name):
 	or not it does. 
 	'''
 
-	conn = psycopg2.conn(dbname='forest_fires')
+	conn = psycopg2.connect(dbname='forest_fires')
 	cursor = conn.cursor()
 
 	cursor.execute('SELECT * \
-					FROM ' + db_name + ' \
+					FROM ' + dt_name + ' \
 					LIMIT 1;')
 
 	if cursor.fetchall(): 
 		return True 
 	else: 
 		return False
-
-
-
 
 if __name__ == '__main__': 
 	with open(sys.argv[1]) as f: 
