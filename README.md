@@ -1,4 +1,4 @@
-# forest-fires
+# Building a Model for the Early-Detection of Forest-Fires
 
 With the right compilation of datasets, can we build a machine learning model for the early detection of forest fires?
 Furthermore, can we extend that early detection model to predict ahead of time how severe a forest fire will be?
