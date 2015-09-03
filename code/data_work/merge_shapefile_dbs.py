@@ -2,12 +2,6 @@ import pandas as pd
 import pickle
 import psycopg2
 
-
-'''
-For trues/falses (whether fire or not and whether urban area), input 
-variable name and table to query from. 
-'''
-
 def boundary_bool_merge(new_col_name, shapefile_table_name, detected_fires_table):
 	'''
 	Input: String, String, String
@@ -24,10 +18,7 @@ def boundary_bool_merge(new_col_name, shapefile_table_name, detected_fires_table
 	conn = psycopg2.connect('dbname=forest_fires')
 	cursor = conn.cursor()
 
-	cursor.execute('''ALTER TABLE {detected_fires_table}
-						DROP COLUMN IF EXISTS {new_col_name};
-					'''.format(detected_fires_table=detected_fires_table, 
-								new_col_name=new_col_name))
+	delete_col_if_exists(cursor, new_col_name, detected_fires_table)
 
 	query = create_bool_query(new_col_name, shapefile_table_name, detected_fires_table)
 	cursor.execute(query)
@@ -94,6 +85,36 @@ def create_bool_query(new_col_name, shapefile_table_name, detected_fires_table):
 									shapefile_table_name=shapefile_table_name, 
 									new_col_name=new_col_name, on_query_part=on_query_part)
 	return query
+
+def delete_col_if_exists(cursor, new_col_name, detected_fires_table): 
+	'''
+	Input: Pyscopg2 cursor, String, String, String
+	Output: None
+
+	Delete the new column that we want to insert from the detected fires table if it already 
+	exists. 
+	'''
+
+	cursor.execute('''ALTER TABLE {detected_fires_table}
+					DROP COLUMN IF EXISTS {new_col_name};
+				'''.format(detected_fires_table=detected_fires_table, 
+							new_col_name=new_col_name))
+
+
+def boundary_label_merge(new_col_name, shapefile_table_name, detected_fires_table): 
+	'''
+	Input: String, String, String
+	Output: PSQL Data Table
+
+	For a given column name and table that contains shape information, create a new column 
+	in the detected_fires_table that is fed in that contains the label associated with where 
+	the latitude/longitude coordinates for that fire centroid falls (i.e. state, county, etc.). 
+
+	Notes: The best way I could see to do this query was to create a new table, delete the old 
+	table, and then rename the new. 
+	'''
+
+	pass
 
 if __name__ == '__main__': 
 	for year in xrange(2013, 2015): 
