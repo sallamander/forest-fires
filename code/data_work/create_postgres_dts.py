@@ -81,7 +81,7 @@ def dt_exist(dt_name):
 	or not it does. 
 	'''
 
-	conn = psycopg2.connect(dbname='forest_fires')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
 	cursor = conn.cursor()
 
 	try: 
