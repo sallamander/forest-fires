@@ -61,6 +61,12 @@ def chk_in_boundary_dirs():
 	for folder in folders_list: 
 		if folder not in in_unzipped_boundary_dirs: 
 			os.mkdir('./unzipped_files/boundary_files/' + folder)
+		folders_list2 = os.listdir('./unzipped_files/boundary_files/' + folder + '/')
+		for year in xrange(2013, 2015): 
+			folder2 = './unzipped_files/boundary_files/' + folder + '/' + str(year)
+			if str(year) not in folders_list2: 
+				os.mkdir(folder2)
+
 
 def chk_in_detected_dirs(): 
 	'''
@@ -115,7 +121,9 @@ def unzip_boundaries():
 			remove_nonzips()
 			zipped_files = os.listdir('./')
 			for zipped_file in zipped_files: 
-				os.system('unzip ' + zipped_file)
+				pass
+				# os.system('unzip ' + zipped_file)
+			# mv_nonzips()
 
 def remove_nonzips(): 
 	'''
@@ -130,6 +138,28 @@ def remove_nonzips():
 	for f in files:
 		if f.find('.zip') == -1: 
 			os.remove(f)
+
+def mv_nonzips(): 
+	'''
+	Input: None
+	Output: None
+	
+	Within the current working directory, move all those files without .zip extensions (i.e. 
+	the recently unzipped files) to the equivalent folder in the unzipped folder in the data	
+	folder. 
+	'''
+
+	files = os.listdir('./')
+	current_dir = os.getcwd()
+	move_to_dir = current_dir.replace('zipped_files', 'unzipped_files')
+
+	import pdb
+	pdb.set_trace()
+
+	for f in files: 
+		if f.find('2013') != -1: 
+			pass
+			
 
 if __name__ == '__main__': 
 	check_dirs()
