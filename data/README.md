@@ -7,4 +7,4 @@ The data used for this project is all publicly available. At this point, I am us
 3.) [Fire perimeter Boundaries](http://rmgsc.cr.usgs.gov/outgoing/GeoMAC/historic_fire_data/)  
 
 All of the zipped files that I have downloaded to use (namely 2013, 2014) are in the zipped_files folder
-in this data subdirectory. Data from (1) above are in the /data/deteced_fires subdirectory, and data from (2) above are located in the data/boundary_files subdirectory. 
+in this data subdirectory. Data from (1) above are in the /zipped_files/deteced_fires subdirectory, and data from (2) above are located in the /zipped_files/boundary_files subdirectory. 
