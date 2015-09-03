@@ -56,7 +56,7 @@ def chk_in_boundary_dirs():
 
 	in_unzipped_boundary_dirs = os.listdir('./unzipped_files/boundary_files')
 
-	folders_list = ['county', 'fire_perimeters', 'region', 'urban_areas']
+	folders_list = ['county', 'fire_perimeters', 'region', 'urban_areas', 'state']
 
 	for folder in folders_list: 
 		if folder not in in_unzipped_boundary_dirs: 
