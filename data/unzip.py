@@ -26,7 +26,7 @@ def chk_zipped_dir():
 
 	current_dir_dirs = os.listdir('.')
 
-	if 'unzipped_files' not in current_dir_dirs; 
+	if 'unzipped_files' not in current_dir_dirs: 
 		os.mkdir('unzipped_files')
 
 def chk_in_zipped_dirs(): 
@@ -82,6 +82,55 @@ def chk_in_detected_dirs():
 		if str(year) not in in_MODIS_dirs: 
 			os.mkdir('./unzipped_files/detected_fires/MODIS/' + str(year))
 
+def unzip_files(): 
+	'''
+	Input: None
+	Output: Unzipped Files. 
+
+	For all of the created dirs. above, let's unzip the data from the zipped files. I'm going 
+	to assume that the user wants to unzip this only once, and so I'm going to remove all files 
+	from the unzipped dirs. created above (purge them), and I'm going to remove everything but 
+	the remaining zipped files from all of the zipped folders. 
+	'''
+
+	unzip_boundaries()
+
+def unzip_boundaries():
+	'''
+	Input: None
+	Output: Unzipped files. 
+
+	Unzip all of the files in each of the boundary folders and move them from the zipped folder
+	to the equivalent unzipped folder. 
+	''' 
+
+	boundaries_dirs = os.listdir('./zipped_files/boundary_files')
+	current_dir = os.getcwd()
+
+	for bound_dir in boundaries_dirs: 
+		os.chdir(current_dir)
+		if bound_dir != '.DS_Store': 
+			filepath = './zipped_files/boundary_files/' + bound_dir + '/'
+			os.chdir(current_dir + filepath[1:])
+			remove_nonzips()
+			zipped_files = os.listdir('./')
+			for zipped_file in zipped_files: 
+				os.system('unzip ' + zipped_file)
+
+def remove_nonzips(): 
+	'''
+	Input: None
+	Output: None
+
+	Within the current working directory, delete/remove all files which aren't .zip files. 
+	'''
+
+	files = os.listdir('./')
+
+	for f in files:
+		if f.find('.zip') == -1: 
+			os.remove(f)
 
 if __name__ == '__main__': 
 	check_dirs()
+	unzip_files()
