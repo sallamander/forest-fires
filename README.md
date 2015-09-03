@@ -9,3 +9,7 @@ actual fires are forest fires. To do so, I plan to train a model using [historic
 (http://rmgsc.cr.usgs.gov/outgoing/GeoMAC/historic_fire_data/) as the target variable/ground truth. That is, if a 
 detected fire falls within a forest fire perimeter boundary for the given date that it occurs, I will consider it 
 a forest fire and use that as my ground truth. 
+
+### Current Status
+
+Right now, I am working on finalizing the data set to start training a model. 
