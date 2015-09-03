@@ -100,6 +100,7 @@ def unzip_files():
 	'''
 
 	unzip_boundaries()
+	unzip_detected()
 
 def unzip_boundaries():
 	'''
@@ -123,6 +124,8 @@ def unzip_boundaries():
 			for zipped_file in zipped_files: 
 				os.system('unzip ' + zipped_file)
 			mv_nonzips()
+
+	os.chdir(current_dir)
 
 def remove_nonzips(): 
 	'''
@@ -157,7 +160,32 @@ def mv_nonzips():
 			os.rename(current_dir + '/' + f, move_to_dir + '/2013/' + f)
 		if f.find('2014') != -1 and f.find('.zip') == -1: 
 			os.rename(current_dir + '/' + f, move_to_dir + '/2014/' + f)
- 
+		if f.find('2015') != -1 and f.find('.zip') == -1: 
+			os.rename(current_dir + '/' + f, move_to_dir + '/2015/' + f)
+
+def unzip_detected(): 
+	'''
+	Input: None
+	Output: None
+
+	Unzip all of the files in each of the detected fires folders and move them from the zipped folder
+	to the equivalent unzipped folder. 
+	'''
+
+	detected_fires_dirs = os.listdir('./zipped_files/detected_fires')
+	current_dir = os.getcwd()
+
+	for detected_fire_dir in detected_fires_dirs: 
+		os.chdir(current_dir)
+		if detected_fire_dir != '.DS_Store': 
+			filepath = './zipped_files/detected_fires/' + detected_fire_dir + '/'
+			os.chdir(current_dir + filepath[1:])
+			remove_nonzips()
+			zipped_files = os.listdir('./')
+			for zipped_file in zipped_files: 
+				os.system('unzip ' + zipped_file)
+			mv_nonzips()
+
 if __name__ == '__main__': 
 	check_dirs()
 	unzip_files()
