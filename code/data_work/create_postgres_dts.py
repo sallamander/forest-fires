@@ -39,6 +39,8 @@ def create_shapefile_db(name, year):
 	elif name == 'region': 
 		latin_encoding = True
 		filepath = 'data/unzipped_files/boundary_files/region/' + str(year)
+	elif name == 'state': 
+		filepath = 'data/unzipped_files/boundary_files/state/' + str(year)
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
@@ -101,6 +103,7 @@ if __name__ == '__main__':
 		create_fire_db(year)
 		create_shapefile_db('perimeters', year)
 		create_shapefile_db('county', year)
+		create_shapefile_db('state', year)
 		create_shapefile_db('urban', year)
 		create_shapefile_db('region', year)
 
