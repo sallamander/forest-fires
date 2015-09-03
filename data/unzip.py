@@ -121,9 +121,8 @@ def unzip_boundaries():
 			remove_nonzips()
 			zipped_files = os.listdir('./')
 			for zipped_file in zipped_files: 
-				pass
-				# os.system('unzip ' + zipped_file)
-			# mv_nonzips()
+				os.system('unzip ' + zipped_file)
+			mv_nonzips()
 
 def remove_nonzips(): 
 	'''
@@ -153,14 +152,12 @@ def mv_nonzips():
 	current_dir = os.getcwd()
 	move_to_dir = current_dir.replace('zipped_files', 'unzipped_files')
 
-	import pdb
-	pdb.set_trace()
-
 	for f in files: 
-		if f.find('2013') != -1: 
-			pass
-			
-
+		if f.find('2013') != -1 and f.find('.zip') == -1: 
+			os.rename(current_dir + '/' + f, move_to_dir + '/2013/' + f)
+		if f.find('2014') != -1 and f.find('.zip') == -1: 
+			os.rename(current_dir + '/' + f, move_to_dir + '/2014/' + f)
+ 
 if __name__ == '__main__': 
 	check_dirs()
 	unzip_files()
