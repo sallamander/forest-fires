@@ -30,10 +30,10 @@ CREATE EXTENSION POSTGIS; # Add the POSTGIS extension to the forest_fires databa
 
 After this step, feel free to log out of the forest_fires database (or stay logged in so you can verify the results of the create_postgres_dts.py file), **but** don't stop running Postgres on your machine.   
 
-You are now ready to run the create_postgres_dts.py file and have all of the datatables created in your forest_fires database. I'm going to spare you the details of creating the pickled list that I'm using as input into the create_postgres_dts.py (I did it this way so I could make use of a Makefile), but from **within** the /code/data_work folder you can run it **from the terminal** as follows: 
+You are now ready to run the create_postgres_dts.py file and have all of the datatables created in your forest_fires database. I'm going to spare you the details of creating the pickled list that I'm using as input into the create_postgres_dts.py (I did it this way so I could make use of a Makefile), but from **within** the main folder (i.e. forest-fires) folder you can run it **from the terminal** as follows: 
 
 ```unix
-python create_postgres_dts.py ../../makefiles/year_list.pkl 
+python code/data_work/create_postgres_dts.py makefiles/year_list.pkl 
 ```
 
 
