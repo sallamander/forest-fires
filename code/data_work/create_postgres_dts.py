@@ -12,7 +12,7 @@ def create_fire_db(year):
 	The basefile_name read in will point to a set of shapefiles. This function will read those shapefiles
 	into a psql table. 
 	'''
-	filepath = '../data/detected_fires/MODIS/' + str(year)
+	filepath = 'data/unzipped_files/detected_fires/MODIS/' + str(year)
 
 	dt_name = 'detected_fires_' + str(year)
 	create_db(filepath, dt_name)
@@ -28,19 +28,17 @@ def create_shapefile_db(name, year):
 	'''
 	latin_encoding = False
 
-	if name == 'end_fire': 
-		filepath = '../data/boundary_files/forest_fires/end_boundaries/' + str(year)	
-	elif name == 'daily_fire': 
-		filepath = '../data/boundary_files/forest_fires/daily_boundaries/' + str(year)
+	if name == 'perimeters': 
+		filepath = 'data/unzipped_files/boundary_files/fire_perimeters/' + str(year)
 	elif name == 'county': 
-		filepath = '../data/boundary_files/county/' + str(year)
+		filepath = 'data/unzipped_files/boundary_files/county/' + str(year)
 		latin_encoding = True
 	elif name == 'urban': 
 		latin_encoding = True
-		filepath = '../data/boundary_files/urban_areas/' + str(year)
+		filepath = 'data/unzipped_files/boundary_files/urban_areas/' + str(year)
 	elif name == 'region': 
 		latin_encoding = True
-		filepath = '../data/boundary_files/region/' + str(year)
+		filepath = 'data/unzipped_files/boundary_files/region/' + str(year)
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
@@ -101,8 +99,7 @@ if __name__ == '__main__':
 		
 	for year in year_list: 
 		create_fire_db(year)
-		create_shapefile_db('end_fire', year)
-		create_shapefile_db('daily_fire', year)
+		create_shapefile_db('perimeters', year)
 		create_shapefile_db('county', year)
 		create_shapefile_db('urban', year)
 		create_shapefile_db('region', year)
