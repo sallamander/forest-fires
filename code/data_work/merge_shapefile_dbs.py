@@ -96,5 +96,7 @@ def create_bool_query(new_col_name, shapefile_table_name, detected_fires_table):
 	return query
 
 if __name__ == '__main__': 
-	boundary_bool_merge('fire', 'perimeters_shapefiles_2013', 'detected_fires_2013')
-	boundary_bool_merge('urban_area', 'urban_shapefiles_2013', 'detected_fires_2013')
+	for year in xrange(2013, 2015): 
+		detected_fires_table = 'detected_fires_' + str(year)
+		boundary_bool_merge('fire', 'perimeters_shapefiles_' + str(year), detected_fires_table)
+		boundary_bool_merge('urban_area', 'urban_shapefiles_' + str(year), detected_fires_table)
