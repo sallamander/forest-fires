@@ -1,6 +1,7 @@
 import pandas as pd
 import pickle
 import psycopg2
+import time
 
 def boundary_bool_merge(new_col_name, shapefile_table_name, detected_fires_table):
 	'''
@@ -50,9 +51,13 @@ def create_bool_query(cursor, new_col_name, shapefile_table_name, detected_fires
 	# If we are adding in a fire column, then we will be merging using the fire perimeter 
 	# boundaries, which means we're merging on date and geometry. 
 	on_query_part = 'ST_WITHIN(points.wkb_geometry, polys.wkb_geometry)'
+	select_distinct_on = '(lat, long)'
 
-	if new_col_name == 'fire': 
+	if new_col_name == 'fire_bool': 
 		on_query_part += ' AND points.date = polys.date_'
+		select_distinct_on = '(lat, long, date)'
+
+	print select_distinct_on
 
 
 	# The breakdown of this query ... kind of from the inside out.
@@ -63,27 +68,28 @@ def create_bool_query(cursor, new_col_name, shapefile_table_name, detected_fires
 	#  	boolean that holds whether each row of the detected fire data table was within 
 	# 	shape perimeter boundary. 
 	# 3.) Create a new table holding these results. 
-	query = '''CREATE TABLE {detected_fires_table}2 AS 
-						(WITH merged AS
-							(SELECT DISTINCT lat, long, date FROM 
-						 		(SELECT lat, long, date
-									FROM {detected_fires_table} as points
-									INNER JOIN {shapefile_table_name} as polys
-						 				ON {on_query_part}) as merged
-							)  
+	query = '''CREATE TABLE {detected_fires_table}2 AS
+				(WITH 
+					distinct_to_merge AS 
+						(SELECT DISTINCT ON {select_distinct_on} * 
+						FROM {detected_fires_table}), 
+					merged AS 
+						(SELECT DISTINCT points.lat, points.long, points.date
+						FROM distinct_to_merge as points
+						INNER JOIN {shapefile_table_name} as polys
+							ON {on_query_part})
 
-						SELECT df.*, 
-							CASE WHEN merged.lat IS NOT NULL THEN TRUE
-								 WHEN merged.lat IS NULL THEN FALSE END AS {new_col_name}
-						FROM {detected_fires_table} df
-						LEFT JOIN merged 
-							ON df.lat = merged.lat
-							AND df.long = merged.long
-							AND df.date = merged.date
-						);
-						'''.format(detected_fires_table=detected_fires_table, 
+				SELECT df.*, 
+					CASE WHEN merged.lat IS NOT NULL THEN TRUE
+						 WHEN merged.lat IS NULL THEN FALSE END AS {new_col_name}
+				FROM {detected_fires_table} df
+				LEFT JOIN merged 
+					ON df.lat = merged.lat
+					AND df.long = merged.long
+					AND df.date = merged.date);'''.format(detected_fires_table=detected_fires_table, 
 									shapefile_table_name=shapefile_table_name, 
-									new_col_name=new_col_name, on_query_part=on_query_part)
+									new_col_name=new_col_name, on_query_part=on_query_part, 
+									select_distinct_on=select_distinct_on)
 	return query
 
 def delete_col_if_exists(cursor, cols_list, detected_fires_table): 
@@ -123,12 +129,17 @@ def boundary_label_merge(new_col_name, shapefile_table_name, detected_fires_tabl
 
 	query = create_label_query(cursor, new_col_name, shapefile_table_name, detected_fires_table)
 
+	print 'Got query... Executing'
+	print '-' * 50, '\n'
+	print query
+	print '\n', '-' * 50
 	cursor.execute(query)
 
 	cursor.execute(''' DROP TABLE {}'''.format(detected_fires_table))
 	cursor.execute(''' ALTER TABLE {detected_fires_table}2 
 						RENAME TO {detected_fires_table}'''.format(detected_fires_table=detected_fires_table))
 
+	print 'About to commit and peace out... '
 	conn.commit()
 	conn.close()
 
@@ -149,6 +160,7 @@ def create_label_query(cursor, new_col_name, shapefile_table_name, detected_fire
 	this moment, but would like to know if there is a better way to do this. 
 	'''
 
+	print 'Getting query'
 	land, water, name, lsad = new_col_name + '_aland', new_col_name + '_water', new_col_name + '_name', new_col_name + '_lsad'
 	columns_to_check = [land, water, name, lsad]
 	polys_keep_columns = ''' aland as {land}, awater as {water}, name as {name}, 
@@ -188,15 +200,17 @@ def create_label_query(cursor, new_col_name, shapefile_table_name, detected_fire
 	return query
 
 if __name__ == '__main__': 
-	'''
 	for year in xrange(2013, 2015): 
 		detected_fires_table = 'detected_fires_' + str(year)
-		boundary_bool_merge('fire', 'perimeters_shapefiles_' + str(year), detected_fires_table)
-		boundary_bool_merge('urban_area', 'urban_shapefiles_' + str(year), detected_fires_table)
-	'''
+		boundary_bool_merge('fire_bool', 'perimeters_shapefiles_' + str(year), detected_fires_table)
+		boundary_bool_merge('urban_area_bool', 'urban_shapefiles_' + str(year), detected_fires_table)
 
-	for year in xrange(2013, 2015): 
+	end = time.time()
+
+	'''
+	for year in xrange(2014, 2015): 
 		detected_fires_table = 'detected_fires_' + str(year)
 		boundary_label_merge('region', 'region_shapefiles_' + str(year), detected_fires_table)
 		boundary_label_merge('county', 'county_shapefiles_' + str(year), detected_fires_table)
 		boundary_label_merge('state', 'state_shapefiles_' + str(year), detected_fires_table)
+	'''
