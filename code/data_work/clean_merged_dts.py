@@ -25,10 +25,28 @@ def add_stname_county(year):
 	conn.commit()
 	conn.close()
 
+def rename_urban_name(year):
+	'''
+	Input: Integer
+	Output: Updated Datatable
+
+	Rename the name10 column in the urban shapefiles tables so that it matches the other tables. 
+	'''
+
+	conn = pscyopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	cursor = conn.cursor()
+
+	urban_table = 'urban_shapefiles_' + str(year)
+	cursor.execute(''' ALTER TABLE rename 'name10' AS 'name';''')
+
+
 if __name__ == '__main__': 
+	# The main reason these queries are in this file is to make sure they get documented and I don't 
+	# forget that this was part of the process. 
 	for year in xrange(2013, 2015): 
 		add_stname_county(year)
+		rename_urban_name(year)
 
-		
+
  
 
