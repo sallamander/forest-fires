@@ -40,5 +40,7 @@ def check_csv_dir():
 		if 'csvs' not in data_dirs: 
 			os.mkdir(current_dir[:location] + '/forest-fires/data/csvs')
 
-
+if __name__ == '__main__': 
+	for year in xrange(2013, 2015): 
+		output_csv(year)
 
