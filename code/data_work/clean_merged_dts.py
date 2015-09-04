@@ -1,4 +1,5 @@
-import pscyopg2
+import psycopg2
+import os
 
 def add_stname_county(year): 
 	'''
@@ -9,18 +10,25 @@ def add_stname_county(year):
 	with each county, and not just the state fips. 
 	'''
 
-	conn = pscyopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
 	cursor = conn.cursor()
 
 	county_table = 'county_shapefiles_' + str(year)
 	state_table = 'state_shapefiles_' + str(year)
-	cursor.execute(''' ALTER TABLE {county_table} 
-						ADD state_name varchar(30) AS 
-							(SELECT st.name 
+
+	delete_col_if_exists(cursor, ['state_name'], county_table )
+	
+	cursor.execute(''' CREATE TABLE {county_table}2 AS 
+							(SELECT st.name as state_name, ct.* 
 							FROM {county_table} ct 
 							INNER JOIN {state_table} st 
 								ON ct.statefp = st.statefp)
-					;'''.format(county_table=county_table, state_table=state_table)
+					;'''.format(county_table=county_table, state_table=state_table))
+
+
+	cursor.execute(''' DROP TABLE {}'''.format(county_table))
+	cursor.execute(''' ALTER TABLE {county_table}2 
+						RENAME TO {county_table}'''.format(county_table=county_table))
 
 	conn.commit()
 	conn.close()
@@ -33,11 +41,29 @@ def rename_urban_name(year):
 	Rename the name10 column in the urban shapefiles tables so that it matches the other tables. 
 	'''
 
-	conn = pscyopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
 	cursor = conn.cursor()
 
 	urban_table = 'urban_shapefiles_' + str(year)
-	cursor.execute(''' ALTER TABLE rename 'name10' AS 'name';''')
+	cursor.execute(''' ALTER TABLE {urban_table} RENAME COLUMN name10 TO name;'''.format(urban_table=urban_table))
+
+	conn.commit()
+	conn.close()
+
+def delete_col_if_exists(cursor, cols_list, detected_fires_table): 
+	'''
+	Input: Pyscopg2 cursor, String, String, String
+	Output: None
+
+	Delete the new column that we want to insert from the detected fires table if it already 
+	exists. 
+	'''
+
+	for col in cols_list: 
+		cursor.execute('''ALTER TABLE {detected_fires_table}
+						DROP COLUMN IF EXISTS {new_col_name};
+					'''.format(detected_fires_table=detected_fires_table, 
+								new_col_name=col))
 
 
 if __name__ == '__main__': 
