@@ -4,7 +4,7 @@ import psycopg2
 import time
 import os
 
-def boundary_bool_merge(new_col_name, shapefile_table_name, detected_fires_table):
+def boundary_merge(new_col_name, shapefile_table_name, detected_fires_table, label):
 	'''
 	Input: String, String, String
 	Output: PSQL Data Table
@@ -20,7 +20,11 @@ def boundary_bool_merge(new_col_name, shapefile_table_name, detected_fires_table
 	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
 	cursor = conn.cursor()
 
-	query = create_bool_query(cursor, new_col_name, shapefile_table_name, detected_fires_table)
+	if label: 
+		query = create_label_query(cursor, new_col_name, shapefile_table_name, detected_fires_table)
+	else: 
+		query = create_bool_query(cursor, new_col_name, shapefile_table_name, detected_fires_table)
+	
 	cursor.execute(query)
 
 	cursor.execute(''' DROP TABLE {}'''.format(detected_fires_table))
@@ -57,9 +61,6 @@ def create_bool_query(cursor, new_col_name, shapefile_table_name, detected_fires
 	if new_col_name == 'fire_bool': 
 		on_query_part += ' AND points.date = polys.date_'
 		select_distinct_on = '(lat, long, date)'
-
-	print select_distinct_on
-
 
 	# The breakdown of this query ... kind of from the inside out.
 	#  
@@ -108,40 +109,6 @@ def delete_col_if_exists(cursor, cols_list, detected_fires_table):
 					'''.format(detected_fires_table=detected_fires_table, 
 								new_col_name=col))
 
-
-def boundary_label_merge(new_col_name, shapefile_table_name, detected_fires_table): 
-	'''
-	Input: String, String, String
-	Output: PSQL Data Table
-
-	For a given column name and table that contains shape information, create a new column 
-	in the detected_fires_table that is fed in that contains the label associated with where 
-	the latitude/longitude coordinates for that fire centroid falls (i.e. state, county, etc.). 
-
-	Notes: The best way I could see to do this query was to create a new table, delete the old 
-	table, and then rename the new. 
-	'''
-
-	print 'Doing ' + new_col_name
-
-	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
-	cursor = conn.cursor()
-
-
-	query = create_label_query(cursor, new_col_name, shapefile_table_name, detected_fires_table)
-
-	print 'Got query... Executing'
-	cursor.execute(query)
-
-	cursor.execute(''' DROP TABLE {}'''.format(detected_fires_table))
-	cursor.execute(''' ALTER TABLE {detected_fires_table}2 
-						RENAME TO {detected_fires_table}'''.format(detected_fires_table=detected_fires_table))
-
-	print 'About to commit and peace out... '
-	conn.commit()
-	conn.close()
-
-
 def create_label_query(cursor, new_col_name, shapefile_table_name, detected_fires_table): 
 	'''
 	Input: String, String, String
@@ -158,7 +125,6 @@ def create_label_query(cursor, new_col_name, shapefile_table_name, detected_fire
 	this moment, but would like to know if there is a better way to do this. 
 	'''
 
-	print 'Getting query'
 	land, water, name, lsad = new_col_name + '_aland', new_col_name + '_water', new_col_name + '_name', new_col_name + '_lsad'
 	columns_to_check = [land, water, name, lsad]
 	polys_keep_columns = ''' polys.aland as {land}, polys.awater as {water}, polys.name as {name}, 
@@ -198,13 +164,17 @@ def create_label_query(cursor, new_col_name, shapefile_table_name, detected_fire
 	return query
 
 if __name__ == '__main__': 
-	for year in xrange(2014, 2015): 
+	for year in xrange(2013, 2014): 
 		detected_fires_table = 'detected_fires_' + str(year)
-		boundary_bool_merge('fire_bool', 'perimeters_shapefiles_' + str(year), detected_fires_table)
-		boundary_bool_merge('urban_area_bool', 'urban_shapefiles_' + str(year), detected_fires_table)
+		# Start off with those shapefiles where we want a boolean if the detected fire is within that 
+		# shape. 
+		label = False
+		boundary_merge('fire_bool', 'perimeters_shapefiles_' + str(year), detected_fires_table, label)
+		boundary_merge('urban_area_bool', 'urban_shapefiles_' + str(year), detected_fires_table, label)
 
-	for year in xrange(2014, 2015): 
-		detected_fires_table = 'detected_fires_' + str(year)
-		boundary_label_merge('region', 'region_shapefiles_' + str(year), detected_fires_table)
-		boundary_label_merge('county', 'county_shapefiles_' + str(year), detected_fires_table)
-		boundary_label_merge('state', 'state_shapefiles_' + str(year), detected_fires_table)
+		# Now move to those shapefiles where we want labels/variables asscoiated with each detected point, because 
+		# we know that they will fall into one of the shapes in each of these files (except for Canada). 
+		label = True
+		boundary_merge('region', 'region_shapefiles_' + str(year), detected_fires_table, label)
+		boundary_merge('county', 'county_shapefiles_' + str(year), detected_fires_table, label)
+		boundary_merge('state', 'state_shapefiles_' + str(year), detected_fires_table, label)
