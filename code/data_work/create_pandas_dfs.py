@@ -1,27 +1,44 @@
-def format_df(df): 
+import psycopg2
+import os
+
+def output_csv(year): 
 	'''
-	Input: Pandas DataFrame
-	Output: Pandas DataFrame
+	Input: Intger
+	Output: CSV file
 
-	In the years 2008 and prior, the data is formatted slightly differently than later years. The 
-	Fire_ and Fire_ID variables from later years are named differently, as are the LAT and LONG 
-	variables. For these, we simply need to change names. For the TEMP variable from years 2009+, we need to 
-	use the T21 from the years prior to 2008, and for the JULIAN varible in years 2009+, we need to parse
-	part of the JDATE variable. 
-	'''
-
-	df = df.rename(columns={'MCD14ML_': 'FIRE_', 'MCD14ML_ID': 'FIRE_ID', 'WGS84LAT': 'LAT', 'WGS84LONG': 'LONG', 
-							'T21': 'TEMP', 'UTC': 'GMT', 'SATELLITE': 'SAT_SRC', 'CONFIDENCE': 'CONF'})
-	df['JULIAN'] = df['JDATE'].apply(lambda x: int(str(x)[-3:]))
-	df = df.drop(['T31', 'JDATE'], axis=1)
-
-	return df
-
-def pickle_df_sf(year, df): 
-	'''
-	Input: Integer, Pandas DataFrame
-	Ouput: Pickled file of DataFrame
+	Ouptut the postgres detected_fires table for the inputted year into a .csv. 
 	'''
 
-	with open('../data/pickled_data/MODIS/' + 'df_' + str(year) + '.pkl', 'w+') as f: 
-		pickle.dump(df, f)
+	check_csv_dir()
+
+	conn = pscycopg2.connect('dbname=forest_fires', user=os.environ['USER'], host='localhost')
+	cursor = conn.cursor()
+
+	conn.execute('''COPY detected_fires_{year} to 
+				'../data/csvs/detected_fires_{year}.csv' DELIMITER AS ',' 
+				CSV HEADER;'''.format(str(year)))
+
+def check_csv_dir(): 
+	'''
+	Input: None
+	Output: Possibly Created Directory/Folder
+
+	Check to make sure the .csv directory/folder is created, and if not create it. 
+	'''
+
+	# In the hopes of generalizing this so I can easily throw it up on AWS or somebody else can 
+	# use it, I'm going to find the current directory path, remove any directories forest-fires
+	# and deeper, and then create the .csv in forest-fires/data/csv. 
+	current_dir = os.getcwd()
+	location = current_dir.find('forest-fires')
+
+	if location == -1: 
+		raise Exception("You're not running this code from anywhere in you're forest-fire directory... \
+						Smokey would be ashamed!")
+	else: 
+		data_dirs = os.listdir(current_dir[:location] + '/forest-fires/data/')
+		if 'csvs' not in data_dirs: 
+			os.mkdir(current_dir[:location] + '/forest-fires/data/csvs')
+
+
+
