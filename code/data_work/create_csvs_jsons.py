@@ -36,18 +36,21 @@ def output_json(year, geo_type):
 	For the given year and geography type, create JSON files that hold the geoJSON for mapping 
 	that geography type. 
 	'''
+
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	cursor = conn.cursor()
  		
  	query = get_json_query(geo_type, year)
 
- 	df = pd.read_sql(map_query, conn)
+ 	df = pd.read_sql(query, conn)
 
 	list_to_export = []	
 	for idx, row in df.iterrows():
 		list_to_export.append((add_properties_geo(row, geo_type)))
 
-	filename = year + '_' + geo_type + '.json'
-	json = True
-	filepath = get_filepath(filename, json)
+	check_create_dir('jsons')
+	filename = str(year) + '_' + geo_type + '.json'
+	filepath = get_filepath(filename)
 	with open(filepath, 'w+') as f: 
 		f.write(json.dumps(list_to_export))
 
@@ -61,7 +64,7 @@ def get_json_query(geo_type, year):
 	'''
 
 	from_table = geo_type + '_shapefiles_' + str(year)
-	select_variables = ' ST_asGeoJSON(wkb_geometry) as geometry, name, '
+	select_variables = 'DISTINCT ST_AsGeoJSON(wkb_geometry) as geometry, name, '
 
 	if geo_type == 'state': 
 		select_variables += 'statefp'
@@ -71,11 +74,15 @@ def get_json_query(geo_type, year):
 		select_variables += 'regionce'
 
 
+
 	query = '''SELECT {select_variables} 
 				FROM {from_table};
 			'''.format(select_variables=select_variables, from_table=from_table)
 
+	return query
+
 def add_properties_geo(row, geo_type):
+
 	properties_dict = {}
 	properties_dict['name'] = row['name']
 	if geo_type == 'state': 
@@ -146,4 +153,6 @@ if __name__ == '__main__':
 	for year in xrange(2013, 2015): 
 		# output_csv(year)
 		output_json(year, 'state')
+		output_json(year, 'county')
+		output_json(year, 'region')
 
