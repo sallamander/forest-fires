@@ -43,7 +43,7 @@ def output_json(year, geo_type):
 
 	list_to_export = []	
 	for idx, row in df.iterrows():
-		list_to_export.append((add_properties_geo(row)))
+		list_to_export.append((add_properties_geo(row, geo_type)))
 
 	filename = year + '_' + geo_type + '.json'
 	json = True
@@ -65,15 +65,30 @@ def get_json_query(geo_type, year):
 
 	if geo_type == 'state': 
 		select_variables += 'statefp'
-	if geo_type == 'county':
+	elif geo_type == 'county':
 		select_variables += 'statefp, countyfp, state_name'
-	if geo_type == 'region': 
+	elif geo_type == 'region': 
 		select_variables += 'regionce'
 
 
 	query = '''SELECT {select_variables} 
 				FROM {from_table};
 			'''.format(select_variables=select_variables, from_table=from_table)
+
+def add_properties_geo(row, geo_type):
+	properties_dict = {}
+	properties_dict['name'] = row['name']
+	if geo_type == 'state': 
+		properties_dict['state_fips'] = row['statefp']
+	elif geo_type == 'county': 
+		properties_dict ['state_fips'] = row['statefp']
+		properties_dict['county_fips'] = row['countyfp']
+		properties_dict['state_name'] = row['state_name']
+	elif geo_type == 'region': 
+		properties_dict['region_number'] = row['regionce']
+
+	geo_json = {"type": "Feature", "geometry": json.loads(row['geometry']),  "properties": properties_dict} 
+	return geo_json
 
 
 def check_create_dir(data_dir_name): 
@@ -129,6 +144,6 @@ def smokey_error():
 
 if __name__ == '__main__': 
 	for year in xrange(2013, 2015): 
-		output_csv(year)
-		
+		# output_csv(year)
+		output_json(year, 'state')
 
