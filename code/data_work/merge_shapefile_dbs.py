@@ -18,9 +18,7 @@ def boundary_bool_merge(new_col_name, shapefile_table_name, detected_fires_table
 	conn = psycopg2.connect('dbname=forest_fires')
 	cursor = conn.cursor()
 
-	delete_col_if_exists(cursor, new_col_name, detected_fires_table)
-
-	query = create_bool_query(new_col_name, shapefile_table_name, detected_fires_table)
+	query = create_bool_query(cursor, new_col_name, shapefile_table_name, detected_fires_table)
 	cursor.execute(query)
 
 	cursor.execute(''' DROP TABLE {}'''.format(detected_fires_table))
@@ -30,7 +28,7 @@ def boundary_bool_merge(new_col_name, shapefile_table_name, detected_fires_table
 	conn.commit()
 	conn.close()
 
-def create_bool_query(new_col_name, shapefile_table_name, detected_fires_table): 
+def create_bool_query(cursor, new_col_name, shapefile_table_name, detected_fires_table): 
 	'''
 	Input: String, String, String
 	Output: String 
@@ -46,6 +44,8 @@ def create_bool_query(new_col_name, shapefile_table_name, detected_fires_table):
 	This works, and it's only being run a handful of times, so I'm not terribly worried at 
 	this moment, but would like to know if there is a better way to do this. 
 	'''
+
+	delete_col_if_exists(cursor, [new_col_name], detected_fires_table)
 
 	# If we are adding in a fire column, then we will be merging using the fire perimeter 
 	# boundaries, which means we're merging on date and geometry. 
@@ -86,7 +86,7 @@ def create_bool_query(new_col_name, shapefile_table_name, detected_fires_table):
 									new_col_name=new_col_name, on_query_part=on_query_part)
 	return query
 
-def delete_col_if_exists(cursor, new_col_name, detected_fires_table): 
+def delete_col_if_exists(cursor, cols_list, detected_fires_table): 
 	'''
 	Input: Pyscopg2 cursor, String, String, String
 	Output: None
@@ -95,10 +95,11 @@ def delete_col_if_exists(cursor, new_col_name, detected_fires_table):
 	exists. 
 	'''
 
-	cursor.execute('''ALTER TABLE {detected_fires_table}
-					DROP COLUMN IF EXISTS {new_col_name};
-				'''.format(detected_fires_table=detected_fires_table, 
-							new_col_name=new_col_name))
+	for col in cols_list: 
+		cursor.execute('''ALTER TABLE {detected_fires_table}
+						DROP COLUMN IF EXISTS {new_col_name};
+					'''.format(detected_fires_table=detected_fires_table, 
+								new_col_name=col))
 
 
 def boundary_label_merge(new_col_name, shapefile_table_name, detected_fires_table): 
@@ -114,10 +115,88 @@ def boundary_label_merge(new_col_name, shapefile_table_name, detected_fires_tabl
 	table, and then rename the new. 
 	'''
 
-	pass
+	print 'Doing ' + new_col_name
+
+	conn = psycopg2.connect('dbname=forest_fires')
+	cursor = conn.cursor()
+
+
+	query = create_label_query(cursor, new_col_name, shapefile_table_name, detected_fires_table)
+
+	cursor.execute(query)
+
+	cursor.execute(''' DROP TABLE {}'''.format(detected_fires_table))
+	cursor.execute(''' ALTER TABLE {detected_fires_table}2 
+						RENAME TO {detected_fires_table}'''.format(detected_fires_table=detected_fires_table))
+
+	conn.commit()
+	conn.close()
+
+
+def create_label_query(cursor, new_col_name, shapefile_table_name, detected_fires_table): 
+	'''
+	Input: String, String, String
+	Output: String
+
+	Take in the new column name to create, the table that holds the shapefile boundaries, 
+	and the detected_fires_table, and write a query that will effectively create the 
+	new column in the detected_fires_table, where the new column will hold the label 
+	for where the detected fire falls within that geometry. 
+
+	Notes: This might not be the cleanest way of doing this, but I spent some time 
+	trying to use ALTER TABLE table update and/or INSERT INTO, and neither really panned out. 
+	This works, and it's only being run a handful of times, so I'm not terribly worried at 
+	this moment, but would like to know if there is a better way to do this. 
+	'''
+
+	land, water, name, lsad = new_col_name + '_aland', new_col_name + '_water', new_col_name + '_name', new_col_name + '_lsad'
+	columns_to_check = [land, water, name, lsad]
+	polys_keep_columns = ''' aland as {land}, awater as {water}, name as {name}, 
+						lsad as {lsad}'''.format(land=land, water=water, name=name, lsad=lsad)
+	if new_col_name == 'county': 
+		polys_keep_columns += ', countyfp as county_fips'
+		columns_to_check.append('county_fips')
+	if new_col_name == 'state': 
+		polys_keep_columns += ', statefp as state_fips'
+		columns_to_check.append('state_fips')
+	if new_col_name == 'region': 
+		polys_keep_columns += ', regionce as region_code'
+		columns_to_check.append('region_code')
+
+	delete_col_if_exists(cursor, columns_to_check, detected_fires_table)
+							 
+	query = '''CREATE TABLE {detected_fires_table}2 AS 
+					(WITH merged AS
+						(SELECT DISTINCT lat, long, {polys_keep_columns} FROM 
+					 		(SELECT lat, long, polys.*
+								FROM {detected_fires_table} as points
+								INNER JOIN {shapefile_table_name} as polys
+					 				ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry)) as merged
+						)  
+
+					SELECT df.*, {columns_to_check}
+					FROM {detected_fires_table} df
+					LEFT JOIN merged 
+						ON df.lat = merged.lat
+						AND df.long = merged.long
+					);
+					'''.format(detected_fires_table=detected_fires_table, 
+								shapefile_table_name=shapefile_table_name, 
+								new_col_name=new_col_name, polys_keep_columns=polys_keep_columns, 
+								columns_to_check=', '.join(columns_to_check))
+
+	return query
 
 if __name__ == '__main__': 
+	'''
 	for year in xrange(2013, 2015): 
 		detected_fires_table = 'detected_fires_' + str(year)
 		boundary_bool_merge('fire', 'perimeters_shapefiles_' + str(year), detected_fires_table)
 		boundary_bool_merge('urban_area', 'urban_shapefiles_' + str(year), detected_fires_table)
+	'''
+
+	for year in xrange(2013, 2015): 
+		detected_fires_table = 'detected_fires_' + str(year)
+		boundary_label_merge('region', 'region_shapefiles_' + str(year), detected_fires_table)
+		boundary_label_merge('county', 'county_shapefiles_' + str(year), detected_fires_table)
+		boundary_label_merge('state', 'state_shapefiles_' + str(year), detected_fires_table)
