@@ -13,12 +13,20 @@ def output_csv(year):
 
 	check_create_dir('csvs')
 
-	conn = pscycopg2.connect('dbname=forest_fires', user=os.environ['USER'], host='localhost')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
 	cursor = conn.cursor()
 
-	conn.execute('''COPY detected_fires_{year} to 
-				'../data/csvs/detected_fires_{year}.csv' DELIMITER AS ',' 
-				CSV HEADER;'''.format(str(year)))
+	filename = 'fires_' + str(year) + '.csv'
+	filepath = get_filepath(filename)
+
+	print filepath
+
+	cursor.execute('''COPY detected_fires_{year} to 
+				'{filepath}' DELIMITER AS ',' 
+				CSV HEADER;'''.format(filepath=filepath, year=str(year)))
+
+	conn.commit()
+	conn.close()
 
 def output_json(year, geo_type):
 	'''
@@ -33,14 +41,15 @@ def output_json(year, geo_type):
 
  	df = pd.read_sql(map_query, conn)
 
-    list_to_export = []	
-    for idx, row in df.iterrows():
-       	list_to_export.append((add_properties_geo(row)))
+	list_to_export = []	
+	for idx, row in df.iterrows():
+		list_to_export.append((add_properties_geo(row)))
 
-    filename = geo_type + '.json'
-    filepath = get_filepath(filename)
-    with open(filepath, 'w+') as f: 
-    	f.write(json.dumps(list_to_export))
+	filename = year + '_' + geo_type + '.json'
+	json = True
+	filepath = get_filepath(filename, json)
+	with open(filepath, 'w+') as f: 
+		f.write(json.dumps(list_to_export))
 
 def get_json_query(geo_type, year): 
 	'''
@@ -105,7 +114,10 @@ def get_filepath(filename):
 	if location == -1: 
 		smokey_error()
 	else: 
-		return current_dir[:location] + '/forest-fires/data/jsons/' + filename
+		if filename.find('.json') != -1: 
+			return current_dir[:location] + 'forest-fires/data/jsons/' + filename
+		elif filename.find('.csv') != -1: 
+			return current_dir[:location] + 'forest-fires/data/csvs/' + filename
 
 def smokey_error(): 
 	'''
@@ -118,4 +130,5 @@ def smokey_error():
 if __name__ == '__main__': 
 	for year in xrange(2013, 2015): 
 		output_csv(year)
+		
 
