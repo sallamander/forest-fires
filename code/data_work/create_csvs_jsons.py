@@ -29,7 +29,7 @@ def output_json(year, geo_type):
 	that geography type. 
 	'''
  		
- 	query = get_json_query(geo_type)
+ 	query = get_json_query(geo_type, year)
 
  	df = pd.read_sql(map_query, conn)
 
@@ -41,6 +41,31 @@ def output_json(year, geo_type):
     filepath = get_filepath(filename)
     with open(filepath, 'w+') as f: 
     	f.write(json.dumps(list_to_export))
+
+def get_json_query(geo_type, year): 
+	'''
+	Input: String 
+	Output: String
+
+	For the given geotype, output a query string to pull properties from its table so that we can create a 
+	geojson file. 
+	'''
+
+	from_table = geo_type + '_shapefiles_' + str(year)
+	select_variables = ' ST_asGeoJSON(wkb_geometry) as geometry, name, '
+
+	if geo_type == 'state': 
+		select_variables += 'statefp'
+	if geo_type == 'county':
+		select_variables += 'statefp, countyfp, state_name'
+	if geo_type == 'region': 
+		select_variables += 'regionce'
+
+
+	query = '''SELECT {select_variables} 
+				FROM {from_table};
+			'''.format(select_variables=select_variables, from_table=from_table)
+
 
 def check_create_dir(data_dir_name): 
 	'''
