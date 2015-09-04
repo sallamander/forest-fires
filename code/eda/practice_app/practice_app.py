@@ -24,9 +24,9 @@ else:
 	def homeplate(): 
 		return render_template('index_d3.html')
 
-	@app.route('/data/test.json')
+	@app.route('/data/jsons/2013_state.json')
 	def return_json(): 
-		return render_template('test.json')
+		return render_template('2013_state.json')
 
 	@app.route('/js/index_d3_js.js')
 	def return_js(): 
