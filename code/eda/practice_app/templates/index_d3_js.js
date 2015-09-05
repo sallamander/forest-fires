@@ -26,6 +26,17 @@ d3.json('/data/jsons/2013_state.json', function(json){
 }); 
 
 d3.csv('/data/csvs/fires_2013_lightweight.csv', function(data) {
-	console.log(data); 
+	svg.selectAll("circle")
+	.data(data)
+	.enter()
+	.append("circle")
+	.attr('cx', function(d){
+		return projection([d.long, d.lat])[0]; 
+	}) 
+	.attr('cy', function(d){
+		return projection([d.long, d.lat])[1]; 
+	})
+	.attr("r", 1)
+	.style("fill", "red")
 }); 
 
