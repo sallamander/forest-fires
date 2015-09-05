@@ -19,8 +19,6 @@ def output_csv(year):
 	filename = 'fires_' + str(year) + '.csv'
 	filepath = get_filepath(filename)
 
-	print filepath
-
 	cursor.execute('''COPY detected_fires_{year} to 
 				'{filepath}' DELIMITER AS ',' 
 				CSV HEADER;'''.format(filepath=filepath, year=str(year)))
@@ -149,10 +147,33 @@ def smokey_error():
 	raise Exception("You're not running this code from anywhere in you're forest-fire directory... \
 				Smokey would be ashamed!")
 
+def get_detected_fires_csv(year): 
+	'''
+	Input: String
+	Output: CSV
+
+	For the inputted year, read in the csv that we outputted earlier for the detected fires, and output 
+	a new, limited csv that we can use to plot the detected fires centroids using D3. Basically, I want to 
+	create a very lightweight csv that is easy for my app to load so it runs quicker, and we don't need all 
+	of the columns that we originally put in the csv. 
+	'''
+
+	check_create_dir('csvs')
+	filename = 'fires_' + str(year) + '.csv'
+	open_filepath = get_filepath(filename)
+
+	df = pd.read_csv(open_filepath)
+	keep_columns = ['lat', 'long', 'date']
+	lightweight_df = df[keep_columns]
+
+	save_filepath = open_filepath[:-4] + '_lightweight.csv'
+	lightweight_df.to_csv(save_filepath, index=False)
+
 if __name__ == '__main__': 
 	for year in xrange(2013, 2015): 
 		# output_csv(year)
-		output_json(year, 'state')
-		output_json(year, 'county')
-		output_json(year, 'region')
+		# output_json(year, 'state')
+		# output_json(year, 'county')
+		# output_json(year, 'region')
+		get_detected_fires_csv(year)
 
