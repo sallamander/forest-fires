@@ -28,6 +28,10 @@ else:
 	def return_json(): 
 		return render_template('2013_state.json')
 
+	@app.route('/data/csvs/fires_2013_lightweight.csv')
+	def return_csvs():
+		return render_template('fires_2013_lightweight.csv')
+
 	@app.route('/js/index_d3_js.js')
 	def return_js(): 
 		return render_template('index_d3_js.js')

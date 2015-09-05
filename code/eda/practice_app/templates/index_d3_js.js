@@ -22,6 +22,10 @@ d3.json('/data/jsons/2013_state.json', function(json){
 	.append("path")
 	.attr("d", path)
 	.style("fill", color)
-	.style('stroke-width', '3') 
+	.style('stroke-width', '3');  
+}); 
+
+d3.csv('/data/csvs/fires_2013_lightweight.csv', function(data) {
+	console.log(data); 
 }); 
 
