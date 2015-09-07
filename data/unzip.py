@@ -62,7 +62,7 @@ def chk_in_boundary_dirs():
 		if folder not in in_unzipped_boundary_dirs: 
 			os.mkdir('./unzipped_files/boundary_files/' + folder)
 		folders_list2 = os.listdir('./unzipped_files/boundary_files/' + folder + '/')
-		for year in xrange(2013, 2015): 
+		for year in xrange(2015, 2016): 
 			folder2 = './unzipped_files/boundary_files/' + folder + '/' + str(year)
 			if str(year) not in folders_list2: 
 				os.mkdir(folder2)
@@ -122,8 +122,12 @@ def unzip_boundaries():
 			remove_nonzips()
 			zipped_files = os.listdir('./')
 			for zipped_file in zipped_files: 
-				os.system('unzip ' + zipped_file)
+				if zipped_file == '2015.zip' and bound_dir == 'fire_perimeters': 
+					unzip_2015_fire_perimeters()
+				else: 
+					os.system('unzip ' + zipped_file)
 			mv_nonzips()
+
 
 	os.chdir(current_dir)
 
@@ -160,8 +164,13 @@ def mv_nonzips():
 			os.rename(current_dir + '/' + f, move_to_dir + '/2013/' + f)
 		if f.find('2014') != -1 and f.find('.zip') == -1: 
 			os.rename(current_dir + '/' + f, move_to_dir + '/2014/' + f)
-		if f.find('2015') != -1 and f.find('.zip') == -1: 
-			os.rename(current_dir + '/' + f, move_to_dir + '/2015/' + f)
+		if f.find('2015') != -1: 
+			os.chdir('./2015.zip')
+			files = os.listdir('./')
+			for f in files: 
+				if f.find('.tar') == -1: 
+					os.system('cp {current_dir}/{f} {move_to_dir}/2015/{f}'.format(current_dir=current_dir,
+							  move_to_dir=move_to_dir, f=f))
 
 def unzip_detected(): 
 	'''
@@ -185,6 +194,30 @@ def unzip_detected():
 			for zipped_file in zipped_files: 
 				os.system('unzip ' + zipped_file)
 			mv_nonzips()
+
+def unzip_2015_fire_perimeters(): 
+	'''
+	Input: None
+	Output: Unzipped and moved files
+
+	The 2015 fire perimters files were too big to .zip up in a way that didn't exceed github's 100 MB restriction, 
+	so I found a way around that by using tar to split up the .shp file into two pieces and .tar those pieces (this 
+	was the one file in the 2015 fire perimeters data that was causing the problem - even zipped it's 135 MB). 
+	This function is built to unzip those pieces, since it takes a special unzip command than is typical for the
+	other .zip files that I have stored the perimeter boundaries in. It's also worth nothing (and I'll note this
+	in the README that the 2015.zip folder for the fire_perimeters isn't actually a .zip; it simplified the code 
+	to rename it to a .zip), and everything that could be zipped is already stored within that 2015.zip folder (i.e. 
+	the .shp file I just mentioned tarring).  
+
+	For the record, this is the command I used to break up the .shp file was: 
+
+	tar -cf - 2015_perimeters_dd83.shp | split -b 90m - 2015_perimeters_dd83.shp.tar
+	''' 
+
+	os.chdir('./2015.zip')
+	os.system('cat 2015_perimeters_dd83.shp.tara* | (tar x)')
+	os.system('rm 2015_perimeters_dd83.shp.tara*')
+	os.chdir('../')
 
 if __name__ == '__main__': 
 	check_dirs()
