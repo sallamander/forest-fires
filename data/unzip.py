@@ -165,12 +165,10 @@ def mv_nonzips():
 		if f.find('2014') != -1 and f.find('.zip') == -1: 
 			os.rename(current_dir + '/' + f, move_to_dir + '/2014/' + f)
 		if f.find('2015') != -1: 
-			os.chdir('./2015.zip')
-			files = os.listdir('./')
-			for f in files: 
-				if f.find('.tar') == -1: 
-					os.system('cp {current_dir}/{f} {move_to_dir}/2015/{f}'.format(current_dir=current_dir,
-							  move_to_dir=move_to_dir, f=f))
+			if current_dir.find('fire_perimeters') != -1: 
+				mv_2015_fire_perimeters(current_dir, move_to_dir)
+			elif f.find('.zip') == -1: 
+				os.rename(current_dir + '/' + f, move_to_dir + '/2015/' + f)
 
 def unzip_detected(): 
 	'''
@@ -216,8 +214,25 @@ def unzip_2015_fire_perimeters():
 
 	os.chdir('./2015.zip')
 	os.system('cat 2015_perimeters_dd83.shp.tara* | (tar x)')
-	os.system('rm 2015_perimeters_dd83.shp.tara*')
 	os.chdir('../')
+
+def mv_2015_fire_perimeters(current_dir, move_to_dir): 
+	'''
+	Input: String, String
+	Output: Moved files
+
+	This is the analgous move function to the unzip_2015_fire_perimeters function. 
+	'''
+
+	os.chdir('./2015.zip')
+	files = os.listdir('./')
+	for f in files: 
+		if f.find('.tar') == -1:
+			os.system('cp {current_dir}/2015.zip/{f} {move_to_dir}/2015/{f}'.format(current_dir=current_dir,
+					  move_to_dir=move_to_dir, f=f))
+
+	os.system('rm -r 2015_perimeters_dd83.shp')
+	os.chdir('./')
 
 if __name__ == '__main__': 
 	check_dirs()
