@@ -3,7 +3,7 @@ import os
 import json 
 import pandas as pd
 
-def output_csv(year): 
+def output_detected_fires_csv(year): 
 	'''
 	Input: Intger
 	Output: CSV file
@@ -147,7 +147,7 @@ def smokey_error():
 	raise Exception("You're not running this code from anywhere in you're forest-fire directory... \
 				Smokey would be ashamed!")
 
-def get_detected_fires_csv(year): 
+def get_fire_centroids_csv(year): 
 	'''
 	Input: String
 	Output: CSV
@@ -170,10 +170,17 @@ def get_detected_fires_csv(year):
 	lightweight_df.to_csv(save_filepath, index=False)
 
 if __name__ == '__main__': 
-	for year in xrange(2013, 2015): 
-		# output_csv(year)
-		# output_json(year, 'state')
-		# output_json(year, 'county')
-		# output_json(year, 'region')
-		get_detected_fires_csv(year)
+	if len(sys.argv) == 1: 
+		with open('../makefiles/year_list.pkl') as f: 
+			year_list = pickle.load(f)
+	elif len(sys.argv) == 2: 
+		with open(sys.argv[1]) as f: 
+			year_list = pickle.load(f)
+
+	for year in year_list: 
+		output_detected_fires_csv(year)
+		output_json(year, 'state')
+		output_json(year, 'county')
+		output_json(year, 'region')
+		get_fire_centroids_csv(year)
 
