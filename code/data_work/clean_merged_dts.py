@@ -1,5 +1,7 @@
 import psycopg2
 import os
+import sys
+import pickle
 
 def add_stname_county(year): 
 	'''
@@ -45,7 +47,8 @@ def rename_urban_name(year):
 	cursor = conn.cursor()
 
 	urban_table = 'urban_shapefiles_' + str(year)
-	cursor.execute(''' ALTER TABLE {urban_table} RENAME COLUMN name10 TO name;'''.format(urban_table=urban_table))
+	if name_10(cursor, urban_table): 
+		cursor.execute(''' ALTER TABLE {urban_table} RENAME COLUMN name10 TO name;'''.format(urban_table=urban_table))
 
 	conn.commit()
 	conn.close()
@@ -65,11 +68,35 @@ def delete_col_if_exists(cursor, cols_list, detected_fires_table):
 					'''.format(detected_fires_table=detected_fires_table, 
 								new_col_name=col))
 
+def name_10(cursor, urban_table): 
+	'''
+	Input: psycopg2 cursor, String
+	Output: Boolean
+
+	Check if the name10 column exists in the urban_table, so we know if we can rename it (can't rename it 
+	if it doesn't exist). 
+	'''
+
+	cursor.execute(''' SELECT column_name 
+						FROM information_schema.columns 
+						WHERE table_name='{urban_table}' 
+							AND column_name='name10';'''.format(urban_table=urban_table))
+	result = cursor.fetchall()
+	if len(result) == 0: 
+		return False
+	else: 
+		return True	
+
 
 if __name__ == '__main__': 
-	# The main reason these queries are in this file is to make sure they get documented and I don't 
-	# forget that this was part of the process. 
-	for year in xrange(2013, 2015): 
+	if len(sys.argv) == 1: 
+		with open('../makefiles/year_list.pkl') as f: 
+			year_list = pickle.load(f)
+	elif len(sys.argv) == 2: 
+		with open(sys.argv[1]) as f: 
+			year_list = pickle.load(f)
+
+	for year in year_list: 
 		add_stname_county(year)
 		rename_urban_name(year)
 

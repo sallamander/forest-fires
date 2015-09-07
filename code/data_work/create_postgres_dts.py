@@ -96,9 +96,13 @@ def dt_exist(dt_name):
 	return True 
 
 if __name__ == '__main__': 
-	with open(sys.argv[1]) as f: 
-		year_list = pickle.load(f)
-		
+	if len(sys.argv) == 1: 
+		with open('../makefiles/year_list.pkl') as f: 
+			year_list = pickle.load(f)
+	elif len(sys.argv) == 2: 
+		with open(sys.argv[1]) as f: 
+			year_list = pickle.load(f)
+
 	for year in year_list: 
 		create_fire_db(year)
 		create_shapefile_db('perimeters', year)

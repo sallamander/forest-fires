@@ -163,8 +163,15 @@ def create_label_query(cursor, new_col_name, shapefile_table_name, detected_fire
 
 	return query
 
-if __name__ == '__main__': 
-	for year in xrange(2013, 2014): 
+if __name__ == '__main__': 	
+	if len(sys.argv) == 1: 
+		with open('../makefiles/year_list.pkl') as f: 
+			year_list = pickle.load(f)
+	elif len(sys.argv) == 2: 
+		with open(sys.argv[1]) as f: 
+			year_list = pickle.load(f)
+
+	for year in year_list: 
 		detected_fires_table = 'detected_fires_' + str(year)
 		# Start off with those shapefiles where we want a boolean if the detected fire is within that 
 		# shape. 
