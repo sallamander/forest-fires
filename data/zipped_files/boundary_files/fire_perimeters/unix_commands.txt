@@ -1,4 +1,0 @@
-tar -cf - 2015_perimeters_dd83.shp | split -b 90m - 2015_perimeters_dd83.shp.tar
-cat 2015_perimeters_dd83.shp.tara* | (tar x)
-
-
