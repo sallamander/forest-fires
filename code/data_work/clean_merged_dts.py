@@ -97,8 +97,9 @@ if __name__ == '__main__':
 			year_list = pickle.load(f)
 
 	for year in year_list: 
-		add_stname_county(year)
-		rename_urban_name(year)
+		if year != 2015: 
+			add_stname_county(year)
+			rename_urban_name(year)
 
 
  

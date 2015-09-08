@@ -12,7 +12,7 @@ def create_fire_db(year):
 	The basefile_name read in will point to a set of shapefiles. This function will read those shapefiles
 	into a psql table. 
 	'''
-	filepath = 'data/unzipped_files/detected_fires/MODIS/' + str(year)
+	filepath = '../data/unzipped_files/detected_fires/MODIS/' + str(year)
 
 	dt_name = 'detected_fires_' + str(year)
 	create_db(filepath, dt_name)
@@ -106,9 +106,12 @@ if __name__ == '__main__':
 	for year in year_list: 
 		create_fire_db(year)
 		create_shapefile_db('perimeters', year)
-		create_shapefile_db('county', year)
-		create_shapefile_db('state', year)
-		create_shapefile_db('urban', year)
-		create_shapefile_db('region', year)
+		# The 2015 boundary shapefiles for these regions are not yet available. Later when merging we'll 
+		# just use 2014, because that will be close enough. 
+		if year != 2015: 
+			create_shapefile_db('county', year)
+			create_shapefile_db('state', year)
+			create_shapefile_db('urban', year)
+			create_shapefile_db('region', year)
 
 		
