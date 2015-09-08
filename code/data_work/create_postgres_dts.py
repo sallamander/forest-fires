@@ -29,18 +29,18 @@ def create_shapefile_db(name, year):
 	latin_encoding = False
 
 	if name == 'perimeters': 
-		filepath = 'data/unzipped_files/boundary_files/fire_perimeters/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/fire_perimeters/' + str(year)
 	elif name == 'county': 
-		filepath = 'data/unzipped_files/boundary_files/county/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/county/' + str(year)
 		latin_encoding = True
 	elif name == 'urban': 
 		latin_encoding = True
-		filepath = 'data/unzipped_files/boundary_files/urban_areas/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/urban_areas/' + str(year)
 	elif name == 'region': 
 		latin_encoding = True
-		filepath = 'data/unzipped_files/boundary_files/region/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/region/' + str(year)
 	elif name == 'state': 
-		filepath = 'data/unzipped_files/boundary_files/state/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/state/' + str(year)
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
@@ -97,7 +97,7 @@ def dt_exist(dt_name):
 
 if __name__ == '__main__': 
 	if len(sys.argv) == 1: 
-		with open('../makefiles/year_list.pkl') as f: 
+		with open('makefiles/year_list.pkl') as f: 
 			year_list = pickle.load(f)
 	elif len(sys.argv) == 2: 
 		with open(sys.argv[1]) as f: 

@@ -165,7 +165,7 @@ def create_label_query(cursor, new_col_name, shapefile_table_name, detected_fire
 
 if __name__ == '__main__': 	
 	if len(sys.argv) == 1: 
-		with open('../makefiles/year_list.pkl') as f: 
+		with open('makefiles/year_list.pkl') as f: 
 			year_list = pickle.load(f)
 	elif len(sys.argv) == 2: 
 		with open(sys.argv[1]) as f: 
