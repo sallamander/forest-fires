@@ -16,7 +16,7 @@ makefiles/year_list.pkl: makefiles/make_year_list.py
 ./data_work/.csvs_jsons_sentinal: makefiles/year_list.pkl .cleaned_psql_sentinal
 	python data_work/create_csvs_jsons.py makefiles/year_list.pkl
 	aws s3 cp ../data/csvs/ s3://sallamander-forest-fires --recursive
-	aws s3 ../data/jsons s3://sallamander-forest-fires --recursive
+	aws s3 cp ../data/jsons s3://sallamander-forest-fires --recursive
 	touch ./data_work/.csvs_jsons_sentinal
 
 setup_data: ./data_work/.psql_dts_sentinal ./data_work/.merged_psql_sentinal \
