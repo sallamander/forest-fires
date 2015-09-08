@@ -3,6 +3,7 @@ import pickle
 import psycopg2
 import time
 import os
+import sys
 
 def boundary_merge(new_col_name, shapefile_table_name, detected_fires_table, label):
 	'''
@@ -177,6 +178,10 @@ if __name__ == '__main__':
 		# shape. 
 		label = False
 		boundary_merge('fire_bool', 'perimeters_shapefiles_' + str(year), detected_fires_table, label)
+		# If the year is equal to 2015, then we know the perimeter files aren't available yet (other than 
+		# for detected fires, so we'll use the 2014 perimeter files). 
+		if year == 2015: 
+			year = 2014
 		boundary_merge('urban_area_bool', 'urban_shapefiles_' + str(year), detected_fires_table, label)
 
 		# Now move to those shapefiles where we want labels/variables asscoiated with each detected point, because 

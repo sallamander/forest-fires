@@ -2,6 +2,8 @@ import psycopg2
 import os
 import json 
 import pandas as pd
+import sys
+import pickle
 
 def output_detected_fires_csv(year): 
 	'''
@@ -179,8 +181,9 @@ if __name__ == '__main__':
 
 	for year in year_list: 
 		output_detected_fires_csv(year)
-		output_json(year, 'state')
-		output_json(year, 'county')
-		output_json(year, 'region')
 		get_fire_centroids_csv(year)
+		if year != 2015: 
+			output_json(year, 'state')
+			output_json(year, 'county')
+			output_json(year, 'region')
 
