@@ -15,15 +15,17 @@ def output_detected_fires_csv(year):
 
 	check_create_dir('csvs')
 
-	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'])
 	cursor = conn.cursor()
 
 	filename = 'fires_' + str(year) + '.csv'
 	filepath = get_filepath(filename)
+	tablename = 'detected_fires_' + str(year)
 
-	cursor.execute('''COPY detected_fires_{year} to 
-				'{filepath}' DELIMITER AS ',' 
-				CSV HEADER;'''.format(filepath=filepath, year=str(year)))
+	with open(filepath, 'w+') as f: 
+		cursor.copy_expert(""" COPY {tablename} 
+						TO STDOUT WITH CSV HEADER DELIMITER AS E','
+	    				""".format(tablename=tablename), f)
 
 	conn.commit()
 	conn.close()
@@ -37,7 +39,7 @@ def output_json(year, geo_type):
 	that geography type. 
 	'''
 
-	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'])
 	cursor = conn.cursor()
  		
  	query = get_json_query(geo_type, year)

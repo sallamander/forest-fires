@@ -12,7 +12,7 @@ def add_stname_county(year):
 	with each county, and not just the state fips. 
 	'''
 
-	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'])
 	cursor = conn.cursor()
 
 	county_table = 'county_shapefiles_' + str(year)
@@ -43,7 +43,7 @@ def rename_urban_name(year):
 	Rename the name10 column in the urban shapefiles tables so that it matches the other tables. 
 	'''
 
-	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'])
 	cursor = conn.cursor()
 
 	urban_table = 'urban_shapefiles_' + str(year)
