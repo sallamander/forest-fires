@@ -62,7 +62,7 @@ def chk_in_boundary_dirs():
 		if folder not in in_unzipped_boundary_dirs: 
 			os.mkdir('./unzipped_files/boundary_files/' + folder)
 		folders_list2 = os.listdir('./unzipped_files/boundary_files/' + folder + '/')
-		for year in xrange(2015, 2016): 
+		for year in xrange(2013, 2016): 
 			folder2 = './unzipped_files/boundary_files/' + folder + '/' + str(year)
 			if str(year) not in folders_list2: 
 				os.mkdir(folder2)
