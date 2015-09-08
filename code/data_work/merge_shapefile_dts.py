@@ -18,7 +18,7 @@ def boundary_merge(new_col_name, shapefile_table_name, detected_fires_table, lab
 	Notes: The best way I could see to do this query was to create a new table, delete the old 
 	table, and then rename the new. 
 	'''
-	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='localhost')
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'])
 	cursor = conn.cursor()
 
 	if label: 
