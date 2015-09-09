@@ -27,5 +27,5 @@ psql -c "GRANT ALL PRIVILEGES ON DATABASE forest_fires TO ubuntu;"
 exit
 
 # Run Postgres script
-cd ~/forest_fires
-python code/data_setup/create_postgres_dts.py code/makefiles/year_list.pkl
+cd ~/forest_fires/cpde
+python data_setup/create_postgres_dts.py makefiles/year_list.pkl
