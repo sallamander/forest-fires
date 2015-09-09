@@ -1,5 +1,7 @@
 import sys
 import pickle
+import time
+import datetime
 from sklearn.linear_model import LogisticRegression
 from scoring import return_scores
 from data_manip.tt_splits import tt_split_all_less60
@@ -45,6 +47,25 @@ def predict_with_model(test_data, model):
 
 	return predictions, predicted_probs
 
+def log_results(model_name, train, fitted_model, scores): 
+	'''
+	Input: String, Pandas DataFrame,  Dictionary
+	Output: .txt file. 
+
+	Log the results of this run to a .txt file, saving the column names (so I know what features I used), 
+	the model name (so I know what model I ran), the parameters for that model, 
+	and the scores associated with it (so I know how well it did). 
+	'''
+
+	st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+	filename = './logs/' + model_name + '.txt'
+	with open(filename, 'a+') as f:
+		f.write(st + '\n')
+		f.write('-' * 100 + '\n')
+		f.write('Model Run: ' + model_name + '\n' * 2)
+		f.write('Params: ' + str(fitted_model.get_params()) + '\n' * 2)
+		f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
+		f.write('Scores: ' + str(scores) + '\n' * 2)
 
 if __name__ == '__main__': 
 	# sys.argv[1] will hold the name of the model we want to run (logit, random forest, etc.), 
@@ -59,8 +80,8 @@ if __name__ == '__main__':
 	fitted_model = fit_model(train, model)
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
+	log_results(model_name, train, fitted_model, scores)
 
-	print scores
 
 
 
