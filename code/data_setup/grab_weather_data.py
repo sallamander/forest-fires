@@ -6,6 +6,7 @@ import sys
 import pickle
 import itertools
 import numpy as np
+from create_postgres_dts import dt_exist
 
 def get_lat_long_time(year): 
 	'''
@@ -33,25 +34,32 @@ def get_unique_pairs(df, n, n_cores):
 	col_names = df.columns
 	df['date'] = pd.to_datetime(df['date'])
 
+	# Grab the unique pairs of lat, long, date
 	pairs_list = df.drop_duplicates().values
 	pool = multiprocessing.Pool(processes=n_cores)
 
-	outputs = np.array(pool.map(func=get_n_back, iterable=pairs_list))
+	# Map out the unique pairs of lat, long, date to multiple processes and spit back lat, long, date 
+	# sets n days back. 
+	outputs = np.array(pool.map(func=get_n_back, iterable=itertools.izip(pairs_list, itertools.repeat(n))))
+
+	# Reshape the output to fit what we need. 
 	n, m, p  = outputs.shape
 	df = pd.DataFrame(data=outputs.reshape(n * m, p), columns=col_names)
-	return df
+	# Round the lat./long. coordinates to 2 decimal places, and drop duplicates. Rounding to .01 is 
+	# roughly 1 km, which is a small village/town. It's hard to imagine that the weather differs
+	# substantially across a small village/town. 
+	df['lat'] = [np.round(lat, decimals=2) for lat in df['lat']]
 
+	return df.drop_duplicates()
 
-
-
-def get_n_back(row, n=3): 
+def get_n_back(input_list): 
 	'''
 	Input: Set, Integer
 	Output: Set
 
 	Take the lat, long, date pairs set, and go back n days for each date, and then yield those lat, long date values. 
 	'''
-
+	row, n = input_list
 	return [(row[0], row[1], row[2] - pd.Timedelta(days=day_back)) for day_back in xrange(0, n + 1)]
 
 
@@ -65,4 +73,4 @@ if __name__ == '__main__':
 
 	year = 2013
 	df = get_lat_long_time(year)
-	try_this=get_unique_pairs(df, 3, 2)
+	unique_pairs = get_unique_pairs(df, 3, 2)
