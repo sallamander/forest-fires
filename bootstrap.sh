@@ -1,3 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
 # Install Miniconda
 wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
 bash Miniconda-latest-Linux-x86_64.sh -b
