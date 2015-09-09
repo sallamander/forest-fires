@@ -17,12 +17,3 @@ Right now, I am working on finalizing the data set to start training a model.
 #### Want to follow along, work through my project, or try to add to it?
 
 See the README.md in the data folder to get started. 
-
-#### Running the code
-
-From EC2 (tested with Ubuntu 14.04, ami-d05e75b8)
-
-```
-wget https://github.com/sallamander/forest-fires/blob/master/bootstrap.sh
-bash bootstrap.sh
-```
