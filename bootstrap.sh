@@ -16,6 +16,7 @@ sudo apt-get install git unzip -y
 git clone https://github.com/sallamander/forest-fires.git
 cd ~/forest-fires
 conda env create
+source activate forest-fires
 
 # Unzip data
 cd ~/forest-fires/data/
