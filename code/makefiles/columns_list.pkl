@@ -1,0 +1,12 @@
+(lp0
+S'date'
+p1
+aS'lat'
+p2
+aS'long'
+p3
+aS'conf'
+p4
+aS'fire_bool'
+p5
+a.
