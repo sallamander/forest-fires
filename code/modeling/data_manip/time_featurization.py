@@ -12,7 +12,4 @@ def break_time_col(df, time_column):
 	df['year'] = [time[0:4] for time in time_col]
 	df['month'] = [time[5:7] for time in time_col]
 
-	# For now, I don't want to keep the day, just the year and month. 
-	del df[time_column]
-
 	return df

@@ -2,9 +2,8 @@ import pandas as pd
 import sys
 import pickle
 
-from data_manip.general_featurization import combine_dfs, grab_columns, return_all_dummies
+from data_manip.general_featurization import combine_dfs, grab_columns, return_all_dummies, boolean_fire
 from data_manip.time_featurization import break_time_col
-
 
 
 if __name__ == '__main__': 
@@ -22,6 +21,7 @@ if __name__ == '__main__':
 	df = combine_dfs(dfs_list)
 	df = grab_columns(df, columns_list)
 	df = break_time_col(df, 'date')
+	df = boolean_fire(df)
 
 	dummy_cols = ['year', 'month']
 	df = return_all_dummies(df, dummy_cols)

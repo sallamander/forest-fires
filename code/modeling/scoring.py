@@ -10,4 +10,4 @@ def return_scores(y_true, y_pred):
 	'''
 	score_metrics = [accuracy_score, precision_score, roc_auc_score, recall_score]
 
-	return {score_metric.func_name : score_metric(y_true, y_pred for score_metric in score_metrics}
+	return {score_metric.func_name : score_metric(y_true, y_pred) for score_metric in score_metrics}

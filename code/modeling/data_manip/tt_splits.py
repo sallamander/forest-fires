@@ -1,5 +1,5 @@
 from datetime import date
-from pandas import Timedelta
+import pandas as pd
 
 def tt_split_all_less60(df): 
 	'''
@@ -10,10 +10,13 @@ def tt_split_all_less60(df):
 	data but the most recent 60 days
 	'''
 
+	df['date'] = pd.to_datetime(df['date'])
 	today = date.today()
-	today_less60 = today - Timedelta(days=60)
+	today_less60 = today - pd.Timedelta(days=60)
 	train = df.query('date < @today_less60')
 	test = df.query('date >= @today_less60')
+	del train['date']
+	del test['date']
 
 	return train, test
 

@@ -1,7 +1,9 @@
 import sys
+import pickle
 from sklearn.linear_model import LogisticRegression
 from scoring import return_scores
-from data_manip import tt_splits
+from data_manip.tt_splits import tt_split_all_less60
+
 
 def get_model(model_name): 
 	'''
@@ -22,8 +24,8 @@ def fit_model(train_data, model_to_fit):
 	the inputted model. 
 	'''
 
-	target = train_data.fire
-	features = train_data.drop('fire', axis=1)
+	target = train_data.fire_bool
+	features = train_data.drop('fire_bool', axis=1)
 
 	model_to_fit.fit(features, target)
 	return model_to_fit
@@ -36,10 +38,10 @@ def predict_with_model(test_data, model):
 	Using the fitted model, make predictions with the test data and return those predictions. 
 	'''
 
-	target = test_data.fire
-	features = test_data.drop('fire', axis=1)
+	target = test_data.fire_bool
+	features = test_data.drop('fire_bool', axis=1)
 
-	predictions, predicted_probs = lr.predict(features), lr.predict_proba(features)
+	predictions, predicted_probs = model.predict(features), model.predict_proba(features)
 
 	return predictions, predicted_probs
 
@@ -51,10 +53,11 @@ if __name__ == '__main__':
 
 	with open(sys.argv[2]) as f: 
 		input_df = pickle.load(f)
-
-	train, test = tt_splits(input_df)
+	
+	train, test = tt_split_all_less60(input_df)
 	model = get_model(model_name)
 	fitted_model = fit_model(train, model)
 	preds, preds_probs = predict_with_model(test, fitted_model)
+	scores = return_scores(test.fire_bool, preds)
 
 
