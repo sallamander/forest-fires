@@ -58,6 +58,9 @@ if __name__ == '__main__':
 	model = get_model(model_name)
 	fitted_model = fit_model(train, model)
 	preds, preds_probs = predict_with_model(test, fitted_model)
-	scores = return_scores(test.fire_bool, preds)
+	scores = return_scores(test.fire_bool, preds, preds_probs)
+
+	print scores
+
 
 
