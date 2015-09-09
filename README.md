@@ -13,7 +13,3 @@ a forest fire and use that as my ground truth.
 ### Current Status
 
 Right now, I am working on finalizing the data set to start training a model. 
-
-#### Want to follow along, work through my project, or try to add to it?
-
-See the README.md in the data folder to get started. 
