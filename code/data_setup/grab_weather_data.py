@@ -4,6 +4,8 @@ import pandas as pd
 import multiprocessing
 import sys
 import pickle
+import itertools
+import numpy as np
 
 def get_lat_long_time(year): 
 	'''
@@ -19,7 +21,7 @@ def get_lat_long_time(year):
 
 	return df[['lat', 'long', 'date']]
 
-def get_unique_pairs(df, n): 
+def get_unique_pairs(df, n, n_cores): 
 	'''
 	Input: Pandas DataFrame, Integer
 	Output: Pandas DataFrame
@@ -28,11 +30,30 @@ def get_unique_pairs(df, n):
 	how many days back do we want weather), and then again get unique pairs (make sure that none of the days
 	back that we went are overlapping). 
 	'''
-
+	col_names = df.columns
 	df['date'] = pd.to_datetime(df['date'])
 
-	pairs_set = set([(row[0], row[1], row[2]) for row in df.values])
-	pairs_set = set(get_n_back(pairs_set, n))
+	pairs_list = df.drop_duplicates().values
+	pool = multiprocessing.Pool(processes=n_cores)
+
+	outputs = np.array(pool.map(func=get_n_back, iterable=pairs_list))
+	n, m, p  = outputs.shape
+	df = pd.DataFrame(data=outputs.reshape(n * m, p), columns=col_names)
+	return df
+
+
+
+
+def get_n_back(row, n=3): 
+	'''
+	Input: Set, Integer
+	Output: Set
+
+	Take the lat, long, date pairs set, and go back n days for each date, and then yield those lat, long date values. 
+	'''
+
+	return [(row[0], row[1], row[2] - pd.Timedelta(days=day_back)) for day_back in xrange(0, n + 1)]
+
 
 if __name__ == '__main__': 
 	if len(sys.argv) == 1: 
@@ -42,6 +63,6 @@ if __name__ == '__main__':
 		with open(sys.argv[1]) as f: 
 			year_list = pickle.load(f)
 
-	for year in year_list: 
-		df = get_lat_long_time(year)
-		get_unique_pairs(df, 3)
+	year = 2013
+	df = get_lat_long_time(year)
+	try_this=get_unique_pairs(df, 3, 2)
