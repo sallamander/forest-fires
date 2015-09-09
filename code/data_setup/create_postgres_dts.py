@@ -83,7 +83,7 @@ def dt_exist(dt_name):
 	or not it does. 
 	'''
 
-	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'])
+	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'], host='/var/run/postgresql')
 	cursor = conn.cursor()
 
 	try: 
