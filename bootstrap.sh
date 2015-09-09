@@ -7,7 +7,7 @@ source ~/.bashrc
 
 # Install git, clone repo, create conda environment
 sudo apt-get update
-sudo apt-get install git -y
+sudo apt-get install git unzip -y
 git clone https://github.com/sallamander/forest-fires.git
 cd ~/forest-fires
 conda env create
@@ -18,13 +18,10 @@ python unzip.py
 
 # Install PostgreSQL and PostGIS extension and create DB
 sudo apt-get install postgresql postgresql-contrib postgis postgresql-9.3-postgis-2.1 gdal-bin -y
-sudo su postgres -
-cd
-psql -c "CREATE DATABASE forest_fires;"
-psql -d forest_fires -c "CREATE EXTENSION POSTGIS;"
-psql -c "CREATE USER ubuntu WITH PASSWORD 'ubuntu';"
-psql -c "GRANT ALL PRIVILEGES ON DATABASE forest_fires TO ubuntu;"
-exit
+sudo -u postgres psql -c "CREATE DATABASE forest_fires;"
+sudo -u postgres psql -d forest_fires -c "CREATE EXTENSION POSTGIS;"
+sudo -u postgres psql -c "CREATE USER ubuntu WITH PASSWORD 'ubuntu';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE forest_fires TO ubuntu;"
 
 # Run Postgres script
 cd ~/forest_fires/code
