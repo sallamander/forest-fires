@@ -3,6 +3,7 @@ import pickle
 import time
 import datetime
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
 from data_manip.tt_splits import tt_split_all_less60
 
@@ -14,8 +15,11 @@ def get_model(model_name):
 	'''
 
 	if model_name == 'logit': 
-		lr = LogisticRegression()
-		return lr
+		return LogisticRegression()
+	elif model_name == 'random_forest': 
+		return RandomForestClassifier()
+	elif model_name == 'gradient_boosting': 
+		return GradientBoostingClassifier()
 
 def fit_model(train_data, model_to_fit):
 	'''
