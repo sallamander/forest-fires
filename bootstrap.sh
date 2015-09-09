@@ -24,3 +24,8 @@ psql -c "CREATE DATABASE forest_fires;"
 psql -d forest_fires -c "CREATE EXTENSION POSTGIS;"
 psql -c "CREATE USER ubuntu WITH PASSWORD 'ubuntu';"
 psql -c "GRANT ALL PRIVILEGES ON DATABASE forest_fires TO ubuntu;"
+exit
+
+# Run Postgres script
+cd ~/forest_fires
+python code/data_setup/create_postgres_dts.py code/makefiles/year_list.pkl
