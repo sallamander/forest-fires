@@ -29,5 +29,5 @@ sudo -u postgres psql -c "CREATE USER ubuntu WITH PASSWORD 'ubuntu';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE forest_fires TO ubuntu;"
 
 # Run Postgres script
-cd ~/forest_fires/code
+cd ~/forest-fires/code
 python data_setup/create_postgres_dts.py makefiles/year_list.pkl
