@@ -41,6 +41,6 @@ def combine_dfs(df_list):
 	if len(df_list) == 1: 
 		return output_df
 	else: 
-		for df in df_list: 
+		for df in df_list[1:]: 
 			output_df = output_df.append(df)
 		return output_df
