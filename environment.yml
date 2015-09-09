@@ -1,0 +1,9 @@
+name: forest-fires
+channels:
+  - defaults
+dependencies:
+  - python=2.7
+  - pandas
+  - psycopg2
+  - ipython
+  - jupyter
