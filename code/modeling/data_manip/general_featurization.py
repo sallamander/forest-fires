@@ -26,3 +26,21 @@ def return_all_dummies(df, col_list):
 		del df[col]
 
 	return df
+
+def combine_dfs(df_list): 
+	'''
+	Input: List of Pandas DataFrame
+	Output: Pandas DataFrame
+
+	Combine each of the pandas dataframes in the df_list into one single dataframe. Note that I'm assuming 
+	that they have the same column names. 
+	'''
+
+	output_df = df_list[0]
+
+	if len(df_list) == 1: 
+		return output_df
+	else: 
+		for df in df_list: 
+			output_df = output_df.append(df)
+		return output_df
