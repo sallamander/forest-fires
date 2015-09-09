@@ -23,3 +23,8 @@ if __name__ == '__main__':
 	df = grab_columns(df, columns_list)
 	df = break_time_col(df, 'date')
 
+	dummy_cols = ['year', 'month']
+	df = return_all_dummies(df, dummy_cols)
+
+	with open('./input_df.pkl', 'w+') as f: 
+		pickle.dump(df, f)

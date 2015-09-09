@@ -20,10 +20,9 @@ def return_all_dummies(df, col_list):
 	results. 
 	'''
 
-	for col in col_list: 
-		dummies = pd.get_dummies(df[col_list])
-		df = pd.concat(df, dummies)
-		del df[col]
+	dummies = pd.get_dummies(df[col_list])
+	df = pd.concat([df, dummies], axis=1)
+	df = df.drop(col_list, axis=1)
 
 	return df
 
