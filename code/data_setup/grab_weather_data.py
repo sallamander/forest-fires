@@ -63,33 +63,7 @@ def get_n_back(input_list):
 	row, n = input_list
 	return [(row[0], row[1], row[2] - pd.Timedelta(days=day_back)) for day_back in xrange(0, n + 1)]
 
-def create_weather_dt(year): 
-	'''
-	Input: Integer
-	Output: Potentially Created Datatable. 
 
-	For the given year, create the weather_{year} data table in the forest_fires database if it isn't already created. 
-	'''
-
-	conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'])
-	cursor = conn.cursor()
-
-	dt_name = 'weather_' + str(year)
-
-	if dt_exist(dt_name): 
-		pass
-	else: 
-		cursor.execute('''CREATE TABLE weather_{year} (
-						    lat         float NOT NULL,
-						    long		float NOT NULL,
-						    date 		date NOT NULL
-						);'''.format(year=year))
-
-	conn.commit()
-	conn.close()
-
-def input_unique_pairs(year, unique_pairs):
-	pass 
 
 if __name__ == '__main__': 
 	if len(sys.argv) == 1: 
@@ -102,4 +76,3 @@ if __name__ == '__main__':
 	year = 2013
 	df = get_lat_long_time(year)
 	unique_pairs = get_unique_pairs(df, 3, 2)
-	create_weather_dt(year)
