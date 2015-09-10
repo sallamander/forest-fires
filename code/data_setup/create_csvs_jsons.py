@@ -153,7 +153,7 @@ def smokey_error():
 
 def get_fire_centroids_csv(year): 
 	'''
-	Input: String
+	Input: Integer
 	Output: CSV
 
 	For the inputted year, read in the csv that we outputted earlier for the detected fires, and output 
@@ -172,6 +172,18 @@ def get_fire_centroids_csv(year):
 
 	save_filepath = open_filepath[:-4] + '_lightweight.csv'
 	lightweight_df.to_csv(save_filepath, index=False)
+
+def output_weather_csvs(year): 
+	'''
+	Input: Integer
+	Output: CSV
+
+	For the given year, output a weather_{year}.csv that holds the weather information that we might actually 
+	use in some of our features. This function here will build off others that grab the data we want from Mongo
+	and parse that somehow. 
+	'''
+
+	df = query_mongo_table(year)
 
 if __name__ == '__main__': 
 	if len(sys.argv) == 1: 
