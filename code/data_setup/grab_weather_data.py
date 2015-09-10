@@ -77,6 +77,7 @@ def store_unique_pairs(year, unique_pairs):
 
 	files = os.listdir('../../data/csvs/')
 
+	'''
 	if weather_table in files: 
 		weather_df = pd.read_csv(weather_csv_path, parse_dates=[2])
 		appended_weather_df, new_unique = add_unique_pairs(unique_pairs, weather_df)
@@ -88,9 +89,9 @@ def store_unique_pairs(year, unique_pairs):
 			new_unique = np.array(list(duplicated))
 			new_unique_df = pd.DataFrame(data = duplicated_list)
 			return new_unique_df
-	else: 
-		unique_pairs.to_csv(weather_csv_path, index=False)
-		return unique_pairs
+	'''
+	unique_pairs.to_csv(weather_csv_path, index=False)
+	return unique_pairs
 
 def add_unique_pairs(unique_pairs, weather_df): 
 	'''
@@ -121,11 +122,8 @@ def grab_weather_data(lat_long_date_df, year):
 	'''
 
 	table = get_mongo_table(year)
-	import pdb
-	pdb.set_trace()
 	r = lat_long_date_df.values[0]
-	import pdb
-	pdb.set_trace()
+	make_forecast_io_call(r)
 
 def make_forecast_io_call(row): 
 	'''
@@ -135,10 +133,16 @@ def make_forecast_io_call(row):
 	forecast_io_key = os.environ['FORECAST_IO_KEY']
 	lat_coord, long_coord, date = row 
 
+
 	call_path = '''https://api.forecast.io/forecast/
 				{api_key}/{lat},{long},{time}'''.format(api_key=forecast_io_key, 
 				lat=lat_coord, long=long_coord, time=date)
-	
+	insert_t_loc = call_path.find('00:00:00')
+	insert_t_loc_inverse = len(call_path) - insert_t_loc
+	call_path = call_path[:insert_t_loc - 1] + 'T' + call_path[-insert_t_loc_inverse:]
+	response = get(call_path)
+
+
 def get_mongo_table(year): 
 	'''
 	Input: Integer
