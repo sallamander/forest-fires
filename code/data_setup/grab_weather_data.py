@@ -6,8 +6,6 @@ import sys
 import pickle
 import itertools
 import numpy as np
-import os
-from create_postgres_dts import dt_exist
 
 def get_lat_long_time(year): 
 	'''
@@ -62,6 +60,18 @@ def get_n_back(input_list):
 	'''
 	row, n = input_list
 	return [(row[0], row[1], row[2] - pd.Timedelta(days=day_back)) for day_back in xrange(0, n + 1)]
+
+def store_unique_pairs(year, unique_pairs): 
+	'''
+	Input: Integer, Pandas Dataframe
+	Output: CSV
+
+	Read in the weater_{year} .csv file, and store the unique pairs of lat, long, date... but only if they 
+	aren't already in that dataframe. I'm using this dataframe to make sure that I don't ever call the forecast.io
+	api for the same lat, long, date pair. 
+	'''
+
+	pass
 
 
 
