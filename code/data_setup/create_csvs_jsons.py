@@ -185,6 +185,33 @@ def output_weather_csvs(year):
 
 	df = query_mongo_table(year)
 
+def query_mongo_table(year): 
+	'''
+	Input: Integer
+	Output: Pandas DataFrame
+
+	For the given year, read in all data from the weather table and put it into a pandas data frame. We'll 
+	figure out how to parse that dataframe in another function to actually grab the columns that we want. 
+	'''
+
+	table = get_mongo_table(year)
+
+def get_mongo_table(year): 
+	'''
+	Input: Integer
+	Output: Mongo table instance
+
+	For the given year, get the weather_data table instance so we can store data there. 
+	'''
+
+	table_name = 'weather_' + str(year)
+	
+	client = MongoClient()
+	db = client['forest_fires']
+	table = db[table_name]
+
+	return table
+
 if __name__ == '__main__': 
 	if len(sys.argv) == 1: 
 		with open('../makefiles/year_list.pkl') as f: 
