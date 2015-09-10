@@ -4,6 +4,7 @@ import json
 import pandas as pd
 import sys
 import pickle
+from pymongo import MongoClient
 
 def output_detected_fires_csv(year): 
 	'''
@@ -196,6 +197,18 @@ def query_mongo_table(year):
 
 	table = get_mongo_table(year)
 
+	cursor = table.find({})
+	for document in cursor: 
+		lat = document['latitude']
+		lng = document['longitude']
+		hourly = document['hourly']
+		if hourly: 
+			water = False
+			hourly_df = create_hourly_df(hourly)
+
+	import pdb
+	pdb.set_trace()
+
 def get_mongo_table(year): 
 	'''
 	Input: Integer
@@ -212,7 +225,15 @@ def get_mongo_table(year):
 
 	return table
 
+def create_hourly_df(hourly_dict): 
+	'''
+	Input: Dictionary
+	Output: Pandas DataFrame
+	'''
+	pass
+
 if __name__ == '__main__': 
+	'''
 	if len(sys.argv) == 1: 
 		with open('../makefiles/year_list.pkl') as f: 
 			year_list = pickle.load(f)
@@ -227,4 +248,8 @@ if __name__ == '__main__':
 			output_json(year, 'state')
 			output_json(year, 'county')
 			output_json(year, 'region')
+	'''
+
+	year = 2013 
+	output_weather_csvs(year)
 
