@@ -1,4 +1,5 @@
 from requests import get
+from pymongo import MongoClient
 import pandas as pd
 import multiprocessing
 import sys
@@ -79,29 +80,78 @@ def store_unique_pairs(year, unique_pairs):
 	if weather_table in files: 
 		weather_df = pd.read_csv(weather_csv_path, parse_dates=[2])
 		appended_weather_df, new_unique = add_unique_pairs(unique_pairs, weather_df)
+		# If there are new unique lat, long, date combos to grab weather for, make sure 
+		# we save a new .csv that holds those new ones (plus old ones), and then grab
+		# the weather data for those. 
 		if len(new_unique) > 0: 
+			appended_weather_df.to_csv(weather_csv_path)
 			new_unique = np.array(list(duplicated))
 			new_unique_df = pd.DataFrame(data = duplicated_list)
-			grab_weather_data(new_unique_df)
+			return new_unique_df
 	else: 
 		unique_pairs.to_csv(weather_csv_path, index=False)
-		grab_weather_data(unique_pairs)
+		return unique_pairs
 
 def add_unique_pairs(unique_pairs, weather_df): 
 	'''
 	Input: Pandas Dataframe, Pandas DataFrame
-	Output: Pandas DataFrame
+	Output: Pandas DataFrame, Set
 
-	Add any new unique pairs to the weather_df. 
+	Add any new unique pairs to the weather_df to save (i.e. make sure we know we've gotten weather 
+	data for these new lat, long, date pairs), and output the new_unique lat, long, date pairs 
+	in a set so we can grab weather data for those. 
 	'''
 	unique_pairs['date'] = [pd.to_datetime(dt) for dt in unique_pairs['date'].values]
 	weather_df = weather_df.append(unique_pairs)
 
+	# Get the new unique lat, long, date pairs that we need weather data for. 
 	new_set = set([(row[0], row[1], row[2]) for row in unique_pairs.values])
 	current_set = set([(row[0], row[1], row[2]) for row in weather_df.values])
 	new_unique = new_set - current_set
 
 	return weather_df.drop_duplicates(), new_unique
+
+def grab_weather_data(lat_long_date_df, year): 
+	'''
+	Input: Pandas DataFrame
+	Output: Mongo Table
+
+	For each of the lat, long, date pairs in the inputted DataFrame, call the forecast.io API and 
+	get weather data for that date. 
+	'''
+
+	table = get_mongo_table(year)
+	import pdb
+	pdb.set_trace()
+	r = lat_long_date_df.values[0]
+	import pdb
+	pdb.set_trace()
+
+def make_forecast_io_call(row): 
+	'''
+	Input: NumpyArray
+	Output: Results of forecast.io query. 
+	'''
+	forecast_io_key = os.environ['FORECAST_IO_KEY']
+	lat_coord, long_coord, date = row 
+
+	call_path = '''https://api.forecast.io/forecast/
+				{api_key}/{lat},{long},{time}'''.format(api_key=forecast_io_key, 
+				lat=lat_coord, long=long_coord, time=date)
+	
+def get_mongo_table(year): 
+	'''
+	Input: Integer
+	Output: Mongo table instance
+	'''
+
+	table_name = 'weather_' + str(year)
+	
+	client = MongoClient()
+	db = client['forest_fires']
+	table = db[table_name]
+
+	return table
 
 if __name__ == '__main__': 
 	if len(sys.argv) == 1: 
@@ -114,4 +164,5 @@ if __name__ == '__main__':
 	year = 2013
 	df = get_lat_long_time(year)
 	unique_pairs = get_unique_pairs(df, 3, 2)
-	store_unique_pairs(year, unique_pairs)
+	new_pairs_to_grab = store_unique_pairs(year, unique_pairs)
+	grab_weather_data(new_pairs_to_grab, year)
