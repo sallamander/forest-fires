@@ -7,6 +7,11 @@ import pickle
 import itertools
 import numpy as np
 import os 
+import forecastio
+import datetime
+import json
+import threading
+
 
 def get_lat_long_time(year): 
 	'''
@@ -41,15 +46,11 @@ def get_unique_pairs(df, n, n_cores):
 	# Map out the unique pairs of lat, long, date to multiple processes and spit back lat, long, date 
 	# sets n days back. 
 	outputs = np.array(pool.map(func=get_n_back, iterable=itertools.izip(pairs_list, itertools.repeat(n))))
+	pool.close()
 
 	# Reshape the output to fit what we need. 
 	n, m, p  = outputs.shape
 	df = pd.DataFrame(data=outputs.reshape(n * m, p), columns=col_names)
-	# Round the lat./long. coordinates to 2 decimal places, and drop duplicates. Rounding to .01 is 
-	# roughly 1 km, which is a small village/town. It's hard to imagine that the weather differs
-	# substantially across a small village/town. 
-	df['lat'] = [np.round(lat, decimals=2) for lat in df['lat']]
-	df['long'] = [np.round(long_coord, decimals=2) for long_coord in df['long']]
 
 	return df.drop_duplicates()
 
@@ -77,7 +78,6 @@ def store_unique_pairs(year, unique_pairs):
 
 	files = os.listdir('../../data/csvs/')
 
-	'''
 	if weather_table in files: 
 		weather_df = pd.read_csv(weather_csv_path, parse_dates=[2])
 		appended_weather_df, new_unique = add_unique_pairs(unique_pairs, weather_df)
@@ -89,9 +89,11 @@ def store_unique_pairs(year, unique_pairs):
 			new_unique = np.array(list(duplicated))
 			new_unique_df = pd.DataFrame(data = duplicated_list)
 			return new_unique_df
-	'''
-	unique_pairs.to_csv(weather_csv_path, index=False)
-	return unique_pairs
+		else: 
+			return None
+	else: 
+		unique_pairs.to_csv(weather_csv_path, index=False)
+		return unique_pairs
 
 def add_unique_pairs(unique_pairs, weather_df): 
 	'''
@@ -112,41 +114,54 @@ def add_unique_pairs(unique_pairs, weather_df):
 
 	return weather_df.drop_duplicates(), new_unique
 
-def grab_weather_data(lat_long_date_df, year): 
+def grab_weather_data(lat_long_date_df, year, n_cores): 
 	'''
 	Input: Pandas DataFrame
 	Output: Mongo Table
 
-	For each of the lat, long, date pairs in the inputted DataFrame, call the forecast.io API and 
-	get weather data for that date. 
+	For each of the lat, long, date pairs in the inputted DataFrame, map them out to multiple processes
+	and call the forecast.io api for that pair. 
 	'''
 
 	table = get_mongo_table(year)
-	r = lat_long_date_df.values[0]
-	make_forecast_io_call(r)
+	rows = lat_long_date_df.values
+	pool = multiprocessing.Pool(processes=n_cores)
+
+	outputs = pool.map(make_forecast_io_call, rows)
+
+	table.insert_many(outputs)
+	pool.close()
 
 def make_forecast_io_call(row): 
 	'''
 	Input: NumpyArray
-	Output: Results of forecast.io query. 
+	Output: JSON
+
+	Actually make the call to the forecast.io api for the lat, long, date in the inputted row. 
 	'''
 	forecast_io_key = os.environ['FORECAST_IO_KEY']
-	lat_coord, long_coord, date = row 
+	lat, lng, date = row 
 
 
-	call_path = '''https://api.forecast.io/forecast/
-				{api_key}/{lat},{long},{time}'''.format(api_key=forecast_io_key, 
-				lat=lat_coord, long=long_coord, time=date)
-	insert_t_loc = call_path.find('00:00:00')
-	insert_t_loc_inverse = len(call_path) - insert_t_loc
-	call_path = call_path[:insert_t_loc - 1] + 'T' + call_path[-insert_t_loc_inverse:]
-	response = get(call_path)
+	url_time = date.replace(microsecond=0).isoformat()
+	call_path = '''https://api.forecast.io/forecast/{api_key}/{lat},{long},{time}'''.format(
+			api_key=forecast_io_key, lat=lat, long=lng, time=url_time)
+	try: 
+		response = get(call_path)
+		json_data = json.loads(response.text)	
+		if json_data is None: 
+			return {'latitude': lat, 'longitude': lng, 'date': date, 'response': 'none'}
+	except: 
+		return {'latitude': lat, 'longitude': lng, 'date': date, 'response': 'none'}
 
+	return json_data
 
 def get_mongo_table(year): 
 	'''
 	Input: Integer
 	Output: Mongo table instance
+
+	For the given year, get the weather_data table instance so we can store data there. 
 	'''
 
 	table_name = 'weather_' + str(year)
@@ -165,8 +180,13 @@ if __name__ == '__main__':
 		with open(sys.argv[1]) as f: 
 			year_list = pickle.load(f)
 
+	# Set up parameters for grabbing data. 
+	days_back = 1
 	year = 2013
+	n_cores = multiprocessing.cpu_count()
+
 	df = get_lat_long_time(year)
-	unique_pairs = get_unique_pairs(df, 3, 2)
+	unique_pairs = get_unique_pairs(df, days_back, n_cores)
 	new_pairs_to_grab = store_unique_pairs(year, unique_pairs)
-	grab_weather_data(new_pairs_to_grab, year)
+	if new_pairs_to_grab is not None: 
+		grab_weather_data(new_pairs_to_grab, year, n_cores)
