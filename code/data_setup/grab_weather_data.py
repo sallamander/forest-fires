@@ -1,11 +1,11 @@
 from requests import get
-import psycopg2
 import pandas as pd
 import multiprocessing
 import sys
 import pickle
 import itertools
 import numpy as np
+import os 
 
 def get_lat_long_time(year): 
 	'''
@@ -48,6 +48,7 @@ def get_unique_pairs(df, n, n_cores):
 	# roughly 1 km, which is a small village/town. It's hard to imagine that the weather differs
 	# substantially across a small village/town. 
 	df['lat'] = [np.round(lat, decimals=2) for lat in df['lat']]
+	df['long'] = [np.round(long_coord, decimals=2) for long_coord in df['long']]
 
 	return df.drop_duplicates()
 
@@ -70,10 +71,37 @@ def store_unique_pairs(year, unique_pairs):
 	aren't already in that dataframe. I'm using this dataframe to make sure that I don't ever call the forecast.io
 	api for the same lat, long, date pair. 
 	'''
+	weather_table = 'weather_' + str(year) + '.csv'
+	weather_csv_path = '../../data/csvs/' + weather_table
 
-	pass
+	files = os.listdir('../../data/csvs/')
 
+	if weather_table in files: 
+		weather_df = pd.read_csv(weather_csv_path, parse_dates=[2])
+		appended_weather_df, new_unique = add_unique_pairs(unique_pairs, weather_df)
+		if len(new_unique) > 0: 
+			new_unique = np.array(list(duplicated))
+			new_unique_df = pd.DataFrame(data = duplicated_list)
+			grab_weather_data(new_unique_df)
+	else: 
+		unique_pairs.to_csv(weather_csv_path, index=False)
+		grab_weather_data(unique_pairs)
 
+def add_unique_pairs(unique_pairs, weather_df): 
+	'''
+	Input: Pandas Dataframe, Pandas DataFrame
+	Output: Pandas DataFrame
+
+	Add any new unique pairs to the weather_df. 
+	'''
+	unique_pairs['date'] = [pd.to_datetime(dt) for dt in unique_pairs['date'].values]
+	weather_df = weather_df.append(unique_pairs)
+
+	new_set = set([(row[0], row[1], row[2]) for row in unique_pairs.values])
+	current_set = set([(row[0], row[1], row[2]) for row in weather_df.values])
+	new_unique = new_set - current_set
+
+	return weather_df.drop_duplicates(), new_unique
 
 if __name__ == '__main__': 
 	if len(sys.argv) == 1: 
@@ -86,3 +114,4 @@ if __name__ == '__main__':
 	year = 2013
 	df = get_lat_long_time(year)
 	unique_pairs = get_unique_pairs(df, 3, 2)
+	store_unique_pairs(year, unique_pairs)
