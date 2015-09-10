@@ -185,6 +185,7 @@ def output_weather_csvs(year):
 	'''
 
 	df = query_mongo_table(year)
+	return df
 
 def query_mongo_table(year): 
 	'''
@@ -198,13 +199,16 @@ def query_mongo_table(year):
 	table = get_mongo_table(year)
 
 	cursor = table.find({})
+	return cursor
 	for document in cursor: 
 		lat = document['latitude']
 		lng = document['longitude']
-		hourly = document['hourly']
-		if hourly: 
+		if document['hourly']: 
+			hourly_dict = document['hourly']
 			water = False
-			hourly_df = create_hourly_df(hourly)
+			hourly_df = create_hourly_df(hourly_dict)
+			import pdb
+			pdb.set_trace()
 
 	import pdb
 	pdb.set_trace()
@@ -230,7 +234,12 @@ def create_hourly_df(hourly_dict):
 	Input: Dictionary
 	Output: Pandas DataFrame
 	'''
-	pass
+
+	hourly_data = hourly_dict['data']
+	hourly_df = pd.DataFrame(hourly_data)
+
+	return hourly_df
+
 
 if __name__ == '__main__': 
 	'''
@@ -251,5 +260,5 @@ if __name__ == '__main__':
 	'''
 
 	year = 2013 
-	output_weather_csvs(year)
+	cursor = output_weather_csvs(year)
 
