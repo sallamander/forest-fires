@@ -205,7 +205,7 @@ def query_mongo_table(year):
 	non_nulls_hourly_df['hourly_data'] = True
 
 	weather_df = nulls_hourly_df.append(non_nulls_hourly_df)
-	weather_df.to_csv('../../data/csvs/merged_weather.csv')
+	weather_df.to_csv('../../data/csvs/merged_weather_' + str(year) + '.csv')
 
 def get_mongo_table(year): 
 	'''
