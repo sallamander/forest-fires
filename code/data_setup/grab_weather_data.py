@@ -70,7 +70,7 @@ def store_unique_pairs(year, unique_pairs):
 	aren't already in that dataframe. I'm using this dataframe to make sure that I don't ever call the forecast.io
 	api for the same lat, long, date pair. 
 	'''
-	weather_table = 'weather_' + str(year) + '.csv'
+	weather_table = 'checked_weather_' + str(year) + '.csv'
 	weather_csv_path = '../../data/csvs/' + weather_table
 
 	files = os.listdir('../../data/csvs/')
