@@ -198,7 +198,7 @@ def query_mongo_table(year):
 
 	table = get_mongo_table(year)
 
-	cursor = table.find({'hourly': {'$exists': 'true'}}, {'hourly.data': 'true', '_id': 0})
+	cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}}, {'hourly':1, '_id': 0})
 	return cursor
 	for document in cursor: 
 		lat = document['latitude']

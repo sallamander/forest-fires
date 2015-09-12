@@ -5,5 +5,6 @@ db.weather_2013.find({'hourly': {'$exists': true}}, {'hourly.data': 1, '_id': 0}
 
 db.weather_2013.find({ hourly: { $exists: true }, $where: '{data: {$exists: true}}'})
 
-db.weather_2013.find({hourly: {$exists: true, $nin: [null, "null"]}}, {hourly.data:1})
+db.weather_2013.find({hourly: {$exists: true, $nin: [null, "null"]}}, {'hourly.data':1, _id: 0})
+db.weather_2013.find({hourly: {$exists: true, $nin: [null, "null"]}}, {$project: {hourly: 1}})
 
