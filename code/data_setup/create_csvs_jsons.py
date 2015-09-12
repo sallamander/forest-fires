@@ -4,6 +4,7 @@ import json
 import pandas as pd
 import sys
 import pickle
+import numpy as np
 from pymongo import MongoClient
 
 def output_detected_fires_csv(year): 
@@ -197,8 +198,9 @@ def query_mongo_table(year):
 	'''
 
 	table = get_mongo_table(year)
-
-	cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}}, {'hourly':1, '_id': 0})
+	hourly_df = create_hourly_df(table)
+	return hourly_df
+	cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}}, {'hourly.data':1, '_id': 0})
 	return cursor
 	for document in cursor: 
 		lat = document['latitude']
@@ -229,14 +231,16 @@ def get_mongo_table(year):
 
 	return table
 
-def create_hourly_df(hourly_dict): 
+def create_hourly_df(table): 
 	'''
 	Input: Dictionary
 	Output: Pandas DataFrame
 	'''
 
-	hourly_data = hourly_dict['data']
-	hourly_df = pd.DataFrame(hourly_data)
+	cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}}, {'hourly.data':1, '_id': 0})
+
+	hourly_data_list = list(np.array([hourly_dict['hourly']['data'] for hourly_dict in cursor]).ravel())
+	hourly_df = pd.DataFrame(hourly_data_list)
 
 	return hourly_df
 
