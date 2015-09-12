@@ -200,7 +200,7 @@ def query_mongo_table(year):
 	table = get_mongo_table(year)
 	hourly_df = create_hourly_df(table)
 	return hourly_df
-	cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}}, {'hourly.data':1, '_id': 0})
+
 	return cursor
 	for document in cursor: 
 		lat = document['latitude']
@@ -237,13 +237,23 @@ def create_hourly_df(table):
 	Output: Pandas DataFrame
 	'''
 
-	cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}}, {'hourly.data':1, '_id': 0})
+	cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}},
+						 {'hourly.data': 1, 'latitude': 1, 'longitude': 1, '_id': 0})
 
-	hourly_data_list = list(np.array([hourly_dict['hourly']['data'] for hourly_dict in cursor]).ravel())
+	hourly_data_list = list(np.array([merge_dicts(hourly_dict) for hourly_dict in cursor]).ravel())
 	hourly_df = pd.DataFrame(hourly_data_list)
 
 	return hourly_df
 
+def merge_dicts(hourly_dict): 
+	data_dicts = hourly_dict['hourly']['data']
+	lat_dict = {'lat': hourly_dict['latitude']}
+	long_dict = {'long': hourly_dict['longitude']}
+	for data_dict in data_dicts: 
+		data_dict.update(lat_dict)
+		data_dict.update(long_dict)
+
+	return data_dicts
 
 if __name__ == '__main__': 
 	'''
