@@ -198,7 +198,7 @@ def query_mongo_table(year):
 	'''
 
 	table = get_mongo_table(year)
-	hourly_df = create_hourly_df(table)
+	hourly_df = create_hourly_df(table, nulls=True)
 	return hourly_df
 
 	return cursor
@@ -231,21 +231,44 @@ def get_mongo_table(year):
 
 	return table
 
-def create_hourly_df(table): 
+def create_hourly_df(table, nulls=False): 
 	'''
-	Input: Dictionary
+	Input: Mongo Table Object
 	Output: Pandas DataFrame
+
+	Grab the hourly data from the mongo database, and put into a pandas dataframe so we can export 
+	it to csvs. Some weather calls had hourly data and others didn't (i.e. had null for the hourly.data
+	key), and we'll handle those slightly differently. 
 	'''
 
-	cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}},
-						 {'hourly.data': 1, 'latitude': 1, 'longitude': 1, '_id': 0})
+	if nulls == False: 
+		cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}},
+							 {'hourly.data': 1, 'latitude': 1, 'longitude': 1, '_id': 0})
+		# This is a little funky here, but the easiest way to put all of the mongo data we want into a 
+		# dataframe while at the same time inputting nulls where columns don't exist is with a list. To
+		# get to that list from multiple documents in the mongo collection, though, we need to get those 
+		# in a list comp. We end up there with a list of lists, though, and so we unravel that by
+		# a cast to a numpy array. We finish up by casting it back to a list for input into a dataframe. 
+		hourly_data_list = list(np.array([merge_dicts(hourly_dict) for hourly_dict in cursor]).ravel())
+	elif nulls == True: 
+		hourly_data_list = list(table.find({'hourly': {'$exists': 'true', '$in': ['null', None]}},
+							 {'latitude': 1, 'longitude': 1, '_id': 0}))
+	else: 
+		raise Exception('Didnt specify whether to grab nulls or non-nulls!')
 
-	hourly_data_list = list(np.array([merge_dicts(hourly_dict) for hourly_dict in cursor]).ravel())
 	hourly_df = pd.DataFrame(hourly_data_list)
 
 	return hourly_df
 
 def merge_dicts(hourly_dict): 
+	'''
+	Input: Dictionary
+	Output: Dictionary
+
+	Traverse the dictionary and grab the latitude and longitude, as well as the individual hourly data 
+	dictionaries. Update each of the individual hourly data dictionaries (24 of them) with the latitude
+	and longitude. 
+	'''
 	data_dicts = hourly_dict['hourly']['data']
 	lat_dict = {'lat': hourly_dict['latitude']}
 	long_dict = {'long': hourly_dict['longitude']}
