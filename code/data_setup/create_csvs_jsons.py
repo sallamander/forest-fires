@@ -198,22 +198,14 @@ def query_mongo_table(year):
 	'''
 
 	table = get_mongo_table(year)
-	hourly_df = create_hourly_df(table, nulls=True)
-	return hourly_df
+	nulls_hourly_df = create_hourly_df(table, nulls=True)
+	non_nulls_hourly_df = create_hourly_df(table, nulls=False)	
 
-	return cursor
-	for document in cursor: 
-		lat = document['latitude']
-		lng = document['longitude']
-		if document['hourly']: 
-			hourly_dict = document['hourly']
-			water = False
-			hourly_df = create_hourly_df(hourly_dict)
-			import pdb
-			pdb.set_trace()
+	nulls_hourly_df['hourly_data'] = False
+	non_nulls_hourly_df['hourly_data'] = True
 
-	import pdb
-	pdb.set_trace()
+	weather_df = nulls_hourly_df.append(non_nulls_hourly_df)
+	weather_df.to_csv('../../data/csvs/merged_weather.csv')
 
 def get_mongo_table(year): 
 	'''
@@ -270,8 +262,8 @@ def merge_dicts(hourly_dict):
 	and longitude. 
 	'''
 	data_dicts = hourly_dict['hourly']['data']
-	lat_dict = {'lat': hourly_dict['latitude']}
-	long_dict = {'long': hourly_dict['longitude']}
+	lat_dict = {'latitude': hourly_dict['latitude']}
+	long_dict = {'longitude': hourly_dict['longitude']}
 	for data_dict in data_dicts: 
 		data_dict.update(lat_dict)
 		data_dict.update(long_dict)
@@ -297,5 +289,5 @@ if __name__ == '__main__':
 	'''
 
 	year = 2013 
-	cursor = output_weather_csvs(year)
+	output_weather_csvs(year)
 
