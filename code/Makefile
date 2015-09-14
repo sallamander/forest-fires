@@ -24,4 +24,9 @@ setup_data: ./data_setup/.psql_dts_sentinal ./data_setup/.merged_psql_sentinal \
 .PHONY: setup_data
 
 
+makefiles/columns_list.pkl: makefiles/make_columns_list.py
+	python makefiles/make_columns_list
+
+
+
 	
