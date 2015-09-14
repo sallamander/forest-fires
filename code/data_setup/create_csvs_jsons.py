@@ -191,13 +191,24 @@ def output_weather_csvs(year):
 def query_mongo_table(year): 
 	'''
 	Input: Integer
-	Output: Pandas DataFrame
+	Output: Saved CSVs
 
 	For the given year, read in all data from the weather table and put it into a pandas data frame. We'll 
 	figure out how to parse that dataframe in another function to actually grab the columns that we want. 
 	'''
 
 	table = get_mongo_table(year)
+	# query_for_hourly(table, year)
+
+def query_for_hourly(table, year): 
+	'''
+	Input: Instantiated Mongo table, Integer
+	Output: CSV
+
+	Query the mongo table for hourly data, parse it, put it into a pandas DF, and then store it 
+	in a .csv. 
+	'''
+
 	nulls_hourly_df = create_hourly_df(table, nulls=True)
 	non_nulls_hourly_df = create_hourly_df(table, nulls=False)	
 
@@ -205,7 +216,13 @@ def query_mongo_table(year):
 	non_nulls_hourly_df['hourly_data'] = True
 
 	weather_df = nulls_hourly_df.append(non_nulls_hourly_df)
-	weather_df.to_csv('../../data/csvs/merged_weather_' + str(year) + '.csv')
+	weather_df.to_csv('../../data/csvs/merged_hourly_weather_' + str(year) + '.csv')
+
+	'''
+	Punting on this for now - some lat/longs return 23 and 25 hours worth of data for a day (instead of 24), and
+	I haven't decided what to do with them and if I will even use the hourly data yet. I'm going to see if the
+	daily data will help first, and then look into hourly. 
+	'''
 
 def get_mongo_table(year): 
 	'''
