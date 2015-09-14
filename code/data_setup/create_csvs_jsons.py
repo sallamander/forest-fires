@@ -198,19 +198,34 @@ def query_mongo_table(year):
 	'''
 
 	table = get_mongo_table(year)
-	# query_for_hourly(table, year)
+	# query_for_hourly(table)
+	query_for_daily(table)
 
-def query_for_hourly(table, year): 
+def query_for_daily(table): 
 	'''
-	Input: Instantiated Mongo table, Integer
+	Input: Instantiated Mongo Table
+	Output: CSV
+
+	Query the mongo table for the daily data, parse it, put it into a pandas DF, and then store it 
+	in a .csv. 
+	'''
+
+	non_nulls_daily_df = create_weather_df(table, nulls=False, hourly=False)
+
+	non_nulls_daily_df.to_csv('../../data/csvs/merged_daily_weather_' + str(year) + '.csv', encoding='utf-8')
+
+
+def query_for_hourly(table): 
+	'''
+	Input: Instantiated Mongo table
 	Output: CSV
 
 	Query the mongo table for hourly data, parse it, put it into a pandas DF, and then store it 
 	in a .csv. 
 	'''
 
-	nulls_hourly_df = create_hourly_df(table, nulls=True)
-	non_nulls_hourly_df = create_hourly_df(table, nulls=False)	
+	nulls_hourly_df = create_weather_df(table, nulls=True, hourly=True)
+	non_nulls_hourly_df = create_weather_df(table, nulls=False, hourly=True)	
 
 	nulls_hourly_df['hourly_data'] = False
 	non_nulls_hourly_df['hourly_data'] = True
@@ -240,34 +255,38 @@ def get_mongo_table(year):
 
 	return table
 
-def create_hourly_df(table, nulls=False): 
+def create_weather_df(table, nulls=False, hourly=False): 
 	'''
-	Input: Mongo Table Object
+	Input: Mongo Table Object, Boolean, Boolean
 	Output: Pandas DataFrame
 
-	Grab the hourly data from the mongo database, and put into a pandas dataframe so we can export 
+	Grab the hourly or daily data from the mongo database, and put into a pandas dataframe so we can export 
 	it to csvs. Some weather calls had hourly data and others didn't (i.e. had null for the hourly.data
 	key), and we'll handle those slightly differently. 
 	'''
 
 	if nulls == False: 
-		cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}},
-							 {'hourly.data': 1, 'latitude': 1, 'longitude': 1, '_id': 0})
+		if hourly: 
+			cursor = table.find({'hourly': {'$exists': 'true', '$nin': ['null', None]}},
+								 {'hourly.data': 1, 'latitude': 1, 'longitude': 1, '_id': 0})
+		else: 
+			cursor = table.find({'daily.data': {'$exists': 'true', '$nin': ['null', None]}},
+								 {'daily.data': 1, 'latitude': 1, 'longitude': 1, '_id': 0})
 		# This is a little funky here, but the easiest way to put all of the mongo data we want into a 
 		# dataframe while at the same time inputting nulls where columns don't exist is with a list. To
 		# get to that list from multiple documents in the mongo collection, though, we need to get those 
 		# in a list comp. We end up there with a list of lists, though, and so we unravel that by
 		# a cast to a numpy array. We finish up by casting it back to a list for input into a dataframe. 
-		hourly_data_list = list(np.array([merge_dicts(hourly_dict) for hourly_dict in cursor]).ravel())
+		data_list = list(np.array([merge_dicts(dct) for dct in cursor]).ravel())
 	elif nulls == True: 
-		hourly_data_list = list(table.find({'hourly': {'$exists': 'true', '$in': ['null', None]}},
+		data_list = list(table.find({'daily.data': {'$exists': 'true', '$in': ['null', None]}},
 							 {'latitude': 1, 'longitude': 1, '_id': 0}))
 	else: 
 		raise Exception('Didnt specify whether to grab nulls or non-nulls!')
 
-	hourly_df = pd.DataFrame(hourly_data_list)
-
-	return hourly_df
+	if len(data_list) != 0: 
+		weather_df = pd.DataFrame(data_list)
+		return weather_df
 
 def merge_dicts(hourly_dict): 
 	'''
@@ -278,7 +297,7 @@ def merge_dicts(hourly_dict):
 	dictionaries. Update each of the individual hourly data dictionaries (24 of them) with the latitude
 	and longitude. 
 	'''
-	data_dicts = hourly_dict['hourly']['data']
+	data_dicts = hourly_dict['daily']['data']
 	lat_dict = {'latitude': hourly_dict['latitude']}
 	long_dict = {'longitude': hourly_dict['longitude']}
 	for data_dict in data_dicts: 
