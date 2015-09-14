@@ -277,29 +277,33 @@ def create_weather_df(table, nulls=False, hourly=False):
 		# get to that list from multiple documents in the mongo collection, though, we need to get those 
 		# in a list comp. We end up there with a list of lists, though, and so we unravel that by
 		# a cast to a numpy array. We finish up by casting it back to a list for input into a dataframe. 
-		data_list = list(np.array([merge_dicts(dct) for dct in cursor]).ravel())
+		data_list = list(np.array([merge_dicts(dct, hourly) for dct in cursor]).ravel())
 	elif nulls == True: 
-		data_list = list(table.find({'daily.data': {'$exists': 'true', '$in': ['null', None]}},
-							 {'latitude': 1, 'longitude': 1, '_id': 0}))
+		data_list = list(table.find({'hourly.data': {'$exists': 'true', '$in': ['null', None]}},
+					{'latitude': 1, 'longitude': 1, '_id': 0}))
 	else: 
 		raise Exception('Didnt specify whether to grab nulls or non-nulls!')
 
-	if len(data_list) != 0: 
-		weather_df = pd.DataFrame(data_list)
-		return weather_df
 
-def merge_dicts(hourly_dict): 
+	weather_df = pd.DataFrame(data_list)
+	return weather_df
+
+def merge_dicts(input_dict, hourly): 
 	'''
-	Input: Dictionary
+	Input: Dictionary, Boolean
 	Output: Dictionary
 
 	Traverse the dictionary and grab the latitude and longitude, as well as the individual hourly data 
 	dictionaries. Update each of the individual hourly data dictionaries (24 of them) with the latitude
-	and longitude. 
+	and longitude. Do the same for the daily data dictionaries (of which there are only 1 per day). 
 	'''
-	data_dicts = hourly_dict['daily']['data']
-	lat_dict = {'latitude': hourly_dict['latitude']}
-	long_dict = {'longitude': hourly_dict['longitude']}
+	if hourly: 
+		data_dicts = input_dict['hourly']['data']
+	else: 
+		data_dicts = input_dict['daily']['data']
+
+	lat_dict = {'latitude': input_dict['latitude']}
+	long_dict = {'longitude': input_dict['longitude']}
 	for data_dict in data_dicts: 
 		data_dict.update(lat_dict)
 		data_dict.update(long_dict)

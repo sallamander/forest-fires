@@ -1,0 +1,13 @@
+(dp0
+S'fire_bool'
+p1
+S'bool_col'
+p2
+sS'month'
+p3
+S'all_dummies'
+p4
+sS'year'
+p5
+g4
+s.

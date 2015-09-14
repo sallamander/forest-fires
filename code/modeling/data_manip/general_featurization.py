@@ -10,9 +10,9 @@ def grab_columns(df, columns_list):
 
 	return df[columns_list]
 
-def return_all_dummies(df, col_list): 
+def return_all_dummies(df, col): 
 	'''
-	Input: Pandas DataFrame, List of Strings
+	Input: Pandas DataFrame, String
 	Ouput: Pandas DataFrame
 
 	Take in the list of column names, and for each column, dummy it, merge those dummies back onto the 
@@ -20,9 +20,11 @@ def return_all_dummies(df, col_list):
 	results. 
 	'''
 
-	dummies = pd.get_dummies(df[col_list])
+	dummies = pd.get_dummies(df[col])
+	for dummy_col in dummies.columns:
+		dummies.rename(columns={dummy_col: col + '_' + dummy_col}, inplace=True) 
 	df = pd.concat([df, dummies], axis=1)
-	df = df.drop(col_list, axis=1)
+	df = df.drop(col, axis=1)
 
 	return df
 
@@ -44,7 +46,7 @@ def combine_dfs(df_list):
 			output_df = output_df.append(df)
 		return output_df
 
-def boolean_fire(df): 
+def boolean_col(df, col): 
 	'''
 	Input: Pandas DataFrame
 	Output: Pandas DataFrame
@@ -52,5 +54,5 @@ def boolean_fire(df):
 	Rework the fire variable from strings ('t', 'f') to a boolean to predict off of (True, False).
 	'''
 
-	df = df.replace({'fire_bool': {'f': 0, 't': 1}})
+	df = df.replace({col: {'f': 0, 't': 1}})
 	return df

@@ -24,4 +24,25 @@ setup_data: ./data_setup/.psql_dts_sentinal ./data_setup/.merged_psql_sentinal \
 .PHONY: setup_data
 
 
+makefiles/columns_list.pkl: makefiles/make_columns_list.py
+	python makefiles/make_columns_list.py
+
+makefiles/columns_dict.pkl: makefiles/make_columns_dict.py
+	python makefiles/make_columns_dict.py
+
+./modeling/.create_inputs_sentinal: ./makefiles/columns_list.pkl ./makefiles/columns_dict.pkl
+	python ./modeling/create_inputs.py
+	touch ./modeling/.create_inputs_sentinal
+
+create_inputs: ./makefiles/columns_list.pkl ./makefiles/columns_dict.pkl ./modeling/.create_inputs_sentinal
+.PHONY: create_inputs
+
+./modeling/.run_models_sentinal: ./modeling/.create_inputs_sentinal
+	sh ./modeling/run_models.sh
+	touch .run_models_sentinal
+
+run_models: ./modeling/.run_models_sentinal ./modeling/.create_inputs_sentinal
+.PHONY: run_model
+
+
 	
