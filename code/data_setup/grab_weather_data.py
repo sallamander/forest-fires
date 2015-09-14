@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
 	# Set up parameters for grabbing data. 
 	days_back = 1
-	year = 2013
+	year = 2015
 	n_cores = multiprocessing.cpu_count()
 
 	df = get_lat_long_time(year)
