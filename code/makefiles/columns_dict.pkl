@@ -1,9 +1,13 @@
 (dp0
-S'month'
+S'fire_bool'
 p1
-S'dummy_all'
+S'bool_col'
 p2
-sS'year'
+sS'month'
 p3
-g2
+S'all_dummies'
+p4
+sS'year'
+p5
+g4
 s.
