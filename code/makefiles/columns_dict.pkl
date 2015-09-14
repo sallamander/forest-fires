@@ -1,0 +1,9 @@
+(dp0
+S'month'
+p1
+S'dummy_all'
+p2
+sS'year'
+p3
+g2
+s.

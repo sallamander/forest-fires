@@ -27,6 +27,8 @@ setup_data: ./data_setup/.psql_dts_sentinal ./data_setup/.merged_psql_sentinal \
 makefiles/columns_list.pkl: makefiles/make_columns_list.py
 	python makefiles/make_columns_list
 
+makefiles/columns_dict.pkl: makefiles/make_columns_dict.py
+	python makefiles/make_columns_dict.py
 
 
 	
