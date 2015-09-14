@@ -9,16 +9,16 @@ from data_manip.time_featurization import break_time_col
 
 
 if __name__ == '__main__': 
-	with open('../makefiles/year_list.pkl') as f: 
+	with open('./makefiles/year_list.pkl') as f: 
 		year_list = pickle.load(f)
-	with open('../makefiles/columns_list.pkl') as f: 
+	with open('./makefiles/columns_list.pkl') as f: 
 		columns_list = pickle.load(f)
-	with open('../makefiles/columns_dict.pkl') as f: 
+	with open('./makefiles/columns_dict.pkl') as f: 
 		columns_dict = pickle.load(f)
 
 	dfs_list = []
 	for year in year_list: 
-		df_path = '../../data/csvs/fires_' + str(year) + '.csv'
+		df_path = '../data/csvs/fires_' + str(year) + '.csv'
 		df = pd.read_csv(df_path)
 		dfs_list.append(df)
 
@@ -31,5 +31,5 @@ if __name__ == '__main__':
 	for k, v in columns_dict.iteritems(): 
 		df = featurization_dict[v](df, k)
 
-	with open('./input_df.pkl', 'w+') as f: 
+	with open('./modeling/input_df.pkl', 'w+') as f: 
 		pickle.dump(df, f)
