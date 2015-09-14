@@ -1,10 +1,10 @@
-2015-09-09 14:32:16
+2015-09-14 14:22:53
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
-Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 10, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': None, 'max_features': 'auto', 'max_depth': None, 'class_weight': None}
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 10, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': None, 'class_weight': None}
 
 Features: lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.015520409502559391, 'accuracy_score': 0.60274385055439916, 'precision_score': 0.57965686274509809, 'roc_auc_score': 0.64761858203449418}
+Scores: {'recall_score': 0.019871900147807521, 'accuracy_score': 0.59804636244350484, 'precision_score': 0.55402930402930406, 'roc_auc_score': 0.66298353158922141}
 

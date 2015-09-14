@@ -37,5 +37,12 @@ makefiles/columns_dict.pkl: makefiles/make_columns_dict.py
 create_inputs: ./makefiles/columns_list.pkl ./makefiles/columns_dict.pkl ./modeling/.create_inputs_sentinal
 .PHONY: create_inputs
 
+./modeling/.run_models_sentinal: ./modeling/.create_inputs_sentinal
+	sh ./modeling/run_models.sh
+	touch .run_models_sentinal
+
+run_model: ./modeling/.run_models_sentinal ./modeling/.create_inputs_sentinal
+.PHONY: run_model
+
 
 	

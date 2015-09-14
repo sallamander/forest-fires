@@ -13,13 +13,13 @@ def get_model(model_name):
 	Input: String
 	Output: Instantiated Model
 	'''
-
+	random_seed = 24
 	if model_name == 'logit': 
-		return LogisticRegression()
+		return LogisticRegression(random_state=random_seed)
 	elif model_name == 'random_forest': 
-		return RandomForestClassifier()
+		return RandomForestClassifier(random_state=random_seed)
 	elif model_name == 'gradient_boosting': 
-		return GradientBoostingClassifier()
+		return GradientBoostingClassifier(random_state=random_seed)
 
 def fit_model(train_data, model_to_fit):
 	'''
@@ -62,7 +62,7 @@ def log_results(model_name, train, fitted_model, scores):
 	'''
 
 	st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-	filename = './logs/' + model_name + '.txt'
+	filename = './modeling/logs/' + model_name + '.txt'
 	with open(filename, 'a+') as f:
 		f.write(st + '\n')
 		f.write('-' * 100 + '\n')
