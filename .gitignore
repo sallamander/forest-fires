@@ -2,3 +2,5 @@
 /data/zipped_files/boundary_files/region/*.xml
 /code/modeling/input_df.pkl
 /data/csvs/merged_daily_weather*
+/data/jsons/weather_*
+
