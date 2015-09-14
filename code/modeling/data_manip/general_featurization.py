@@ -44,7 +44,7 @@ def combine_dfs(df_list):
 			output_df = output_df.append(df)
 		return output_df
 
-def boolean_fire(df): 
+def boolean_col(df, col): 
 	'''
 	Input: Pandas DataFrame
 	Output: Pandas DataFrame
@@ -52,5 +52,5 @@ def boolean_fire(df):
 	Rework the fire variable from strings ('t', 'f') to a boolean to predict off of (True, False).
 	'''
 
-	df = df.replace({'fire_bool': {'f': 0, 't': 1}})
+	df = df.replace({col: {'f': 0, 't': 1}})
 	return df
