@@ -41,7 +41,7 @@ create_inputs: ./makefiles/columns_list.pkl ./makefiles/columns_dict.pkl ./model
 	sh ./modeling/run_models.sh
 	touch .run_models_sentinal
 
-run_model: ./modeling/.run_models_sentinal ./modeling/.create_inputs_sentinal
+run_models: ./modeling/.run_models_sentinal ./modeling/.create_inputs_sentinal
 .PHONY: run_model
 
 
