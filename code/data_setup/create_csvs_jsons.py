@@ -323,6 +323,16 @@ def get_timezone(year, time_string = 'daily'):
 	filepath = '../../data/csvs/merged_' + time_string + '_weather_' + str(year) + '.csv'
 	df = pd.read_csv(filepath)
 
+def unique_lat_long(df): 
+	'''
+	Input: Pandas DataFrame
+	Output: Pandas DataFrame
+
+	Return a pandas dataframe that only contains the lat/long columns, and only those unique pairs. 
+	'''
+	keep_columns = ['lat', 'long']
+	df = df[keep_columns]
+	return df.drop_duplicates()
 
 if __name__ == '__main__': 
 	'''
