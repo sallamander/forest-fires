@@ -5,6 +5,7 @@ import pandas as pd
 import sys
 import pickle
 import numpy as np
+from geonames import GeonamesClient
 from pymongo import MongoClient
 
 def output_detected_fires_csv(year): 
@@ -311,7 +312,7 @@ def merge_dicts(input_dict, hourly):
 
 	return data_dicts
 
-def get_timezone(year, time_string = 'daily'): 
+def add_timezone_to_weather_df(year, time_string = 'daily'): 
 	'''
 	Input: Integer, String
 	Ouptut: DataFrame
@@ -322,17 +323,30 @@ def get_timezone(year, time_string = 'daily'):
 	'''
 	filepath = '../../data/csvs/merged_' + time_string + '_weather_' + str(year) + '.csv'
 	df = pd.read_csv(filepath)
+	df = get_unique_lat_long(df)
+	df = get_timezone_from_lat_long(df)
 
-def unique_lat_long(df): 
+def get_unique_lat_long(df): 
 	'''
 	Input: Pandas DataFrame
 	Output: Pandas DataFrame
 
 	Return a pandas dataframe that only contains the lat/long columns, and only those unique pairs. 
 	'''
-	keep_columns = ['lat', 'long']
+	keep_columns = ['latitude', 'longitude']
 	df = df[keep_columns]
 	return df.drop_duplicates()
+
+def get_timezone_from_lat_long(df): 
+	'''
+	Input: Pandas DataFrame
+	Output: Pandas DataFrame
+
+	For each of the lat/long pairs in the data frame (of which there are only unique ones), get the timezone
+	that is associated with that latitude and longitude. 
+	'''
+
+	pass
 
 if __name__ == '__main__': 
 	'''
