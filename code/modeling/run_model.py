@@ -14,12 +14,13 @@ def get_model(model_name):
 	Input: String
 	Output: Instantiated Model
 	'''
+	random_seed=24
 	if model_name == 'logit': 
-		return LogisticRegression
+		return LogisticRegression(random_state=random_seed)
 	elif model_name == 'random_forest': 
-		return RandomForestClassifier
+		return RandomForestClassifier(random_state=random_seed)
 	elif model_name == 'gradient_boosting': 
-		return GradientBoostingClassifier
+		return GradientBoostingClassifier(random_state=random_seed)
 
 def fit_model(train_data, model_to_fit):
 	'''
@@ -80,9 +81,11 @@ def grid_search(model_name, train_data):
 
 	model = get_model(model_name)
 	grid_parameters = get_grid_params(model_name)
-	grid_search = GridSearchCV(model, grid_parameters, scoring='roc_auc')
-	grid_search.fit()
+	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
+	target, features = get_target_features(train_data)
+	grid_search.fit(features, target)
 
+	return grid_search.best_estimator_
 
 
 def get_grid_params(model_name): 
@@ -91,7 +94,7 @@ def get_grid_params(model_name):
 	Output: Dictionary
 	'''
 	if model_name == 'logit': 
-		return {'penalty': ['l2', 'l1'], 'tol': [0.0001, 0.001, 0.01, 0.00001]}
+		return {'penalty': ['l2', 'l1'], 'tol': [0.0001, 0.001, 0.01]}
 	elif model_name == 'random_forest': 
 		return {'n_estimators': [10, 50, 100, 250 , 500], 
 				'max_depth': [None, 3, 5, 10], 
@@ -133,8 +136,7 @@ if __name__ == '__main__':
 	test = test.drop(keep_list, axis=1)
 	'''
 
-	model = grid_search(model, model_name)
-	fitted_model = fit_model(train, model)
+	fitted_model = grid_search(model_name, train)
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
