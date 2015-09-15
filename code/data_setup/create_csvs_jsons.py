@@ -5,6 +5,8 @@ import pandas as pd
 import sys
 import pickle
 import numpy as np
+from datetime import datetime
+from pytz import timezone
 from pymongo import MongoClient
 
 def output_detected_fires_csv(year): 
@@ -327,7 +329,25 @@ def add_date_to_weather_df(year, time_string = 'daily'):
 	'''
 	filepath = '../../data/csvs/merged_' + time_string + '_weather_' + str(year) + '.csv'
 	df = pd.read_csv(filepath)
+	cols = df.columns.values
+	epoch_time_index = np.where(cols == 'time')[0][0]
+	timezone_index = np.where(cols == 'timezone')[0][0]
+	df['date'] = [return_date(row, epoch_time_index, timezone_index) for row in df.values]
+	df.to_csv(filepath)
 
+def return_date(row, epoch_time_index, timezone_index): 
+	'''
+	Input: Numpy array
+	Output: datetime.datetime Object
+
+	For the given row form the weather_df, use the epoc timestamp and the timezone to return 
+	a date object to input into the DataFrame. 
+	'''
+
+	row_tz = timezone(row[timezone_index])
+	epoch_timestamp = row[epoch_time_index]
+	d = datetime.fromtimestamp(epoch_timestamp, tz=row_tz)
+	return d
 
 if __name__ == '__main__': 
 	'''
@@ -348,6 +368,7 @@ if __name__ == '__main__':
 	'''
 
 	year=2013
-	output_weather_csv(year)
+	# output_weather_csv(year)
+	add_date_to_weather_df(year)
 
 
