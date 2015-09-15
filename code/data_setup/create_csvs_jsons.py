@@ -350,7 +350,28 @@ def return_date(row, epoch_time_index, timezone_index):
 	row_tz = timezone(row[timezone_index])
 	epoch_timestamp = row[epoch_time_index]
 	d = datetime.fromtimestamp(epoch_timestamp, tz=row_tz)
-	return d
+	return d.date()
+
+def merge_prior_weather(n): 
+	'''
+	Input: Integer
+	Output: CSV
+
+	Merge on weather from up to n days_back. If n is two, merge on the past two days of weather information, 
+	if n is three the past three days, etc. 
+	'''
+
+	create_n_back_col(df, n)
+
+def create_n_back_col(df, n): 
+	'''
+	Input: Pandas DataFrame, Integer
+	Output: Pandas DataFrame
+
+	For the given dataframe, create new columns that are the date minus up to n days (i.e. if n is two, create
+	two new columns, one 1 day back and one 2 days back). 
+	'''
+	pass
 
 if __name__ == '__main__': 
 	'''
@@ -369,9 +390,9 @@ if __name__ == '__main__':
 			output_json(year, 'county')
 			output_json(year, 'region')
 		output_weather_csv(year)
-	'''
-
-	for year in [2013, 2014, 2015]: 
 		add_date_to_weather_df(year)
+	'''
+	days_back = 1
+	merge_prior_weather(days_back)
 
 
