@@ -5,7 +5,6 @@ import pandas as pd
 import sys
 import pickle
 import numpy as np
-from geonames import GeonamesClient
 from pymongo import MongoClient
 
 def output_detected_fires_csv(year): 
@@ -272,7 +271,8 @@ def create_weather_df(table, nulls=False, hourly=False):
 								 {'hourly.data': 1, 'latitude': 1, 'longitude': 1, '_id': 0})
 		else: 
 			cursor = table.find({'daily.data': {'$exists': 'true', '$nin': ['null', None]}},
-								 {'daily.data': 1, 'latitude': 1, 'longitude': 1, '_id': 0})
+								 {'daily.data': 1, 'latitude': 1, 'longitude': 1, 'offset' :1,
+								 'timezone': 1, '_id': 0})
 		# This is a little funky here, but the easiest way to put all of the mongo data we want into a 
 		# dataframe while at the same time inputting nulls where columns don't exist is with a list. To
 		# get to that list from multiple documents in the mongo collection, though, we need to get those 
@@ -304,11 +304,15 @@ def merge_dicts(input_dict, hourly):
 	else: 
 		data_dicts = input_dict['daily']['data']
 
+	offset_dict = {'offset': input_dict['offset']}
+	timezone_dict = {'timezone': input_dict['timezone']}
 	lat_dict = {'latitude': input_dict['latitude']}
 	long_dict = {'longitude': input_dict['longitude']}
 	for data_dict in data_dicts: 
 		data_dict.update(lat_dict)
 		data_dict.update(long_dict)
+		data_dict.update(offset_dict)
+		data_dict.update(timezone_dict)
 
 	return data_dicts
 
@@ -323,7 +327,7 @@ def add_date_to_weather_df(year, time_string = 'daily'):
 	'''
 	filepath = '../../data/csvs/merged_' + time_string + '_weather_' + str(year) + '.csv'
 	df = pd.read_csv(filepath)
-	
+
 
 if __name__ == '__main__': 
 	'''
@@ -341,7 +345,9 @@ if __name__ == '__main__':
 			output_json(year, 'state')
 			output_json(year, 'county')
 			output_json(year, 'region')
-		output_weather_csv(year)
 	'''
+
+	year=2013
+	output_weather_csv(year)
 
 
