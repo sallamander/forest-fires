@@ -30,8 +30,7 @@ def fit_model(train_data, model_to_fit):
 	the inputted model. 
 	'''
 
-	target = train_data.fire_bool
-	features = train_data.drop('fire_bool', axis=1)
+	target, features = get_target_features(train_data)
 
 	model_to_fit.fit(features, target)
 	return model_to_fit
@@ -44,8 +43,7 @@ def predict_with_model(test_data, model):
 	Using the fitted model, make predictions with the test data and return those predictions. 
 	'''
 
-	target = test_data.fire_bool
-	features = test_data.drop('fire_bool', axis=1)
+	target, features = get_target_features(test_data)
 
 	predictions, predicted_probs = model.predict(features), model.predict_proba(features)
 
@@ -103,6 +101,19 @@ def get_grid_params(model_name):
 				'n_estimators': [100, 250, 500], 
 				'max_depth': [None, 3, 5, 10], 
 				'max_features': ['auto', None, 'log2']}
+
+def get_target_features(df): 
+	'''
+	Input: Pandas DataFrame
+	Output: Numpy Array, Numpy Array	
+
+	For the given dataframe, grab the target and features (fire bool versus all else) and return them. 
+	'''
+
+	target = df.fire_bool
+	features = df.drop('fire_bool', axis=1)
+	return target, features
+
 
 if __name__ == '__main__': 
 	# sys.argv[1] will hold the name of the model we want to run (logit, random forest, etc.), 
