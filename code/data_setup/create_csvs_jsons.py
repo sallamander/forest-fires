@@ -175,7 +175,7 @@ def get_fire_centroids_csv(year):
 	save_filepath = open_filepath[:-4] + '_lightweight.csv'
 	lightweight_df.to_csv(save_filepath, index=False)
 
-def output_weather_csvs(year): 
+def output_weather_csv(year): 
 	'''
 	Input: Integer
 	Output: CSV
@@ -326,8 +326,7 @@ if __name__ == '__main__':
 			output_json(year, 'state')
 			output_json(year, 'county')
 			output_json(year, 'region')
+		output_weather_csv(year)
 	'''
 
-	for year in [2013, 2014, 2015]: 
-		output_weather_csvs(year)	
 
