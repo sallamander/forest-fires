@@ -295,7 +295,8 @@ def merge_dicts(input_dict, hourly):
 
 	Traverse the dictionary and grab the latitude and longitude, as well as the individual hourly data 
 	dictionaries. Update each of the individual hourly data dictionaries (24 of them) with the latitude
-	and longitude. Do the same for the daily data dictionaries (of which there are only 1 per day). 
+	and longitude. Do the same for the daily data dictionaries (of which there are only 1 per day). This 
+	way it'll be easier to put all this in a dataframe. 
 	'''
 	if hourly: 
 		data_dicts = input_dict['hourly']['data']
@@ -309,6 +310,19 @@ def merge_dicts(input_dict, hourly):
 		data_dict.update(long_dict)
 
 	return data_dicts
+
+def get_timezone(year, time_string = 'daily'): 
+	'''
+	Input: Integer, String
+	Ouptut: DataFrame
+
+	For the given years weather data set, use the lat/long to get the timezone for that 
+	observation. We'll then use that timezone to get the actual time associated with the epoch
+	timestamp in the data. 
+	'''
+	filepath = '../../data/csvs/merged_' + time_string + '_weather_' + str(year) + '.csv'
+	df = pd.read_csv(filepath)
+
 
 if __name__ == '__main__': 
 	'''
