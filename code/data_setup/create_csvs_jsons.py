@@ -201,11 +201,11 @@ def query_mongo_table(year):
 
 	table = get_mongo_table(year)
 	# query_for_hourly(table)
-	query_for_daily(table)
+	query_for_daily(table, year)
 
-def query_for_daily(table): 
+def query_for_daily(table, year): 
 	'''
-	Input: Instantiated Mongo Table
+	Input: Instantiated Mongo Table, Integer
 	Output: CSV
 
 	Query the mongo table for the daily data, parse it, put it into a pandas DF, and then store it 
@@ -213,8 +213,11 @@ def query_for_daily(table):
 	'''
 
 	non_nulls_daily_df = create_weather_df(table, nulls=False, hourly=False)
+	if year == 2015: 
+		non_nulls_daily_df.drop('ozone', axis=1, inplace=True)
 
-	non_nulls_daily_df.to_csv('../../data/csvs/merged_daily_weather_' + str(year) + '.csv', encoding='utf-8')
+	non_nulls_daily_df.to_csv('../../data/csvs/merged_daily_weather_' + str(year) + '.csv', encoding='utf-8', 
+								index=False)
 
 
 def query_for_hourly(table): 
@@ -233,7 +236,7 @@ def query_for_hourly(table):
 	non_nulls_hourly_df['hourly_data'] = True
 
 	weather_df = nulls_hourly_df.append(non_nulls_hourly_df)
-	weather_df.to_csv('../../data/csvs/merged_hourly_weather_' + str(year) + '.csv')
+	weather_df.to_csv('../../data/csvs/merged_hourly_weather_' + str(year) + '.csv', index=False)
 
 	'''
 	Punting on this for now - some lat/longs return 23 and 25 hours worth of data for a day (instead of 24), and
@@ -333,7 +336,7 @@ def add_date_to_weather_df(year, time_string = 'daily'):
 	epoch_time_index = np.where(cols == 'time')[0][0]
 	timezone_index = np.where(cols == 'timezone')[0][0]
 	df['date'] = [return_date(row, epoch_time_index, timezone_index) for row in df.values]
-	df.to_csv(filepath)
+	df.to_csv(filepath, index=False)
 
 def return_date(row, epoch_time_index, timezone_index): 
 	'''
@@ -365,10 +368,10 @@ if __name__ == '__main__':
 			output_json(year, 'state')
 			output_json(year, 'county')
 			output_json(year, 'region')
+		output_weather_csv(year)
 	'''
 
-	year=2013
-	# output_weather_csv(year)
-	add_date_to_weather_df(year)
+	for year in [2013, 2014, 2015]: 
+		add_date_to_weather_df(year)
 
 
