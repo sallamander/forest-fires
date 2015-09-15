@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
 from data_manip.tt_splits import tt_split_all_less60
+from sklearn.grid_search import GridSearchCV
 
 
 def get_model(model_name): 
@@ -70,7 +71,7 @@ def log_results(model_name, train, fitted_model, scores):
 		f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
 		f.write('Scores: ' + str(scores) + '\n' * 2)
 
-def grid_search(model_name): 
+def grid_search(model_name, train_data): 
 	'''
 	Input: String
 	Output: Best fit model from grid search parameters. 
@@ -81,13 +82,27 @@ def grid_search(model_name):
 
 	model = get_model(model_name)
 	grid_parameters = get_grid_params(model_name)
+	grid_search = GridSearchCV(model, grid_parameters, scoring='roc_auc')
+	grid_search.fit()
+
+
 
 def get_grid_params(model_name): 
 	'''
 	Input: String
 	Output: Dictionary
 	'''
-	pass
+	if model_name == 'logit': 
+		return {'penalty': ['l2', 'l1'], 'tol': [0.0001, 0.001, 0.01, 0.00001]}
+	elif model_name == 'random_forest': 
+		return {'n_estimators': [10, 50, 100, 250 , 500], 
+				'max_depth': [None, 3, 5, 10], 
+				'max_features': ['auto', None, 'log2']}
+	elif model_name == 'gradient_boosting': 
+		return {'learning_rate': [0.01, 0.1, 0.001], 
+				'n_estimators': [100, 250, 500], 
+				'max_depth': [None, 3, 5, 10], 
+				'max_features': ['auto', None, 'log2']}
 
 if __name__ == '__main__': 
 	# sys.argv[1] will hold the name of the model we want to run (logit, random forest, etc.), 
