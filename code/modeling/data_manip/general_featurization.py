@@ -10,12 +10,12 @@ def grab_columns(df, columns_list):
 
 	return df[columns_list]
 
-def return_all_dummies(df, col): 
+def return_all_dummies(df, col, val_dict): 
 	'''
-	Input: Pandas DataFrame, String
+	Input: Pandas DataFrame, String, Dictionary
 	Ouput: Pandas DataFrame
 
-	Take in the list of column names, and for each column, dummy it, merge those dummies back onto the 
+	Take in the column name, and for that column, dummy it, merge those dummies back onto the 
 	DataFrame, delete the original column (we won't want it in our model anymore), and then output the 
 	results. 
 	'''
@@ -27,6 +27,26 @@ def return_all_dummies(df, col):
 	df = df.drop(col, axis=1)
 
 	return df
+
+def return_n(df, col, val_dict): 
+	'''
+	Input: Pandas DataFrame, String, Dictionary
+	Output: Pandas DataFrame
+
+	For the column inputted, take it and dummy it, and then most and/or least common dummies. (i.e. if 
+	Montana has the most observations, then it is the most common state, and I want to return that). 
+	'''
+	n = val_dict['n']
+	dummies = pd.get_dummies(df[col])
+	dummies_count = df.groupby(col).count()['lat']
+
+	if val_dict['dummies_to_grab'] == 'top': 
+		names = dummies_count.nlargest(n).index	
+	if val_dict['dummies_to_grab'] == 'bottom': 
+		names = dummies_count.nsmallest(n).index
+	if val_dict['dummies_to_grab'] == 'both': 
+		names = list(dummies_count.nlargest(n).index)
+		names.extend(list(dummies_count.nsmallest(n).index))
 
 def combine_dfs(df_list): 
 	'''
@@ -46,9 +66,9 @@ def combine_dfs(df_list):
 			output_df = output_df.append(df)
 		return output_df
 
-def boolean_col(df, col): 
+def boolean_col(df, col, val_dict): 
 	'''
-	Input: Pandas DataFrame
+	Input: Pandas DataFrame, String, Dictionary
 	Output: Pandas DataFrame
 
 	Rework the fire variable from strings ('t', 'f') to a boolean to predict off of (True, False).

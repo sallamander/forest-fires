@@ -2,7 +2,7 @@ import pandas as pd
 import sys
 import pickle
 
-from data_manip.general_featurization import combine_dfs, grab_columns, return_all_dummies, boolean_col
+from data_manip.general_featurization import combine_dfs, grab_columns, return_all_dummies, boolean_col, return_n
 from data_manip.time_featurization import break_time_col
 
 
@@ -26,10 +26,10 @@ if __name__ == '__main__':
 	df = grab_columns(df, columns_list)
 	df = break_time_col(df, 'date')
 
-	featurization_dict = {'all_dummies': return_all_dummies, 'bool_col': boolean_col}
+	featurization_dict = {'all_dummies': return_all_dummies, 'bool_col': boolean_col, 'return_n': return_n}
 
 	for k, v in columns_dict.iteritems(): 
-		df = featurization_dict[v](df, k)
+		df = featurization_dict[v['transformation']](df, k, v)
 
 	with open('./modeling/input_df.pkl', 'w+') as f: 
 		pickle.dump(df, f)

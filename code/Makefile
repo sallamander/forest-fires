@@ -45,11 +45,11 @@ run_models: ./modeling/.run_models_sentinal ./modeling/.create_inputs_sentinal
 .PHONY: run_model
 
 ./modeling/.run_rf_sentinal: ./modeling/.create_inputs_sentinal
-	python ./modeling/run_model.py random_forest input_df.pkl
+	python ./modeling/run_model.py random_forest ./modeling/input_df.pkl
 	touch ./modeling/.run_rf_sentinal
 
-run_rf: ./modeling/.run_models_sentinal ./modeling/.create_inputs_sentinal
-.PHONY: run_model
+run_rf: ./modeling/.create_inputs_sentinal ./modeling/.run_rf_sentinal
+.PHONY: run_rf
 
 
 

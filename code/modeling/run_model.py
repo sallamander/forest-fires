@@ -80,6 +80,15 @@ if __name__ == '__main__':
 		input_df = pickle.load(f)
 	
 	train, test = tt_split_all_less60(input_df)
+
+	'''
+	keep_list = ['conf', 'fire_bool']
+	train = train[keep_list]
+	test = test[keep_list]
+	train = train.drop(keep_list, axis=1)
+	test = test.drop(keep_list, axis=1)
+	'''
+
 	model = get_model(model_name)
 	fitted_model = fit_model(train, model)
 	preds, preds_probs = predict_with_model(test, fitted_model)

@@ -1,14 +1,4 @@
-2015-09-14 14:23:32
-----------------------------------------------------------------------------------------------------
-Model Run: gradient_boosting
-
-Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
-
-Features: lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
-
-Scores: {'recall_score': 0.15907373953030055, 'accuracy_score': 0.62112155230685628, 'precision_score': 0.6187555896256548, 'roc_auc_score': 0.71358762124741115}
-
-2015-09-14 15:45:20
+2015-09-15 00:51:15
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
 
@@ -16,9 +6,10 @@ Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0
 
 Features: conf, fire_bool
 
-Scores: {'recall_score': 0.0, 'accuracy_score': 0.59648239207941789, 'precision_score': 0.0, 'roc_auc_score': 0.61452445919699195}
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.59539915212566619, 'precision_score': 0.0, 'roc_auc_score': 0.61392348409240149}
 
-2015-09-14 15:48:35
+
+2015-09-15 00:57:24
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
 
@@ -26,10 +17,21 @@ Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0
 
 Features: lat, long, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.097651502709804563, 'accuracy_score': 0.58704555395035052, 'precision_score': 0.44653048963652747, 'roc_auc_score': 0.69633661840229988}
+Scores: {'recall_score': 0.15572343570372804, 'accuracy_score': 0.59947904899863114, 'precision_score': 0.5167302452316076, 'roc_auc_score': 0.69942433483114463}
 
 
-2015-09-14 18:14:41
+2015-09-15 01:00:25
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.17001149614058136, 'accuracy_score': 0.6201177455579624, 'precision_score': 0.60951483749411206, 'roc_auc_score': 0.71664358376946147}
+
+
+2015-09-15 01:59:54
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
 
@@ -37,9 +39,9 @@ Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0
 
 Features: frp, lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.1880440137953687, 'accuracy_score': 0.61780805577277365, 'precision_score': 0.58174982217254345, 'roc_auc_score': 0.71743373618700912}
+Scores: {'recall_score': 0.18719001478075217, 'accuracy_score': 0.61711430356027486, 'precision_score': 0.58367472347398608, 'roc_auc_score': 0.71456887486011789}
 
-2015-09-14 18:28:24
+2015-09-15 02:03:15
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
 
@@ -47,5 +49,17 @@ Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0
 
 Features: frp, lat, long, conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.22860896698965347, 'accuracy_score': 0.61929250222004273, 'precision_score': 0.57053856873514219, 'roc_auc_score': 0.71573029204944016}
+Scores: {'recall_score': 0.17914271637378881, 'accuracy_score': 0.61255598229829755, 'precision_score': 0.56712072371841526, 'roc_auc_score': 0.71714204751595878}
+
+2015-09-15 02:05:51
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: frp, conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.1300377730333388, 'accuracy_score': 0.5853389503900488, 'precision_score': 0.45636887608069165, 'roc_auc_score': 0.6556255612137063}
+
+
 
