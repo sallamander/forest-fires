@@ -7,7 +7,10 @@ sS'month'
 p3
 S'all_dummies'
 p4
-sS'year'
+sS'state_name'
 p5
+g4
+sS'year'
+p6
 g4
 s.
