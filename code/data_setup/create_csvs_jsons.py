@@ -311,8 +311,8 @@ def merge_dicts(input_dict, hourly):
 
 	offset_dict = {'offset': input_dict['offset']}
 	timezone_dict = {'timezone': input_dict['timezone']}
-	lat_dict = {'latitude': input_dict['latitude']}
-	long_dict = {'longitude': input_dict['longitude']}
+	lat_dict = {'lat': input_dict['latitude']}
+	long_dict = {'long': input_dict['longitude']}
 	for data_dict in data_dicts: 
 		data_dict.update(lat_dict)
 		data_dict.update(long_dict)
@@ -363,11 +363,12 @@ def merge_prior_weather(n, year):
 	fires_df_filepath = '../../data/csvs/fires_' + str(year) + '.csv'
 	weather_df_filespath = '../../data/csvs/merged_daily_weather_' + str(year) + '.csv'
 	fires_df, weather_df = pd.read_csv(fires_df_filepath), pd.read_csv(weather_df_filespath)
-	fires_df, weather_df = rework_date_column(fires_df, 'date'), rework_date_column(weathers_df, 'date')
-	import pdb
-	pdb.set_trace()
-
 	fires_df = create_n_back_col(fires_df, n)
+	for days_back in xrange(1, n + 1): 
+		fires_df, weather_df = rework_date_column(fires_df, 'day_less_1'), rework_date_column(weather_df, 'date')
+		fires_df = fires_df.merge(weather_df, how='left', on=['lat', 'long', 'date_for_merge'], suffixes=('_fire', '_back_' + str(n)))
+
+	fires_df.to_csv(fires_df_filepath, index=False)
 
 def create_n_back_col(df, n): 
 	'''
@@ -397,7 +398,7 @@ def rework_date_column(df, col_name):
 	the same. 
 	'''
 	df['temp_date'] = pd.to_datetime(df[col_name])
-	df['date_for_merge'] = [d.date() for d in df['temp_date'].values]
+	df['date_for_merge'] = [d.date() for d in df['temp_date']]
 	df.drop('temp_date', axis=1, inplace=True)
 	return df
 
@@ -417,11 +418,15 @@ if __name__ == '__main__':
 			output_json(year, 'state')
 			output_json(year, 'county')
 			output_json(year, 'region')
+	'''
+
+	'''
+	for year in [2013, 2014, 2015]: 
 		output_weather_csv(year)
 		add_date_to_weather_df(year)
 	'''
-	year = 2013
-	days_back = 1
-	merge_prior_weather(days_back, year)
+	for year in [2013, 2014, 2015]:
+		days_back = 1
+		merge_prior_weather(days_back, year)
 
 
