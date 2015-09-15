@@ -44,5 +44,13 @@ create_inputs: ./makefiles/columns_list.pkl ./makefiles/columns_dict.pkl ./model
 run_models: ./modeling/.run_models_sentinal ./modeling/.create_inputs_sentinal
 .PHONY: run_model
 
+./modeling/.run_rf_sentinal: ./modeling/.create_inputs_sentinal
+	python ./modeling/run_model.py random_forest input_df.pkl
+	touch ./modeling/.run_rf_sentinal
+
+run_rf: ./modeling/.run_models_sentinal ./modeling/.create_inputs_sentinal
+.PHONY: run_model
+
+
 
 	
