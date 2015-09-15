@@ -5,7 +5,7 @@ import pandas as pd
 import sys
 import pickle
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta, date
 from pytz import timezone
 from pymongo import MongoClient
 
@@ -352,16 +352,20 @@ def return_date(row, epoch_time_index, timezone_index):
 	d = datetime.fromtimestamp(epoch_timestamp, tz=row_tz)
 	return d.date()
 
-def merge_prior_weather(n): 
+def merge_prior_weather(n, year): 
 	'''
-	Input: Integer
+	Input: Integer, Integer
 	Output: CSV
 
 	Merge on weather from up to n days_back. If n is two, merge on the past two days of weather information, 
 	if n is three the past three days, etc. 
 	'''
+	fires_df_filepath = '../../data/csvs/fires_' + str(year) + '.csv'
+	weather_df_filespath = '../../data/csvs/merged_daily_weather_' + str(year) + '.csv'
+	fires_df, weather_df = pd.read_csv(fires_df_filepath), pd.read_csv(weather_df_filespath)
+	
 
-	create_n_back_col(df, n)
+	fires_df = create_n_back_col(fires_df, n)
 
 def create_n_back_col(df, n): 
 	'''
@@ -371,7 +375,13 @@ def create_n_back_col(df, n):
 	For the given dataframe, create new columns that are the date minus up to n days (i.e. if n is two, create
 	two new columns, one 1 day back and one 2 days back). 
 	'''
-	pass
+	df['date'] = pd.to_datetime(df.date)
+	for days_back in xrange(1, n+1): 
+		col_name = 'day_less_' + str(days_back)
+		day_string = str(days_back) + ' days'
+		df[col_name] = df.date.values - pd.Timedelta(day_string)
+
+	return df
 
 if __name__ == '__main__': 
 	'''
@@ -392,7 +402,8 @@ if __name__ == '__main__':
 		output_weather_csv(year)
 		add_date_to_weather_df(year)
 	'''
+	year = 2013
 	days_back = 1
-	merge_prior_weather(days_back)
+	merge_prior_weather(days_back, year)
 
 
