@@ -363,7 +363,9 @@ def merge_prior_weather(n, year):
 	fires_df_filepath = '../../data/csvs/fires_' + str(year) + '.csv'
 	weather_df_filespath = '../../data/csvs/merged_daily_weather_' + str(year) + '.csv'
 	fires_df, weather_df = pd.read_csv(fires_df_filepath), pd.read_csv(weather_df_filespath)
-	
+	fires_df, weather_df = rework_date_column(fires_df, 'date'), rework_date_column(weathers_df, 'date')
+	import pdb
+	pdb.set_trace()
 
 	fires_df = create_n_back_col(fires_df, n)
 
@@ -375,12 +377,28 @@ def create_n_back_col(df, n):
 	For the given dataframe, create new columns that are the date minus up to n days (i.e. if n is two, create
 	two new columns, one 1 day back and one 2 days back). 
 	'''
-	df['date'] = pd.to_datetime(df.date)
+	# I'm creating and then dropping this column because late work relys on the date column remaining 
+	# the same. 
+	df['date_for_merge'] = pd.to_datetime(df.date)
 	for days_back in xrange(1, n+1): 
 		col_name = 'day_less_' + str(days_back)
 		day_string = str(days_back) + ' days'
-		df[col_name] = df.date.values - pd.Timedelta(day_string)
+		df[col_name] = df['date_for_merge'].values - pd.Timedelta(day_string)
+	df.drop('date_for_merge', axis=1, inplace=True)
 
+	return df
+
+def rework_date_column(df, col_name): 
+	'''
+	Input: Pandas DataFrame, String
+	Output: Pandas DataFrame
+
+	Create a new column to merge the dates for the fire and weather data, making sure that the are formatted
+	the same. 
+	'''
+	df['temp_date'] = pd.to_datetime(df[col_name])
+	df['date_for_merge'] = [d.date() for d in df['temp_date'].values]
+	df.drop('temp_date', axis=1, inplace=True)
 	return df
 
 if __name__ == '__main__': 
