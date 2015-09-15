@@ -13,13 +13,12 @@ def get_model(model_name):
 	Input: String
 	Output: Instantiated Model
 	'''
-	random_seed = 24
 	if model_name == 'logit': 
-		return LogisticRegression(random_state=random_seed)
+		return LogisticRegression
 	elif model_name == 'random_forest': 
-		return RandomForestClassifier(random_state=random_seed)
+		return RandomForestClassifier
 	elif model_name == 'gradient_boosting': 
-		return GradientBoostingClassifier(random_state=random_seed)
+		return GradientBoostingClassifier
 
 def fit_model(train_data, model_to_fit):
 	'''
@@ -71,6 +70,25 @@ def log_results(model_name, train, fitted_model, scores):
 		f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
 		f.write('Scores: ' + str(scores) + '\n' * 2)
 
+def grid_search(model_name): 
+	'''
+	Input: String
+	Output: Best fit model from grid search parameters. 
+
+	For the given model name, grab a model and the relevant grid parameters, perform a grid search 
+	with those grid parameters, and return the best model. 
+	'''
+
+	model = get_model(model_name)
+	grid_parameters = get_grid_params(model_name)
+
+def get_grid_params(model_name): 
+	'''
+	Input: String
+	Output: Dictionary
+	'''
+	pass
+
 if __name__ == '__main__': 
 	# sys.argv[1] will hold the name of the model we want to run (logit, random forest, etc.), 
 	# and sys.argv[2] will hold our input dataframe (data will all the features and target). 
@@ -89,7 +107,7 @@ if __name__ == '__main__':
 	test = test.drop(keep_list, axis=1)
 	'''
 
-	model = get_model(model_name)
+	model = grid_search(model, model_name)
 	fitted_model = fit_model(train, model)
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
