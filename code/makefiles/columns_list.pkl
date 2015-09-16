@@ -1,12 +1,10 @@
 (lp0
-S'frp'
+S'date_fire'
 p1
-aS'date_fire'
+aS'conf'
 p2
-aS'lat'
-p3
-aS'long'
-p4
 aS'fire_bool'
-p5
+p3
+aS'state_name'
+p4
 a.

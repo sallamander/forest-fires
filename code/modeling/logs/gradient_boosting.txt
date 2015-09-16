@@ -48,3 +48,43 @@ Features: frp, lat, long, fire_bool, year_2013, year_2014, year_2015, month_01, 
 
 Scores: {'recall_score': 0.15990014452765733, 'accuracy_score': 0.61240196535332414, 'precision_score': 0.57945482680633253, 'roc_auc_score': 0.70565366363490367}
 
+2015-09-16 00:47:18
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.12734857443174352, 'accuracy_score': 0.60955246934128704, 'precision_score': 0.5845017337554651, 'roc_auc_score': 0.71396322866831441}
+
+2015-09-16 01:19:11
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.05, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.1560898699251084, 'accuracy_score': 0.5794996071956432, 'precision_score': 0.44661654135338347, 'roc_auc_score': 0.65599569011733516}
+
+2015-09-16 01:56:28
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: conf, fire_bool, year_2013, year_2014, year_2015, California, Washington, Florida, Idaho, Georgia, Oregon, Texas, Kansas, Alabama, Louisiana, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.078340559716200242, 'accuracy_score': 0.58856739590684548, 'precision_score': 0.45645933014354068, 'roc_auc_score': 0.68136895729265057}
+
+2015-09-16 02:15:27
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: conf, fire_bool, year_2013, year_2014, year_2015, California, Washington, Florida, Idaho, Georgia, Oregon, Texas, Kansas, Alabama, Louisiana, Vermont, Rhode Island, Connecticut, Delaware, Maine, New Hampshire, Massachusetts, Maryland, New York, New Jersey, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.078340559716200242, 'accuracy_score': 0.58856739590684548, 'precision_score': 0.45645933014354068, 'roc_auc_score': 0.68137116466062753}
+

@@ -38,7 +38,8 @@ def return_n(df, col, val_dict):
 	'''
 	n = val_dict['n']
 	dummies = pd.get_dummies(df[col])
-	dummies_count = df.groupby(col).count()['lat']
+	dummies_count = df.groupby(col).count()
+	dummies_count = dummies_count[dummies_count.columns[0]]
 
 	if val_dict['dummies_to_grab'] == 'top': 
 		names = dummies_count.nlargest(n).index	
@@ -47,6 +48,12 @@ def return_n(df, col, val_dict):
 	if val_dict['dummies_to_grab'] == 'both': 
 		names = list(dummies_count.nlargest(n).index)
 		names.extend(list(dummies_count.nsmallest(n).index))
+
+	for dummy_col in names: 
+		df[dummy_col] = dummies[dummy_col]
+
+	df = df.drop(col, axis=1)	
+	return df
 
 def combine_dfs(df_list): 
 	'''
