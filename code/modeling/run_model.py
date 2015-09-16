@@ -94,16 +94,12 @@ def get_grid_params(model_name):
 	Output: Dictionary
 	'''
 	if model_name == 'logit': 
-		return {'penalty': ['l2', 'l1'], 'tol': [0.0001, 0.001, 0.01]}
+		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 10]}
 	elif model_name == 'random_forest': 
-		return {'n_estimators': [10, 50, 100, 250 , 500], 
-				'max_depth': [None, 3, 5, 10], 
-				'max_features': ['auto', None, 'log2']}
+		return {'n_estimators': [500], 
+				'max_depth': [3, 5, 10, 20]}
 	elif model_name == 'gradient_boosting': 
-		return {'learning_rate': [0.01, 0.1, 0.001], 
-				'n_estimators': [100, 250, 500], 
-				'max_depth': [None, 3, 5, 10], 
-				'max_features': ['auto', None, 'log2']}
+		return {'learning_rate': [0.01, 0.05, 0.1]}
 
 def get_target_features(df): 
 	'''
@@ -129,18 +125,17 @@ if __name__ == '__main__':
 	train, test = tt_split_all_less60(input_df)
 
 	'''
-	keep_list = ['conf', 'fire_bool']
+	keep_list = ['conf']
 	train = train[keep_list]
 	test = test[keep_list]
 	train = train.drop(keep_list, axis=1)
 	test = test.drop(keep_list, axis=1)
 	'''
-
+	
 	fitted_model = grid_search(model_name, train)
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
-
 
 
 

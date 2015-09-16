@@ -1,72 +1,50 @@
-2015-09-15 00:51:07
+2015-09-15 22:02:54
 ----------------------------------------------------------------------------------------------------
 Model Run: logit
 
-Params: {'C': 1.0, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
 
 Features: conf, fire_bool
 
 Scores: {'recall_score': 0.0, 'accuracy_score': 0.59539915212566619, 'precision_score': 0.0, 'roc_auc_score': 0.59388268509908404}
 
-2015-09-15 00:58:40
+2015-09-15 22:52:38
 ----------------------------------------------------------------------------------------------------
 Model Run: logit
 
-Params: {'C': 1.0, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+Params: {'C': 10, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l1', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
 
 Features: lat, long, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.0, 'accuracy_score': 0.59539915212566619, 'precision_score': 0.0, 'roc_auc_score': 0.68223419666301433}
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.5953858625593047, 'precision_score': 0.0, 'roc_auc_score': 0.6830880915718216}
 
-2015-09-15 00:59:57
+2015-09-15 23:13:32
 ----------------------------------------------------------------------------------------------------
 Model Run: logit
 
-Params: {'C': 1.0, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+Params: {'C': 10, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l1', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
 
 Features: lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.017638364263425851, 'accuracy_score': 0.59550546865655773, 'precision_score': 0.50375234521575984, 'roc_auc_score': 0.68623871679062265}
+Scores: {'recall_score': 0.020068976843488257, 'accuracy_score': 0.59590415564740118, 'precision_score': 0.51604729729729726, 'roc_auc_score': 0.68650338858177296}
 
-
-2015-09-15 01:59:23
+2015-09-15 23:47:31
 ----------------------------------------------------------------------------------------------------
 Model Run: logit
 
-Params: {'C': 1.0, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+Params: {'C': 10, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l1', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
 
 Features: frp, lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.015404828379044179, 'accuracy_score': 0.59638258003641342, 'precision_score': 0.54282407407407407, 'roc_auc_score': 0.68763931859111493}
+Scores: {'recall_score': 0.0144194449006405, 'accuracy_score': 0.59638258003641342, 'precision_score': 0.54601990049751248, 'roc_auc_score': 0.68784968087427245}
 
-2015-09-15 02:01:46
+2015-09-16 00:15:03
 ----------------------------------------------------------------------------------------------------
 Model Run: logit
 
-Params: {'C': 1.0, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+Params: {'C': 10, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l1', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
 
-Features: frp, lat, long, conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+Features: frp, lat, long, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.0089669896534734766, 'accuracy_score': 0.59670152962908818, 'precision_score': 0.609375, 'roc_auc_score': 0.69850265457716709}
-
-2015-09-15 02:04:26
-----------------------------------------------------------------------------------------------------
-Model Run: logit
-
-Params: {'C': 1.0, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
-
-Features: frp, conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
-
-Scores: {'recall_score': 0.0034488421744128758, 'accuracy_score': 0.59570481215197946, 'precision_score': 0.56149732620320858, 'roc_auc_score': 0.7003991852943301}
-
-
-2015-09-15 11:41:52
-----------------------------------------------------------------------------------------------------
-Model Run: logit
-
-Params: {'C': 1.0, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l1', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.01, 'solver': 'liblinear', 'class_weight': None}
-
-Features: frp, lat, long, conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
-
-Scores: {'recall_score': 0.025685662670389225, 'accuracy_score': 0.59259505362340026, 'precision_score': 0.44056338028169012, 'roc_auc_score': 0.69561046579805619}
+Scores: {'recall_score': 0.0035474970437524636, 'accuracy_score': 0.59514520445799657, 'precision_score': 0.61016949152542377, 'roc_auc_score': 0.68524145267767755}
 

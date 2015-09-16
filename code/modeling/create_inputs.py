@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
 	df = combine_dfs(dfs_list)
 	df = grab_columns(df, columns_list)
-	df = break_time_col(df, 'date')
+	df = break_time_col(df, 'date_fire')
 
 	featurization_dict = {'all_dummies': return_all_dummies, 'bool_col': boolean_col, 'return_n': return_n}
 

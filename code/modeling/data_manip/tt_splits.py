@@ -10,13 +10,13 @@ def tt_split_all_less60(df):
 	data but the most recent 60 days
 	'''
 
-	df['date'] = pd.to_datetime(df['date'])
+	df['date_fire'] = pd.to_datetime(df['date_fire'])
 	today = date.today()
 	today_less60 = today - pd.Timedelta(days=60)
-	train = df.query('date < @today_less60')
-	test = df.query('date >= @today_less60')
-	del train['date']
-	del test['date']
+	train = df.query('date_fire < @today_less60')
+	test = df.query('date_fire >= @today_less60')
+	del train['date_fire']
+	del test['date_fire']
 
 	return train, test
 
