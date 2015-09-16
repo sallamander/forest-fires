@@ -3,4 +3,6 @@
 /code/modeling/input_df.pkl
 /data/csvs/merged_daily_weather*
 /data/jsons/weather_*
-data/zipped_files/boundary_files/fire_perimeters/2015.zip/._2015_perimeters_dd83.shp
+/data/csvs/fires_*
+/data/zipped_files/boundary_files/fire_perimeters/2015.zip/._2015_perimeters_dd83.shp
+
