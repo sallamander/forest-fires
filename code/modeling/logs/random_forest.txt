@@ -1,4 +1,4 @@
-2015-09-15 22:13:40
+2015-09-16 22:07:13
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
@@ -6,9 +6,19 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 
 Features: conf, fire_bool
 
-Scores: {'recall_score': 0.00013138446378715716, 'accuracy_score': 0.59537257299294322, 'precision_score': 0.40000000000000002, 'roc_auc_score': 0.61379062785106486}
+Scores: {'recall_score': 0.00013138877939823938, 'accuracy_score': 0.5945992729790549, 'precision_score': 0.40000000000000002, 'roc_auc_score': 0.61325466413617102}
 
-2015-09-15 23:04:47
+2015-09-16 22:42:26
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
+
+Features: conf, frp, fire_bool
+
+Scores: {'recall_score': 0.034522401786887397, 'accuracy_score': 0.59775502323537633, 'precision_score': 0.56293519014461701, 'roc_auc_score': 0.63709812784390962}
+
+2015-09-16 23:05:15
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
@@ -16,9 +26,9 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 
 Features: lat, long, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.0, 'accuracy_score': 0.59539915212566619, 'precision_score': 0.0, 'roc_auc_score': 0.70974697493628447}
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.5946259037829057, 'precision_score': 0.0, 'roc_auc_score': 0.70691503394475896}
 
-2015-09-15 23:26:32
+2015-09-17 00:01:28
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
@@ -26,65 +36,53 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 
 Features: lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.012448677943833142, 'accuracy_score': 0.59663508179728098, 'precision_score': 0.56992481203007517, 'roc_auc_score': 0.7197434431100499}
+Scores: {'recall_score': 0.021777690185258179, 'accuracy_score': 0.59898004021251383, 'precision_score': 0.66366366366366369, 'roc_auc_score': 0.71886978989184458}
 
-2015-09-16 00:01:04
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+2015-09-17 00:58:05
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
 Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
 
-Features: frp, lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+Features: lat, long, conf, frp, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.040072261455082935, 'accuracy_score': 0.60183130224460779, 'precision_score': 0.62372188139059304, 'roc_auc_score': 0.71753761073458178}
+Scores: {'recall_score': 0.032882202220616254, 'accuracy_score': 0.59835310760853611, 'precision_score': 0.60483383685800607, 'roc_auc_score': 0.71788628966012202}
 
-2015-09-16 00:29:13
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+2015-09-17 01:32:09
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
 Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
 
-Features: frp, lat, long, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+Features: lat, long, conf, frp, fire_bool, year_2013, year_2014, year_2015, California, Florida, Georgia, Idaho, Texas, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.0011496518197345947, 'accuracy_score': 0.59498541963489171, 'precision_score': 0.81395348837209303, 'roc_auc_score': 0.70863973748641329}
+Scores: {'recall_score': 0.010413244859076276, 'accuracy_score': 0.59266772544675628, 'precision_score': 0.44460028050490885, 'roc_auc_score': 0.71324538984065322}
 
-2015-09-16 00:58:12
+2015-09-17 01:56:25
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
 Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
 
-Features: lat, long, conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+Features: lat, long, conf, frp, fire_bool, year_2013, year_2014, year_2015, California, Florida, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.0013467349888319539, 'accuracy_score': 0.5950253658406679, 'precision_score': 0.78846153846153844, 'roc_auc_score': 0.70966613123172029}
+Scores: {'recall_score': 0.0098548058603245524, 'accuracy_score': 0.59241415206395387, 'precision_score': 0.42979942693409739, 'roc_auc_score': 0.71589148654928692}
 
-2015-09-16 01:29:59
-----------------------------------------------------------------------------------------------------
-Model Run: random_forest
-
-Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 20, 'class_weight': None}
-
-Features: conf, fire_bool, year_2013, year_2014, year_2015, state_name_Alabama, state_name_Arizona, state_name_Arkansas, state_name_California, state_name_Colorado, state_name_Connecticut, state_name_Delaware, state_name_Florida, state_name_Georgia, state_name_Idaho, state_name_Illinois, state_name_Indiana, state_name_Iowa, state_name_Kansas, state_name_Kentucky, state_name_Louisiana, state_name_Maine, state_name_Maryland, state_name_Massachusetts, state_name_Michigan, state_name_Minnesota, state_name_Mississippi, state_name_Missouri, state_name_Montana, state_name_Nebraska, state_name_Nevada, state_name_New Hampshire, state_name_New Jersey, state_name_New Mexico, state_name_New York, state_name_North Carolina, state_name_North Dakota, state_name_Ohio, state_name_Oklahoma, state_name_Oregon, state_name_Pennsylvania, state_name_Rhode Island, state_name_South Carolina, state_name_South Dakota, state_name_Tennessee, state_name_Texas, state_name_Utah, state_name_Vermont, state_name_Virginia, state_name_Washington, state_name_West Virginia, state_name_Wisconsin, state_name_Wyoming, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
-
-Scores: {'recall_score': 0.03806989883063986, 'accuracy_score': 0.59155004593813665, 'precision_score': 0.4546881129854845, 'roc_auc_score': 0.67824605494502399}
-
-2015-09-16 02:05:59
+2015-09-17 02:19:33
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
 Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
 
-Features: conf, fire_bool, year_2013, year_2014, year_2015, California, Washington, Florida, Idaho, Georgia, Oregon, Texas, Kansas, Alabama, Louisiana, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+Features: lat, long, conf, frp, fire_bool, Okanogan, Idaho, Siskiyou, Jefferson, Grant, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
-Scores: {'recall_score': 0.045854684009985547, 'accuracy_score': 0.59193619259397345, 'precision_score': 0.46626586506346024, 'roc_auc_score': 0.67633636168332001}
-
-2015-09-16 02:24:38
-----------------------------------------------------------------------------------------------------
-Model Run: random_forest
-
-Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
-
-Features: conf, fire_bool, year_2013, year_2014, year_2015, California, Washington, Florida, Idaho, Georgia, Oregon, Texas, Kansas, Alabama, Louisiana, Vermont, Rhode Island, Connecticut, Delaware, Maine, New Hampshire, Massachusetts, Maryland, New York, New Jersey, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
-
-Scores: {'recall_score': 0.045690448035737748, 'accuracy_score': 0.59190956179012266, 'precision_score': 0.46584058941728063, 'roc_auc_score': 0.67117002723105046}
+Scores: {'recall_score': 0.022107614479994743, 'accuracy_score': 0.59370871091299759, 'precision_score': 0.49962880475129917, 'roc_auc_score': 0.70562218420655598}
 
