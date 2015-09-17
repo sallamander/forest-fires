@@ -5,4 +5,4 @@
 /data/jsons/weather_*
 /data/csvs/fires_*
 /data/zipped_files/boundary_files/fire_perimeters/2015.zip/._2015_perimeters_dd83.shp
-
+/data/csvs/master*
