@@ -1,1 +1,11 @@
 /*!---------- PLACE YOUR CUSTOM STYLES AND OVERRIDES HERE ----------*/
+
+.nav-1 .menu li {
+	font-size: 150%;
+}
+
+.nav-1 .menu ul {
+	font-size: 50%;
+	margin-top: 5px;
+	background: #000;
+}
