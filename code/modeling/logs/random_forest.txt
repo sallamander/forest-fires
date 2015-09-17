@@ -108,3 +108,13 @@ Features: lat, long, frp, conf, fire_bool, Okanogan, Siskiyou, Idaho, Tuolumne, 
 
 Scores: {'recall_score': 0.0014782208790486827, 'accuracy_score': 0.5939756302633159, 'precision_score': 0.63380281690140849, 'roc_auc_score': 0.70882870289632116}
 
+2015-09-17 19:10:05
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, Okanogan, Siskiyou, Idaho, Tuolumne, Grant, Elmore, Chelan, Jefferson, Trinity, Fresno, Ferry, Baker, Douglas, Osage, Washington, Lincoln, Malheur, Palm Beach, Madison, Wasco, Blaine, Gila, Stevens, Flathead, Yakima, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 3.2849352867748506e-05, 'accuracy_score': 0.5937220568805136, 'precision_score': 0.5, 'roc_auc_score': 0.70769783363084859}
+
