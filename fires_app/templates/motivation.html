@@ -14,17 +14,79 @@
     </head>
     <body>
 
-				
 		<div class="nav-container">
-		</div>
+			<nav class="nav-1">
+				<div class="navbar">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-3 col-sm-6 col-xs-4">
+							</div>
+					
+							<div class="col-md-3 text-right col-sm-6 col-md-push-6 col-xs-8">
+							</div>
+					
+							<div class="col-md-6 text-center col-md-pull-3 col-sm-12 col-xs-12">
+								<ul class="menu">
+									<li>
+										<a class="text-white text-center" href="/home">
+											Home
+										</a>
+									</li>
+							
+									<li class="has-dropdown">
+										<a class = "text-white extra-float" href="/home">
+											About
+										</a>
+										<ul class="subnav little-smaller">
+											<li>
+												<a href="/about/motivation">
+													Motivation
+												</a>
+											</li>
+
+											<li>
+												<a href="#">
+													Methods
+												</a>
+											</li>
+										</ul>
+									</li>
+
+									<li class="has-dropdown">
+										<a class = "text-white" href="/About">
+											Data/Results
+										</a>
+										<ul class="subnav little-wider">
+											<li>
+												<a href="#">
+													Cool Vizualizations
+												</a>
+											</li>
+
+											<li>
+												<a href="#">
+													Cool Maps
+												</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+				
+						</div>
+					</div>
+				</div>
+			</nav>
 		
+		</div>
+		<!--
 		<div class="main-container">
-		<section class="header header-7">
+			<section class="header header-7">
 				<div class="hero-slider">
 					<ul class="slides">
 						<li>
 							<div class="background-image-holder">
-								<img alt="Background Image" class="background-image" src="">
+								<img alt="Background Image" class="background-image" src="http://www.escalonfire.com/images/haystack-fires.gif">
 							</div>
 			
 							<div class="container">
@@ -39,7 +101,26 @@
 				</div>
 			</section>
 		</div>
-		
+		-->
+		<div class="main-container">
+			<section class="header header-7">
+				<div class="hero-slider">
+					<ul class="slides">
+						<li>
+
+							<div class="container">
+								<div class="row">
+									<div class="text-white col-sm-12 text-center">
+										<p> Currently, NASA satellite imagery of detected fires is not used in real-time for forest fire prevention. One potential reason is that the detected fires from this data set contain a high number of false positives, ranging from hot asphalt parking lots to house fires to farmer burn piles. I aim to build a model that can identify which of these detected fires are forest fires, using historical fire perimeter boundaries and weather data. My hope is that I can accurately identify these forest fires so that the detected fires data set can be used in near real-time to aid forest fire prevention, where every minute counts. 
+										</p>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</section>
+		</div>
 				
 		<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
