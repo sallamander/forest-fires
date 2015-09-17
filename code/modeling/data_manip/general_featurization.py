@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def grab_columns(df, columns_list): 
 	'''
@@ -84,3 +85,31 @@ def boolean_col(df, col, val_dict):
 
 	df = df.replace({col: {'f': 0, 't': 1}})
 	return df
+
+def create_new_col(df, col, val_dict): 
+	'''
+	Input: Pandas DataFrame, String, Dictionary
+	Output: Pandas DataFrame
+
+	Take in the pandas data frame, and create a new col via the specifications of the val_dict. This is a little
+	different than functions above - the col coming in will be the name of the new column to create. The key/value 
+	pairs in the val_dict will tell us how to create that column. 
+
+	'''
+
+	eval_string = val_dict['eval_string']
+
+	df[col] = df.eval(eval_string)
+
+	val_dict_keys = val_dict.keys()
+
+	if 'delete_columns' in val_dict_keys: 
+		for del_col in val_dict['delete_columns']: 
+			df.drop(del_col, axis=1, inplace=True)
+	if 'replace_nulls' in val_dict_keys: 
+		df.fillna(-9999, inplace=True)
+		df.replace([np.inf, -np.inf], np.nan, inplace=True)
+		df.fillna(-99999, inplace=True)
+
+	return df
+

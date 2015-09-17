@@ -13,4 +13,8 @@ aS'fire_bool'
 p6
 aS'urban_area_bool'
 p7
+aS'county_aland'
+p8
+aS'county_water'
+p9
 a.
