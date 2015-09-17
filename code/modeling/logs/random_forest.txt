@@ -119,10 +119,6 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, year_2013, year_2014
 
 Scores: {'recall_score': 0.02135207936403653, 'accuracy_score': 0.59577733587796444, 'precision_score': 0.56719022687609078, 'roc_auc_score': 0.71852151079991722}
 
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
 2015-09-17 20:59:55
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
@@ -132,6 +128,21 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 Features: lat, long, frp, conf, fire_bool, urban_area_bool, land_water_ratio, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
 Scores: {'recall_score': 0.0018724131134616648, 'accuracy_score': 0.59413578187350691, 'precision_score': 0.68674698795180722, 'roc_auc_score': 0.72763882627781706}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+
+2015-09-17 21:30:06
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, sat_src_A, sat_src_T, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.023914328887720913, 'accuracy_score': 0.5981262261607655, 'precision_score': 0.64653641207815271, 'roc_auc_score': 0.72938039725917825}
 
 *************************************************************************************************************
 *************************************************************************************************************
