@@ -28,26 +28,27 @@ def return_all_dummies(df, col, val_dict):
 
 	return df
 
-def return_n(df, col, val_dict): 
+def return_top_n(df, col, val_dict): 
 	'''
 	Input: Pandas DataFrame, String, Dictionary
 	Output: Pandas DataFrame
 
-	For the column inputted, take it and dummy it, and then most and/or least common dummies. (i.e. if 
-	Montana has the most observations, then it is the most common state, and I want to return that). 
+	For the column inputted, take it and dummy it, and then the top n observations, measured by 
+	some groupby metric around the new column created (for example, the absolute difference between 
+	the fire boolean and confidence). 
 	'''
 	n = val_dict['n']
+	manip_type = val_dict['manip_type']
 	dummies = pd.get_dummies(df[col])
-	dummies_count = df.groupby(col).count()
-	dummies_count = dummies_count[dummies_count.columns[0]]
 
-	if val_dict['dummies_to_grab'] == 'top': 
-		names = dummies_count.nlargest(n).index	
-	if val_dict['dummies_to_grab'] == 'bottom': 
-		names = dummies_count.nsmallest(n).index
-	if val_dict['dummies_to_grab'] == 'both': 
-		names = list(dummies_count.nlargest(n).index)
-		names.extend(list(dummies_count.nsmallest(n).index))
+	if manip_type == 'eval': 
+		new_col = val_dict['new_col']
+		df[new_col] = df.eval(val_dict['eval_string'])
+		df[new_col] = abs(df[new_col])
+		dummies_count = df.groupby(col).sum()[new_col]
+		df.drop(new_col, axis=1, inplace=True)
+
+	names = dummies_count.nlargest(n).index	
 
 	for dummy_col in names: 
 		df[dummy_col] = dummies[dummy_col]
