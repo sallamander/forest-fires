@@ -114,11 +114,11 @@
 								<div class="container">
 									<div class="row">
 										<div class="col-sm-12 text-white text-left center-padding">
-											<p> Each day, there are hundreds of satellite images from NASA's AQUA and TERRA satellites that are run  . These Currently, NASA satellite imagery of detected fires is not used in real-time, or even near-real time, for forest fire prevention. Satellelite imagery is largely used after the fact to confirm forest fire locations reported by state forest service agencies. One potential reason is that the detected fires data set that is output from this imagery contains a high number of false positives, ranging from hot asphalt parking lots to house fires to farmer burn piles. 
+											<p> Each day, there are hundreds of satellite images from NASA's AQUA and TERRA satellites that are run through the MODIS active fire product. The MODIS active fire product detects fires in 1km pixels that are burning at the time of overpass under relatively cloud-free conditions using a contextual algorithm, where thresholds are first applied to the observed middle–infrared and thermal infrared brightness temperature and then false detections are rejected by examining the brightness temperature relative to neighboring pixels (Giglio, L. et al. 2003). The output of this active fire product is a data set that holds hundreds of 'detected fires' at given latitude/longitude coordinates. 
 											</p>
 
 											<p>
-												I aim to build a model that can identify which of these detected fires are forest fires, using historical fire perimeter boundaries and weather data. My hope is that I can accurately identify these forest fires so that the detected fires data set can be used in near real-time to aid forest fire prevention, where every minute counts. 
+											Currently, this detected fires data set is not used in real-time, or even near real-time, for forest fire prevention. While this could be due to the processing time it takes to analyze the AQUA and TERRA images, the large number of false positives with regards to forest-fires doesn't help. The MODIS active fire product detects not only forest fires, but also house fires, farmer burn piles, hot asphalt parking lots, and other hot surfaces that could potentially be forest fires. Unfortunately, there is no way to tease out which of these detected fires are forest fires in real-time; current practice is to the detected fires dataset as a confirmation of daily fire perimeter boundaries submitted by state forest services agencies.  
 											</p>
 										</div>
 									</div>
