@@ -38,10 +38,6 @@ Features: lat, long, conf, fire_bool, year_2013, year_2014, year_2015, month_01,
 
 Scores: {'recall_score': 0.021777690185258179, 'accuracy_score': 0.59898004021251383, 'precision_score': 0.66366366366366369, 'roc_auc_score': 0.71886978989184458}
 
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
 2015-09-17 00:58:05
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
@@ -51,10 +47,6 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 Features: lat, long, conf, frp, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
 Scores: {'recall_score': 0.032882202220616254, 'accuracy_score': 0.59835310760853611, 'precision_score': 0.60483383685800607, 'roc_auc_score': 0.71788628966012202}
-
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
 
 2015-09-17 01:32:09
 ----------------------------------------------------------------------------------------------------
@@ -85,4 +77,34 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 Features: lat, long, conf, frp, fire_bool, Okanogan, Idaho, Siskiyou, Jefferson, Grant, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
 Scores: {'recall_score': 0.022107614479994743, 'accuracy_score': 0.59370871091299759, 'precision_score': 0.49962880475129917, 'roc_auc_score': 0.70562218420655598}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+
+2015-09-17 17:16:10
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.033473490572235726, 'accuracy_score': 0.59768580923274028, 'precision_score': 0.58529580700746697, 'roc_auc_score': 0.71629038610549123}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+
+2015-09-17 17:48:08
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, Okanogan, Siskiyou, Idaho, Tuolumne, Grant, Elmore, Chelan, Jefferson, Trinity, Fresno, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.0014782208790486827, 'accuracy_score': 0.5939756302633159, 'precision_score': 0.63380281690140849, 'roc_auc_score': 0.70882870289632116}
 
