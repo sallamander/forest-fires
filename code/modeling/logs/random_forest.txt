@@ -78,11 +78,6 @@ Features: lat, long, conf, frp, fire_bool, Okanogan, Idaho, Siskiyou, Jefferson,
 
 Scores: {'recall_score': 0.022107614479994743, 'accuracy_score': 0.59370871091299759, 'precision_score': 0.49962880475129917, 'roc_auc_score': 0.70562218420655598}
 
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
-
 2015-09-17 17:16:10
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
@@ -92,11 +87,6 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 Features: lat, long, frp, conf, fire_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
 Scores: {'recall_score': 0.033473490572235726, 'accuracy_score': 0.59768580923274028, 'precision_score': 0.58529580700746697, 'roc_auc_score': 0.71629038610549123}
-
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
 
 2015-09-17 17:48:08
 ----------------------------------------------------------------------------------------------------
@@ -117,4 +107,24 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 Features: lat, long, frp, conf, fire_bool, Okanogan, Siskiyou, Idaho, Tuolumne, Grant, Elmore, Chelan, Jefferson, Trinity, Fresno, Ferry, Baker, Douglas, Osage, Washington, Lincoln, Malheur, Palm Beach, Madison, Wasco, Blaine, Gila, Stevens, Flathead, Yakima, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
 Scores: {'recall_score': 3.2849352867748506e-05, 'accuracy_score': 0.5937220568805136, 'precision_score': 0.5, 'roc_auc_score': 0.70769783363084859}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+
+2015-09-17 19:41:46
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.02135207936403653, 'accuracy_score': 0.59577733587796444, 'precision_score': 0.56719022687609078, 'roc_auc_score': 0.71852151079991722}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
 
