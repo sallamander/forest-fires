@@ -14,3 +14,16 @@
 .nav-1 .little-wider {
 	width: 150%;
 }
+
+.center-padding {
+	margin-top: -15em;
+	padding-top: 2.5em;
+	padding-bottom: 2.5em;
+	padding-right: 5em;
+	padding-left: 2.5em;
+	background: #000;
+	border-radius: 15px;
+}
+
+.controlled-background {
+}
