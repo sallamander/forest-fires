@@ -1125,7 +1125,7 @@ nav ul li:hover .subnav .subnav {
 .nav-1 .navbar {
   height: 80px;
   max-height: 80px;
-  background: #000;
+  background: #fff;
   margin: 0;
 }
 .nav-1 .menu:first-child li,
