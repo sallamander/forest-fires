@@ -157,3 +157,13 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, src_gsfc, src_gsfc_d
 
 Scores: {'recall_score': 0.13895276263057618, 'accuracy_score': 0.61272671462317663, 'precision_score': 0.60119386014781129, 'roc_auc_score': 0.71520517896899993}
 
+2015-09-17 22:37:49
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, land_water_ratio, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.27445634321003876, 'accuracy_score': 0.63313269895501079, 'precision_score': 0.6073271788907465, 'roc_auc_score': 0.72659113594220037}
+
