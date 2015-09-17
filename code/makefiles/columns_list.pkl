@@ -11,6 +11,6 @@ aS'conf'
 p5
 aS'fire_bool'
 p6
-aS'county_name'
+aS'urban_area_bool'
 p7
 a.
