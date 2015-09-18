@@ -162,10 +162,6 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, land_water_rati
 
 Scores: {'recall_score': 0.044248078312857236, 'accuracy_score': 0.60345126719961562, 'precision_score': 0.68549618320610683, 'roc_auc_score': 0.72135488987512708}
 
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
 
 2015-09-17 23:24:57
 ----------------------------------------------------------------------------------------------------
@@ -180,4 +176,39 @@ Scores: {'recall_score': 0.078969844294067407, 'accuracy_score': 0.6133005912263
 *************************************************************************************************************
 *************************************************************************************************************
 *************************************************************************************************************
+
+2015-09-18 16:14:15
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 20, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, land_water_ratio, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.07044058218615501, 'accuracy_score': 0.60983374128914036, 'precision_score': 0.70969877523998681, 'roc_auc_score': 0.73152538786292898}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+
+2015-09-18 17:58:38
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 20, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, tpix, land_water_ratio, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.11190327561849066, 'accuracy_score': 0.61830049623476857, 'precision_score': 0.6934039087947883, 'roc_auc_score': 0.73072905303574653}
+
+2015-09-18 18:33:21
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 20, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, tpix_outlier_bool, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.089693465190393271, 'accuracy_score': 0.61420756256437004, 'precision_score': 0.70615623383341952, 'roc_auc_score': 0.73000419763411084}
 

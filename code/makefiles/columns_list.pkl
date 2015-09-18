@@ -21,4 +21,6 @@ aS'gmt'
 p10
 aS'temp'
 p11
+aS'tpix'
+p12
 a.

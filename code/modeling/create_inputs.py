@@ -3,7 +3,7 @@ import sys
 import pickle
 
 from data_manip.general_featurization import combine_dfs, grab_columns, \
-		return_all_dummies, boolean_col, return_top_n, create_new_col
+		return_all_dummies, boolean_col, return_top_n, create_new_col, return_outlier_boolean
 from data_manip.time_featurization import break_time_col
 
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
 	df = break_time_col(df, 'date_fire')
 
 	featurization_dict = {'all_dummies': return_all_dummies, 'bool_col': boolean_col, 'return_top_n': return_top_n, 
-						'create_new_col': create_new_col}
+						'create_new_col': create_new_col, 'outlier_boolean': return_outlier_boolean}
 
 	for k, v in columns_dict.iteritems(): 
 		df = featurization_dict[v['transformation']](df, k, v)

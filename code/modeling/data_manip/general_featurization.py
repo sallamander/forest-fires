@@ -113,3 +113,23 @@ def create_new_col(df, col, val_dict):
 
 	return df
 
+def return_outlier_boolean(df, col, val_dict): 
+	'''
+	Input: Pandas DataFrame, String, Dictionary
+	Output: Pandas DataFrame
+
+	Take in the pandas dataframe, and for the given col, create a boolean for whether or not each row is 
+	an outlier for that given column, where outlier will be determined by the val_dict key/value pairs. 
+	'''
+	col_values = df[col].values
+	col_mean, col_std = np.mean(col_values), np.std(col_values)
+
+	new_col_name = col + '_outlier_bool'
+	std_multiplier = val_dict['std_multiplier']
+	eval_string = col + ' < (@col_mean - @std_multiplier * @col_std) or ' + col + ' > (@col_mean + @std_multiplier * @col_std)' 
+	
+	df[new_col_name] = df.eval(eval_string)
+	df.drop(col, axis=1, inplace=True)
+
+	return df
+
