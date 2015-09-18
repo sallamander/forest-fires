@@ -23,4 +23,6 @@ aS'temp'
 p11
 aS'tpix'
 p12
+aS'state_name'
+p13
 a.
