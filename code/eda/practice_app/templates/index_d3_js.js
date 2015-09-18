@@ -1,6 +1,6 @@
 //Width and height
-var w = 500;
-var h = 500;
+var w = 750;
+var h = 750;
 
 //Create SVG element
 var svg = d3.select("body")
