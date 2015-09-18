@@ -21,8 +21,6 @@ aS'gmt'
 p10
 aS'temp'
 p11
-aS'tpix'
+aS'spix'
 p12
-aS'state_name'
-p13
 a.

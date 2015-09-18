@@ -212,3 +212,23 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, tpix_outl
 
 Scores: {'recall_score': 0.089693465190393271, 'accuracy_score': 0.61420756256437004, 'precision_score': 0.70615623383341952, 'roc_auc_score': 0.73000419763411084}
 
+2015-09-18 21:05:12
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 20, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, spix, land_water_ratio, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.094358839570259881, 'accuracy_score': 0.61561200058852639, 'precision_score': 0.71001236093943143, 'roc_auc_score': 0.73004129987097022}
+
+2015-09-18 21:47:03
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 20, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, spix_outlier_bool, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.090941945658244899, 'accuracy_score': 0.61371266535585789, 'precision_score': 0.69565217391304346, 'roc_auc_score': 0.73168413998586312}
+
