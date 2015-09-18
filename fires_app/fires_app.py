@@ -11,5 +11,9 @@ def home():
 def about_motivation(): 
 	return render_template('motivation.html')
 
+@app.route('/data/maps')
+def data_maps(): 
+	return render_template('map.html')
+
 if __name__ == '__main__': 
 	app.run()
