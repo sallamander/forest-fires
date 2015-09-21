@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import multiprocessing
 from datetime import timedelta
 
 def gen_nearby_fires_count(df, dist_measure, time_measure):
@@ -10,14 +12,20 @@ def gen_nearby_fires_count(df, dist_measure, time_measure):
 	potential detected fires, where nearby detected fires are determined by the inputted dist_measure
 	and time_measure. 
 	'''
-	df['date_temp'] = pd.to_datetime(df['date_fire'])
-	df['nearby_fires'] = [query_for_nearby_fires(df, row, dist_measure, time_measure) for row in df.values]
-	df.drop('date_temp', axis=1, inplace=True)
+	global df2, lat_idx, lng_idx, dt_idx, dist_measure2, time_measure2
+	dist_measure2 = dist_measure
+	time_measure2 = time_measure
+	df2 = df.copy()
+	df2['date_temp'] = pd.to_datetime(df2['date_fire'])
+	df_columns = df2.columns
+	lat_idx, lng_idx, dt_idx = np.where(df_columns == 'lat')[0][0], np.where(df_columns == 'long')[0][0], np.where(df_columns == 'date_temp')[0][0] 
+	pool = multiprocessing.Pool(multiprocessing.cpu_count())
+	result = pool.map(query_for_nearby_fires, df2.values) 
 	import pdb
 	pdb.set_trace()
 	return df
 
-def query_for_nearby_fires(df, row, dist_measure, time_measure): 
+def query_for_nearby_fires(row): 
 	'''
 	Input: Pandas DataFrame, Numpy Array, Float, Integer
 	Output: Float
@@ -25,14 +33,26 @@ def query_for_nearby_fires(df, row, dist_measure, time_measure):
 	For the inputted row, query the dataframe for the number of 'detected fires' (i.e. other rows) that 
 	are within dist_measure of the inputted row and within the time_measure of the inputted row. 
 	'''
-	lat, lng, date = df['lat'], df['long'], df['date_temp']
-	lat_min, lat_max = lat - dist_measure, lat + dist_measure
-	long_min, long_max = lng - dist_measure, lng + dist_measure
+	lat, lng, date = row[lat_idx], row[lng_idx], row[dt_idx]
+	lat_min, lat_max = lat - dist_measure2, lat + dist_measure2
+	long_min, long_max = lng - dist_measure2, lng + dist_measure2
 	# Note we're not doing day_max here because in real time we wouldn't have forward dates. 
-	date_min  = date - timedelta(days=time_measure)
-
+	date_min  = date - timedelta(days=time_measure2)
 	query = 'lat >= @lat_min and lat <= @lat_max and long >= @long_min and long <= @long_max and date_temp >= @date_min'
-	nearby_count = df.query(query).count()
-
-	return nearby_count
+	nearby_count = df2.query(query).shape[0]
 	
+	output_dict = {'lat': lat, 'long': lng, 'date': date, 'nearby_count': nearby_count}
+	return output_dict
+
+def prep_for_query(df, dist_measure, time_measure, beginning=True): 
+	'''
+	Input: Pandas DataFrame, Float, Float, Boolean
+	Output: Global Variables (deleted or created)
+
+	For the inputted dataframe and time dist measure, create the necessary global variables for 
+	the multiprocessing environment. Since I am multiprocessing a dataframe query, I need to be able to 
+	either pass the dataframe through the multiprocessing pool, or make it a global. While neither
+	is ideal, the second seems better. I'll make sure to delete the global when I'm all done. 
+	'''
+
+	pass	
