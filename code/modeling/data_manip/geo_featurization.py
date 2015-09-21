@@ -12,6 +12,7 @@ def gen_nearby_fires_count(df, dist_measure, time_measure):
 	potential detected fires, where nearby detected fires are determined by the inputted dist_measure
 	and time_measure. 
 	'''
+	query_prep_clean(df, dist_measure, time_measure) 
 	global df2, lat_idx, lng_idx, dt_idx, dist_measure2, time_measure2
 	dist_measure2 = dist_measure
 	time_measure2 = time_measure
@@ -44,7 +45,7 @@ def query_for_nearby_fires(row):
 	output_dict = {'lat': lat, 'long': lng, 'date': date, 'nearby_count': nearby_count}
 	return output_dict
 
-def prep_for_query(df, dist_measure, time_measure, beginning=True): 
+def query_prep_clean(df, dist_measure, time_measure, beginning=True): 
 	'''
 	Input: Pandas DataFrame, Float, Float, Boolean
 	Output: Global Variables (deleted or created)
@@ -54,5 +55,12 @@ def prep_for_query(df, dist_measure, time_measure, beginning=True):
 	either pass the dataframe through the multiprocessing pool, or make it a global. While neither
 	is ideal, the second seems better. I'll make sure to delete the global when I'm all done. 
 	'''
-
-	pass	
+	if beginning == True: 
+		global df2, lat_idx, lng_idx, dt_idx, dist_measure2, time_measure2
+		dist_measure2, time_measure2 = dist_measure, time_measure
+		df2 = df.copy()
+		df2['date_temp'] = pd.to_datetime(df2['date_fire'])
+		df_columns = df2.columns
+		lat_idx, lng_idx, dt_idx = np.where(df_columns == 'lat')[0][0], np.where(df_columns == 'long')[0][0], np.where(df_columns == 'date_temp')[0][0] 
+	if beginning == False:
+		del df2, lat_idx, lng_idx, dt_idx, dist_measure2, time_measure2		
