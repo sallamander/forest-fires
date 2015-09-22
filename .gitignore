@@ -1,8 +1,6 @@
-/data/unzipped_files
-/data/zipped_files/boundary_files/region/*.xml
+/data/unzipped_files/*
+/data/jsons/*
+/data/csvs/*
+/data/zipped_files/*
 /code/modeling/input_df.pkl
-/data/csvs/merged_daily_weather*
-/data/jsons/weather_*
-/data/csvs/fires_*
-/data/zipped_files/boundary_files/fire_perimeters/2015.zip/._2015_perimeters_dd83.shp
-/data/csvs/master*
+
