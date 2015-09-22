@@ -1,0 +1,30 @@
+2015-09-22 03:09:40
+----------------------------------------------------------------------------------------------------
+Model Run: neural_net
+
+Params: ([<TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>], [], [<keras.constraints.Constraint object at 0x7f579587bbd0>, <keras.constraints.Constraint object at 0x7f579587bc10>, <keras.constraints.Constraint object at 0x7f5795884050>, <keras.constraints.Constraint object at 0x7f5795884090>])
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 3.2930483748806269e-05, 'accuracy_score': 0.58880959796341181, 'precision_score': 1.0, 'roc_auc_score': 0.68158928555083642}
+
+2015-09-22 03:47:18
+----------------------------------------------------------------------------------------------------
+Model Run: neural_net
+
+Params: ([<TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>], [], [<keras.constraints.Constraint object at 0x7f7ab5135bd0>, <keras.constraints.Constraint object at 0x7f7ab5135c10>, <keras.constraints.Constraint object at 0x7f7ab513e050>, <keras.constraints.Constraint object at 0x7f7ab513e090>])
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.63888431521059041, 'accuracy_score': 0.61581064063155899, 'precision_score': 0.5271008232129758, 'roc_auc_score': 0.67507200489362651}
+
+2015-09-22 03:50:52
+----------------------------------------------------------------------------------------------------
+Model Run: neural_net
+
+Params: ([<TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>], [], [<keras.constraints.Constraint object at 0x7fdbe3a52bd0>, <keras.constraints.Constraint object at 0x7fdbe3a52c10>, <keras.constraints.Constraint object at 0x7fdbe3a5b050>, <keras.constraints.Constraint object at 0x7fdbe3a5b090>])
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.03405012019626568, 'accuracy_score': 0.59040745304608055, 'precision_score': 0.53052847614161103, 'roc_auc_score': 0.67960343318400995}
+

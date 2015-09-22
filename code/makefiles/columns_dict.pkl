@@ -11,10 +11,10 @@ p5
 (dp6
 S'dist_measure'
 p7
-F0.001
+F0.01
 sS'time_measure'
 p8
-I1
+I2
 ssS'urban_area_bool'
 p9
 (dp10

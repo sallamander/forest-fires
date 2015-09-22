@@ -2,6 +2,7 @@ import sys
 import pickle
 import time
 import datetime
+import keras
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
@@ -9,7 +10,8 @@ from data_manip.tt_splits import tt_split_all_less60
 from sklearn.grid_search import GridSearchCV
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
-from keras.optimizers import SGD
+from keras.optimizers import SGD, RMSprop
+from keras.utils import np_utils
 
 
 def get_model(model_name, train_data): 
@@ -50,8 +52,10 @@ def predict_with_model(test_data, model):
 	'''
 
 	target, features = get_target_features(test_data)
-
-	predictions, predicted_probs = model.predict(features), model.predict_proba(features)
+	if isinstance(model, keras.models.Sequential): 
+		predictions, predicted_probs = model.predict(features.values)[:, 1] > 0.50, model.predict_proba(features.values)
+	else: 
+		predictions, predicted_probs = model.predict(features), model.predict_proba(features)
 
 	return predictions, predicted_probs
 
@@ -75,7 +79,7 @@ def log_results(model_name, train, fitted_model, scores):
 		f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
 		f.write('Scores: ' + str(scores) + '\n' * 2)
 
-def grid_search(model_name, train_data): 
+def grid_search(model_name, train_data, test_data): 
 	'''
 	Input: String
 	Output: Best fit model from grid search parameters. 
@@ -85,6 +89,13 @@ def grid_search(model_name, train_data):
 	'''
 
 	model = get_model(model_name, train_data)
+	if isinstance(model, keras.models.Sequential): 
+		train_target, train_features = get_target_features(train_data)
+		test_target, test_features = get_target_features(test_data)
+		train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
+		train_features, test_features = train_features.values, test_features.values
+		model.fit(train_features, train_target, batch_size=200, nb_epoch=20, validation_data=(test_features, test_target))
+		return model
 	grid_parameters = get_grid_params(model_name)
 	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
 	target, features = get_target_features(train_data)
@@ -92,28 +103,27 @@ def grid_search(model_name, train_data):
 
 	return grid_search.best_estimator_
 
-def get_neural_net(random_st, train_data): 
+def get_neural_net(train_data): 
 	'''
 	Input: Integer, Pandas DataFrame
 	Output: Instantiated Neural Network model
 
 	Instantiate the neural net model and output it to train with. 
 	'''
-
+	hlayer_1_nodes = 200
+	hlayer_2_nodes = 200
 	model = Sequential()
 
-	hlayer_1_nodes = 100
-	hlayer_2_nodes = 100
-
-	model.add(Dense(train_data.shape[1], hlayer_1_nodes, init='uniform'))
-	model.add(Dropout(0.40))
+	model.add(Dense(train_data.shape[1] - 1, hlayer_1_nodes, init='uniform'))
+	model.add(Activation('relu'))
+	model.add(Dropout(0.50))
 	model.add(Dense(hlayer_1_nodes, hlayer_2_nodes, init='uniform'))
+	model.add(Activation('relu'))
+	model.add(Dropout(0.50))
 	model.add(Dense(hlayer_2_nodes, 2, init='uniform'))
 	model.add(Activation('softmax'))
 
 	model.compile(loss='categorical_crossentropy', optimizer='adadelta')
-	import pdb
-	pdb.set_trace()
 
 	return model
 
@@ -161,9 +171,7 @@ if __name__ == '__main__':
 	test = test.drop(keep_list, axis=1)
 	'''
 	
-	fitted_model = grid_search(model_name, train)
-	import pdb
-	pdb.set_trace()
+	fitted_model = grid_search(model_name, train, test)
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)

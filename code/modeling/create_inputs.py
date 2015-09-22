@@ -38,6 +38,6 @@ if __name__ == '__main__':
 	for k, v in columns_dict.iteritems(): 
 		if k != 'add_nearby_fires':
 			df = featurization_dict[v['transformation']](df, k, v)
-
+			
 	with open('./modeling/input_df.pkl', 'w+') as f: 
 		pickle.dump(df, f)
