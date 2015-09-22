@@ -11,11 +11,11 @@ def output_preds_hist(df, num_bins=5):
 	For the inputted df, lets bin the probability of fire into the number of inputted bins, and then 
 	let's see how our fire prediction is in each bin. 
 	'''
-	final_groupings = []
+	final_groupings = {}
 	for col in df.columns:
 		if col != 'fire_bool': 	
 			model_groupings = calc_bins(df, col, num_bins)
-			final_groupings.append({col: model_groupings})
+			final_groupings[col] = model_groupings
 
 	return final_groupings
 
@@ -45,5 +45,5 @@ if __name__ == '__main__':
 
 	final_groups = output_preds_hist(df)
 
-	with open('../../data/jsons/model_preds.json', 'w+') as f:
+	with open('model_preds.json', 'w+') as f:
 		json.dump(final_groups, f) 
