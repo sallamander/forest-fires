@@ -9,7 +9,7 @@ from data_manip.geo_featurization import gen_nearby_fires_count
 
 if __name__ == '__main__': 
 	with open('./makefiles/year_list.pkl') as f: 
-		year_list = [2013, 2014, 2015]
+		year_list = [2012, 2013, 2014, 2015]
 	with open('./makefiles/columns_list.pkl') as f: 
 		columns_list = pickle.load(f)
 	with open('./makefiles/columns_dict.pkl') as f: 

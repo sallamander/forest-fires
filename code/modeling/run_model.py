@@ -4,6 +4,8 @@ import time
 import datetime
 import keras
 import numpy as np
+import os
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
@@ -96,7 +98,7 @@ def grid_search(model_name, train_data, test_data):
 		test_target, test_features = get_target_features(test_data)
 		train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
 		train_features, test_features = train_features.values, test_features.values
-		model.fit(train_features, train_target, batch_size=150, nb_epoch=10, validation_data=(test_features, test_target))
+		model.fit(train_features, train_target, batch_size=150, nb_epoch=5, validation_data=(test_features, test_target))
 		return model
 	grid_parameters = get_grid_params(model_name)
 	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
@@ -114,7 +116,8 @@ def get_neural_net(train_data):
 	'''
 	np.random.seed(24)
 	hlayer_1_nodes = 200
-	hlayer_2_nodes = 75
+	hlayer_2_nodes = 45
+	hlayer_3_nodes = 25
 	model = Sequential()
 
 	model.add(Dense(train_data.shape[1] - 1, hlayer_1_nodes, init='uniform'))
@@ -123,7 +126,10 @@ def get_neural_net(train_data):
 	model.add(Dense(hlayer_1_nodes, hlayer_2_nodes, init='uniform'))
 	model.add(Activation('relu'))
 	model.add(Dropout(0.35))
-	model.add(Dense(hlayer_2_nodes, 2, init='uniform'))
+	model.add(Dense(hlayer_2_nodes, hlayer_3_nodes, init='uniform'))
+	model.add(Activation('relu'))
+	model.add(Dropout(0.35))
+	model.add(Dense(hlayer_3_nodes, 2, init='uniform'))
 	model.add(Activation('softmax'))
 
 	model.compile(loss='categorical_crossentropy', optimizer='adadelta')
@@ -163,12 +169,12 @@ def output_model(filename, model_name, preds_probs, fire_bool):
 	if not os.path.isfile(filename): 
 		df = pd.DataFrame()
 		df['fire_bool'] = fire_bool
-		df[model_name] = preds_probs
-		df.to_csv(filename)
+		df[model_name] = preds_probs[:, 1]
+		df.to_csv(filename, index=False)
 	else: 
 		df = pd.read_csv(filename)
-		df[model_name] = preds_probs
-		df.to_csv(filename)
+		df[model_name] = preds_probs[:, 1]
+		df.to_csv(filename, index=False)
 
 	return df
 
@@ -195,7 +201,7 @@ if __name__ == '__main__':
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
 
-	filename = '../../data/csvs/model_preds.csv'
+	filename = '../data/csvs/model_preds.csv'
 	output_model(filename, model_name, preds_probs, test.fire_bool)
 
 
