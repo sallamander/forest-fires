@@ -72,7 +72,7 @@ def combine_dfs(df_list):
 		return output_df
 	else: 
 		for df in df_list[1:]: 
-			output_df = output_df.append(df)
+			output_df = output_df.append(df, ignore_index=True)
 		return output_df
 
 def boolean_col(df, col, val_dict): 

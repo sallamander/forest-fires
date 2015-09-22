@@ -232,3 +232,13 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, spix_outl
 
 Scores: {'recall_score': 0.090941945658244899, 'accuracy_score': 0.61371266535585789, 'precision_score': 0.69565217391304346, 'roc_auc_score': 0.73168413998586312}
 
+2015-09-22 00:19:50
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 20, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.16801053151225934, 'accuracy_score': 0.62646324174711399, 'precision_score': 0.68148444800427177, 'roc_auc_score': 0.73559204532371814}
+

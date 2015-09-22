@@ -17,9 +17,10 @@ if __name__ == '__main__':
 
 	dfs_list = []
 	for year in year_list: 
-		df_path = '../data/csvs/fires_' + str(year) + '.csv'
+		df_path = '../data/csvs/fires_weather_' + str(year) + '.csv'
 		df = pd.read_csv(df_path)
 		dfs_list.append(df)
+
 
 	df = combine_dfs(dfs_list)
 	df = grab_columns(df, columns_list)
