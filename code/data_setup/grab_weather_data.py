@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
 	# Set up parameters for grabbing data. 
 	days_back = 1
-	year = 2015
+	year = 2012
 	n_cores = multiprocessing.cpu_count()
 
 	df = get_lat_long_time(year)
@@ -187,3 +187,4 @@ if __name__ == '__main__':
 	new_pairs_to_grab = store_unique_pairs(year, unique_pairs)
 	if new_pairs_to_grab is not None: 
 		grab_weather_data(new_pairs_to_grab, year, n_cores)
+

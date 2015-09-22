@@ -94,7 +94,7 @@ def grid_search(model_name, train_data, test_data):
 		test_target, test_features = get_target_features(test_data)
 		train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
 		train_features, test_features = train_features.values, test_features.values
-		model.fit(train_features, train_target, batch_size=200, nb_epoch=20, validation_data=(test_features, test_target))
+		model.fit(train_features, train_target, batch_size=150, nb_epoch=20, validation_data=(test_features, test_target))
 		return model
 	grid_parameters = get_grid_params(model_name)
 	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
@@ -110,16 +110,16 @@ def get_neural_net(train_data):
 
 	Instantiate the neural net model and output it to train with. 
 	'''
-	hlayer_1_nodes = 150
-	hlayer_2_nodes = 150
+	hlayer_1_nodes = 200
+	hlayer_2_nodes = 200
 	model = Sequential()
 
 	model.add(Dense(train_data.shape[1] - 1, hlayer_1_nodes, init='uniform'))
 	model.add(Activation('relu'))
-	model.add(Dropout(0.40))
+	model.add(Dropout(0.35))
 	model.add(Dense(hlayer_1_nodes, hlayer_2_nodes, init='uniform'))
 	model.add(Activation('relu'))
-	model.add(Dropout(0.40))
+	model.add(Dropout(0.35))
 	model.add(Dense(hlayer_2_nodes, 2, init='uniform'))
 	model.add(Activation('softmax'))
 

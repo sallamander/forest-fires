@@ -55,10 +55,14 @@ def create_db(filepath, dt_name, latin_encoding=False):
 	Create a data table named dt_name in the forest_fires database from the shapefiles located in the folder 
 	at filepath. 
 	''' 
-
+	print 'In ' + dt_name
 	if dt_exist(dt_name): 
-		return 
-
+		if dt_name.find('2015') != -1: 
+			print 'found it'
+			dt_name = dt_name + '_temp'
+		else: 
+			return 
+	print 'out_of_it'
 	# I'm using the overwrite option here because anytime this I'm creating a db I'll be fixing something 
 	# and need to create the database from scratch. Otherwise, I won't be running this function. 
 	create_db_command = 'ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user=' + os.environ['USER'] + \
@@ -105,14 +109,10 @@ if __name__ == '__main__':
 
 	for year in year_list: 
 		create_fire_db(year)
-		create_shapefile_db('perimeters', year)
+		# create_shapefile_db('perimeters', year)
 		# The 2015 boundary shapefiles for these regions are not yet available. Later when merging we'll 
 		# just use 2014, because that will be close enough. 
-<<<<<<< HEAD:code/data_setup/create_postgres_dts.py
-		if year != 2015: 
-=======
 		if year != 2015 and year!= 2012: 
->>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28:code/data_setup/create_postgres_dts.py
 			create_shapefile_db('county', year)
 			create_shapefile_db('state', year)
 			create_shapefile_db('urban', year)

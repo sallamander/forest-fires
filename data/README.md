@@ -15,4 +15,4 @@ in this data subdirectory. Data from (1) above are in the /zipped_files/deteced_
 
 2.) The state, county, region, and urban area shapefiles contain the boundaries for each of those respective geographic types. As of right now, the census has these files for 1990, 2000, 2010, 2013, and 2014. I'm currently looking at only 2013-2015 data, and will be using the 2014 geographic boundary shapefiles for 2015.
       
-3.) Each state is required to report fire perimeter boundaries eacy day, which is what the fire perimeter boundary file contains. It also contains other information relating to those fires, such as fire name, the date, the number of acres burned thus far, etc. 
+3.) Each state is required to report fire perimeter boundaries each day, which is what the fire perimeter boundary file contains. It also contains other information relating to those fires, such as fire name, the date, the number of acres burned thus far, etc. 
