@@ -51,3 +51,13 @@ Scores: {'recall_score': 0.50643790957289159, 'accuracy_score': 0.62350201085999
 
 =======
 >>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
+2015-09-22 05:15:52
+----------------------------------------------------------------------------------------------------
+Model Run: neural_net
+
+Params: ([<TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>], [], [<keras.constraints.Constraint object at 0x7f522463fc50>, <keras.constraints.Constraint object at 0x7f522463fc90>, <keras.constraints.Constraint object at 0x7f52246480d0>, <keras.constraints.Constraint object at 0x7f5224648110>, <keras.constraints.Constraint object at 0x7f5224648510>, <keras.constraints.Constraint object at 0x7f5224648550>])
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.58879605681864344, 'precision_score': 0.0, 'roc_auc_score': 0.5}
+

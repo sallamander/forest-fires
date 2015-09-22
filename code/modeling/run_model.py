@@ -110,28 +110,16 @@ def get_neural_net(train_data):
 
 	Instantiate the neural net model and output it to train with. 
 	'''
-<<<<<<< HEAD
-	hlayer_1_nodes = 600
-	hlayer_2_nodes = 600
-=======
-	hlayer_1_nodes = 200
-	hlayer_2_nodes = 200
->>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
+	hlayer_1_nodes = 150
+	hlayer_2_nodes = 150
 	model = Sequential()
 
 	model.add(Dense(train_data.shape[1] - 1, hlayer_1_nodes, init='uniform'))
 	model.add(Activation('relu'))
-<<<<<<< HEAD
 	model.add(Dropout(0.40))
 	model.add(Dense(hlayer_1_nodes, hlayer_2_nodes, init='uniform'))
 	model.add(Activation('relu'))
 	model.add(Dropout(0.40))
-=======
-	model.add(Dropout(0.50))
-	model.add(Dense(hlayer_1_nodes, hlayer_2_nodes, init='uniform'))
-	model.add(Activation('relu'))
-	model.add(Dropout(0.50))
->>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
 	model.add(Dense(hlayer_2_nodes, 2, init='uniform'))
 	model.add(Activation('softmax'))
 
