@@ -7,11 +7,14 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
 from data_manip.tt_splits import tt_split_all_less60
 from sklearn.grid_search import GridSearchCV
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation
+from keras.optimizers import SGD
 
 
-def get_model(model_name): 
+def get_model(model_name, train_data): 
 	'''
-	Input: String
+	Input: String, Pandas DataFrame
 	Output: Instantiated Model
 	'''
 	random_seed=24
@@ -21,6 +24,8 @@ def get_model(model_name):
 		return RandomForestClassifier(random_state=random_seed)
 	elif model_name == 'gradient_boosting': 
 		return GradientBoostingClassifier(random_state=random_seed)
+	elif model_name == 'neural_net': 
+		return get_neural_net(train_data)
 
 def fit_model(train_data, model_to_fit):
 	'''
@@ -79,7 +84,7 @@ def grid_search(model_name, train_data):
 	with those grid parameters, and return the best model. 
 	'''
 
-	model = get_model(model_name)
+	model = get_model(model_name, train_data)
 	grid_parameters = get_grid_params(model_name)
 	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
 	target, features = get_target_features(train_data)
@@ -87,6 +92,30 @@ def grid_search(model_name, train_data):
 
 	return grid_search.best_estimator_
 
+def get_neural_net(random_st, train_data): 
+	'''
+	Input: Integer, Pandas DataFrame
+	Output: Instantiated Neural Network model
+
+	Instantiate the neural net model and output it to train with. 
+	'''
+
+	model = Sequential()
+
+	hlayer_1_nodes = 100
+	hlayer_2_nodes = 100
+
+	model.add(Dense(train_data.shape[1], hlayer_1_nodes, init='uniform'))
+	model.add(Dropout(0.40))
+	model.add(Dense(hlayer_1_nodes, hlayer_2_nodes, init='uniform'))
+	model.add(Dense(hlayer_2_nodes, 2, init='uniform'))
+	model.add(Activation('softmax'))
+
+	model.compile(loss='categorical_crossentropy', optimizer='adadelta')
+	import pdb
+	pdb.set_trace()
+
+	return model
 
 def get_grid_params(model_name): 
 	'''
@@ -133,6 +162,8 @@ if __name__ == '__main__':
 	'''
 	
 	fitted_model = grid_search(model_name, train)
+	import pdb
+	pdb.set_trace()
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
