@@ -216,7 +216,7 @@ def query_for_daily(table, year):
 	if year == 2015: 
 		non_nulls_daily_df.drop('ozone', axis=1, inplace=True)
 
-	non_nulls_daily_df.to_csv('../../data/csvs/merged_daily_weather_' + str(year) + '.csv', encoding='utf-8', 
+	non_nulls_daily_df.to_csv('../data/csvs/merged_daily_weather_' + str(year) + '.csv', encoding='utf-8', 
 								index=False)
 
 
@@ -236,7 +236,7 @@ def query_for_hourly(table):
 	non_nulls_hourly_df['hourly_data'] = True
 
 	weather_df = nulls_hourly_df.append(non_nulls_hourly_df)
-	weather_df.to_csv('../../data/csvs/merged_hourly_weather_' + str(year) + '.csv', index=False)
+	weather_df.to_csv('../data/csvs/merged_hourly_weather_' + str(year) + '.csv', index=False)
 
 	'''
 	Punting on this for now - some lat/longs return 23 and 25 hours worth of data for a day (instead of 24), and
@@ -330,7 +330,7 @@ def add_date_to_weather_df(year, time_string = 'daily'):
 	observation. We'll then use that timezone to get the actual time associated with the epoch
 	timestamp in the data. 
 	'''
-	filepath = '../../data/csvs/merged_' + time_string + '_weather_' + str(year) + '.csv'
+	filepath = '../data/csvs/merged_' + time_string + '_weather_' + str(year) + '.csv'
 	df = pd.read_csv(filepath)
 	cols = df.columns.values
 	epoch_time_index = np.where(cols == 'time')[0][0]
@@ -360,9 +360,9 @@ def merge_prior_weather(n, year):
 	Merge on weather from up to n days_back. If n is two, merge on the past two days of weather information, 
 	if n is three the past three days, etc. 
 	'''
-	fires_df_filepath = '../../data/csvs/fires_' + str(year) + '.csv'
-	save_df_filepath = '../../data/csvs/fires_weather_' + str(year) + '.csv'
-	weather_df_filespath = '../../data/csvs/merged_daily_weather_' + str(year) + '.csv'
+	fires_df_filepath = '../data/csvs/fires_' + str(year) + '.csv'
+	save_df_filepath = '../data/csvs/fires_weather_' + str(year) + '.csv'
+	weather_df_filespath = '../data/csvs/merged_daily_weather_' + str(year) + '.csv'
 	fires_df, weather_df = pd.read_csv(fires_df_filepath), pd.read_csv(weather_df_filespath)
 	fires_df = create_n_back_col(fires_df, n)
 	for days_back in xrange(1, n + 1): 
@@ -413,8 +413,6 @@ if __name__ == '__main__':
 
 	for year in year_list: 
 		output_detected_fires_csv(year)
-		import pdb
-		pdb.set_trace()
 		get_fire_centroids_csv(year)
 		if year != 2015 and year!=2012: 
 			output_json(year, 'state')

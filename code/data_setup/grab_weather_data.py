@@ -186,5 +186,8 @@ if __name__ == '__main__':
 	unique_pairs = get_unique_pairs(df, days_back, n_cores)
 	new_pairs_to_grab = store_unique_pairs(year, unique_pairs)
 	if new_pairs_to_grab is not None: 
+		import pdb
+		pdb.set_trace()
+		print 'Grabbing weather data!'
 		grab_weather_data(new_pairs_to_grab, year, n_cores)
 
