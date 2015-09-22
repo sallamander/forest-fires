@@ -544,3 +544,33 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_co
 
 Scores: {'recall_score': 0.33197220667171601, 'accuracy_score': 0.65097699359503858, 'precision_score': 0.64746307000642256, 'roc_auc_score': 0.73296579696306363}
 
+2015-09-22 21:49:01
+----------------------------------------------------------------------------------------------------
+Model Run: neural_net
+
+Params: ([<TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>], [], [<keras.constraints.Constraint object at 0x7f5ae96c8e10>, <keras.constraints.Constraint object at 0x7f5ae96c8e50>, <keras.constraints.Constraint object at 0x7f5ae96d1290>, <keras.constraints.Constraint object at 0x7f5ae96d12d0>, <keras.constraints.Constraint object at 0x7f5ae96d16d0>, <keras.constraints.Constraint object at 0x7f5ae96d1710>, <keras.constraints.Constraint object at 0x7f5ae96d1b10>, <keras.constraints.Constraint object at 0x7f5ae96d1b50>])
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.15154608621200646, 'accuracy_score': 0.62042817099757619, 'precision_score': 0.67006406523005246, 'roc_auc_score': 0.73469565348074573}
+
+2015-09-22 21:52:51
+----------------------------------------------------------------------------------------------------
+Model Run: neural_net
+
+Params: ([<TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>], [], [<keras.constraints.Constraint object at 0x7f5d1425de10>, <keras.constraints.Constraint object at 0x7f5d1425de50>, <keras.constraints.Constraint object at 0x7f5d14266290>, <keras.constraints.Constraint object at 0x7f5d142662d0>, <keras.constraints.Constraint object at 0x7f5d142666d0>, <keras.constraints.Constraint object at 0x7f5d14266710>, <keras.constraints.Constraint object at 0x7f5d14266b10>, <keras.constraints.Constraint object at 0x7f5d14266b50>])
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.173378996937465, 'accuracy_score': 0.62293328277972615, 'precision_score': 0.65738544137844923, 'roc_auc_score': 0.7307458747601614}
+
+2015-09-22 21:54:35
+----------------------------------------------------------------------------------------------------
+Model Run: neural_net
+
+Params: ([<TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>], [], [<keras.constraints.Constraint object at 0x7f589fdb4e10>, <keras.constraints.Constraint object at 0x7f589fdb4e50>, <keras.constraints.Constraint object at 0x7f589fdbd290>, <keras.constraints.Constraint object at 0x7f589fdbd2d0>, <keras.constraints.Constraint object at 0x7f589fdbd6d0>, <keras.constraints.Constraint object at 0x7f589fdbd710>, <keras.constraints.Constraint object at 0x7f589fdbdb10>, <keras.constraints.Constraint object at 0x7f589fdbdb50>])
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.30878914611255637, 'accuracy_score': 0.64891873959024493, 'precision_score': 0.65509291602626796, 'roc_auc_score': 0.74204872370504238}
+
