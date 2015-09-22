@@ -108,7 +108,11 @@ if __name__ == '__main__':
 		create_shapefile_db('perimeters', year)
 		# The 2015 boundary shapefiles for these regions are not yet available. Later when merging we'll 
 		# just use 2014, because that will be close enough. 
+<<<<<<< HEAD:code/data_setup/create_postgres_dts.py
 		if year != 2015: 
+=======
+		if year != 2015 and year!= 2012: 
+>>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28:code/data_setup/create_postgres_dts.py
 			create_shapefile_db('county', year)
 			create_shapefile_db('state', year)
 			create_shapefile_db('urban', year)

@@ -258,6 +258,7 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_co
 
 Scores: {'recall_score': 0.26891033029275202, 'accuracy_score': 0.63081422903492257, 'precision_score': 0.61728021770353014, 'roc_auc_score': 0.72724983496777718}
 
+<<<<<<< HEAD
 2015-09-22 04:45:43
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
@@ -268,3 +269,5 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_co
 
 Scores: {'recall_score': 0.42753647051075178, 'accuracy_score': 0.65578409998781295, 'precision_score': 0.61767924259003759, 'roc_auc_score': 0.73413424636609781}
 
+=======
+>>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28

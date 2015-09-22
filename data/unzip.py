@@ -62,7 +62,11 @@ def chk_in_boundary_dirs():
 		if folder not in in_unzipped_boundary_dirs: 
 			os.mkdir('./unzipped_files/boundary_files/' + folder)
 		folders_list2 = os.listdir('./unzipped_files/boundary_files/' + folder + '/')
+<<<<<<< HEAD
 		for year in xrange(2013, 2016): 
+=======
+		for year in xrange(2012, 2016): 
+>>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
 			folder2 = './unzipped_files/boundary_files/' + folder + '/' + str(year)
 			if str(year) not in folders_list2: 
 				os.mkdir(folder2)
@@ -84,7 +88,11 @@ def chk_in_detected_dirs():
 
 	in_MODIS_dirs = os.listdir('./unzipped_files/detected_fires/MODIS')
 
+<<<<<<< HEAD
 	for year in xrange(2013, 2016): 
+=======
+	for year in xrange(2012, 2016): 
+>>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
 		if str(year) not in in_MODIS_dirs: 
 			os.mkdir('./unzipped_files/detected_fires/MODIS/' + str(year))
 
@@ -122,10 +130,14 @@ def unzip_boundaries():
 			remove_nonzips()
 			zipped_files = os.listdir('./')
 			for zipped_file in zipped_files: 
+<<<<<<< HEAD
 				if zipped_file == '2015.zip' and bound_dir == 'fire_perimeters': 
 					unzip_2015_fire_perimeters()
 				else: 
 					os.system('unzip ' + zipped_file)
+=======
+				os.system('unzip ' + zipped_file)
+>>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
 			mv_nonzips()
 
 
@@ -160,6 +172,7 @@ def mv_nonzips():
 	move_to_dir = current_dir.replace('zipped_files', 'unzipped_files')
 
 	for f in files: 
+<<<<<<< HEAD
 		if f.find('2013') != -1 and f.find('.zip') == -1: 
 			os.rename(current_dir + '/' + f, move_to_dir + '/2013/' + f)
 		if f.find('2014') != -1 and f.find('.zip') == -1: 
@@ -169,6 +182,16 @@ def mv_nonzips():
 				mv_2015_fire_perimeters(current_dir, move_to_dir)
 			elif f.find('.zip') == -1: 
 				os.rename(current_dir + '/' + f, move_to_dir + '/2015/' + f)
+=======
+		if f.find('2012') != -1 and f.find('.zip') == -1: 
+			os.rename(current_dir + '/' + f, move_to_dir + '/2012/' + f)
+		elif f.find('2013') != -1 and f.find('.zip') == -1: 
+			os.rename(current_dir + '/' + f, move_to_dir + '/2013/' + f)
+		elif f.find('2014') != -1 and f.find('.zip') == -1: 
+			os.rename(current_dir + '/' + f, move_to_dir + '/2014/' + f)
+		elif f.find('.zip') == -1: 
+			os.rename(current_dir + '/' + f, move_to_dir + '/2015/' + f)
+>>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
 
 def unzip_detected(): 
 	'''
@@ -193,6 +216,7 @@ def unzip_detected():
 				os.system('unzip ' + zipped_file)
 			mv_nonzips()
 
+<<<<<<< HEAD
 def unzip_2015_fire_perimeters(): 
 	'''
 	Input: None
@@ -234,6 +258,8 @@ def mv_2015_fire_perimeters(current_dir, move_to_dir):
 	os.system('rm -r 2015_perimeters_dd83.shp')
 	os.chdir('./')
 
+=======
+>>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
 if __name__ == '__main__': 
 	check_dirs()
 	unzip_files()

@@ -28,6 +28,7 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_co
 
 Scores: {'recall_score': 0.03405012019626568, 'accuracy_score': 0.59040745304608055, 'precision_score': 0.53052847614161103, 'roc_auc_score': 0.67960343318400995}
 
+<<<<<<< HEAD
 2015-09-22 04:00:36
 ----------------------------------------------------------------------------------------------------
 Model Run: neural_net
@@ -48,3 +49,5 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_co
 
 Scores: {'recall_score': 0.50643790957289159, 'accuracy_score': 0.62350201085999812, 'precision_score': 0.5454513211562334, 'roc_auc_score': 0.68289696473925565}
 
+=======
+>>>>>>> ee23f2fa9b27de4f9b5ad0d0b7213d8ae43d6e28
