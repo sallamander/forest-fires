@@ -3,4 +3,4 @@
 /data/csvs/*
 /data/zipped_files/*
 /code/modeling/input*
-
+/fires_app/static/*

@@ -411,16 +411,20 @@ if __name__ == '__main__':
 		with open(sys.argv[1]) as f: 
 			year_list = pickle.load(f)
 
-	for year in year_list: 
+	for year in [2014]: 
+		'''
 		output_detected_fires_csv(year)
 		get_fire_centroids_csv(year)
+		'''
 		if year != 2015 and year!=2012: 
 			output_json(year, 'state')
 			output_json(year, 'county')
 			output_json(year, 'region')
+		'''
 		output_weather_csv(year)
 		add_date_to_weather_df(year)
 		days_back = 1
 		merge_prior_weather(days_back, year)
+		'''
 
 
