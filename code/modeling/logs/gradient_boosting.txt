@@ -170,10 +170,6 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, land_wate
 
 Scores: {'recall_score': 0.32067538269496093, 'accuracy_score': 0.64148727461997357, 'precision_score': 0.61222953904045152, 'roc_auc_score': 0.7372945212872084}
 
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
 2015-09-18 15:54:57
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
@@ -183,10 +179,6 @@ Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0
 Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, land_water_ratio, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
 
 Scores: {'recall_score': 0.31711403883431349, 'accuracy_score': 0.64058424621804899, 'precision_score': 0.61329266742915234, 'roc_auc_score': 0.73624562046808983}
-
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
 
 2015-09-18 17:40:18
 ----------------------------------------------------------------------------------------------------
@@ -227,4 +219,32 @@ Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0
 Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, spix_outlier_bool, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
 
 Scores: {'recall_score': 0.31711403883431349, 'accuracy_score': 0.64058424621804899, 'precision_score': 0.61329266742915234, 'roc_auc_score': 0.73624562046808983}
+
+2015-09-21 23:59:39
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.38525588283692613, 'accuracy_score': 0.64764733679875786, 'precision_score': 0.61211043714704039, 'roc_auc_score': 0.72977395403674827}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+2015-09-22 00:27:36
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, land_water_ratio, year_2013, year_2014, year_2015, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12
+
+Scores: {'recall_score': 0.31458491125234628, 'accuracy_score': 0.63490365475497301, 'precision_score': 0.60843258391185273, 'roc_auc_score': 0.72886713999651387}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
 
