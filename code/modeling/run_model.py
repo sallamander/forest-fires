@@ -116,7 +116,7 @@ def get_neural_net(train_data):
 	'''
 	np.random.seed(24)
 	hlayer_1_nodes = 200
-	hlayer_2_nodes = 45
+	hlayer_2_nodes = 50
 	hlayer_3_nodes = 25
 	model = Sequential()
 
@@ -128,7 +128,7 @@ def get_neural_net(train_data):
 	model.add(Dropout(0.35))
 	model.add(Dense(hlayer_2_nodes, hlayer_3_nodes, init='uniform'))
 	model.add(Activation('relu'))
-	model.add(Dropout(0.35))
+	model.add(Dropout(0.40))
 	model.add(Dense(hlayer_3_nodes, 2, init='uniform'))
 	model.add(Activation('softmax'))
 
