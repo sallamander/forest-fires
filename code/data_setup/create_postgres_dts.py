@@ -108,7 +108,7 @@ if __name__ == '__main__':
 		create_shapefile_db('perimeters', year)
 		# The 2015 boundary shapefiles for these regions are not yet available. Later when merging we'll 
 		# just use 2014, because that will be close enough. 
-		if year != 2015: 
+		if year != 2015 and year!= 2012: 
 			create_shapefile_db('county', year)
 			create_shapefile_db('state', year)
 			create_shapefile_db('urban', year)

@@ -361,17 +361,14 @@ def merge_prior_weather(n, year):
 	if n is three the past three days, etc. 
 	'''
 	fires_df_filepath = '../../data/csvs/fires_' + str(year) + '.csv'
-	save_df_filepath = '../../data/csvs/fires_weather_' + str(year) + '.csv'
 	weather_df_filespath = '../../data/csvs/merged_daily_weather_' + str(year) + '.csv'
 	fires_df, weather_df = pd.read_csv(fires_df_filepath), pd.read_csv(weather_df_filespath)
 	fires_df = create_n_back_col(fires_df, n)
-	import pdb
-	pdb.set_trace()
 	for days_back in xrange(1, n + 1): 
 		fires_df, weather_df = rework_date_column(fires_df, 'day_less_1'), rework_date_column(weather_df, 'date')
 		fires_df = fires_df.merge(weather_df, how='left', on=['lat', 'long', 'date_for_merge'], suffixes=('_fire', '_back_' + str(n)))
 
-	fires_df.to_csv(save_df_filepath, index=False)
+	fires_df.to_csv(fires_df_filepath, index=False)
 
 def create_n_back_col(df, n): 
 	'''
@@ -416,7 +413,7 @@ if __name__ == '__main__':
 	for year in year_list: 
 		output_detected_fires_csv(year)
 		get_fire_centroids_csv(year)
-		if year != 2015: 
+		if year != 2015 and year!=2012: 
 			output_json(year, 'state')
 			output_json(year, 'county')
 			output_json(year, 'region')

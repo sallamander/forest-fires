@@ -182,6 +182,8 @@ if __name__ == '__main__':
 		# for detected fires, so we'll use the 2014 perimeter files). 
 		if year == 2015: 
 			year = 2014
+		elif year == 2012: 
+			year = 2013
 		boundary_merge('urban_area_bool', 'urban_shapefiles_' + str(year), detected_fires_table, label)
 
 		# Now move to those shapefiles where we want labels/variables asscoiated with each detected point, because 
