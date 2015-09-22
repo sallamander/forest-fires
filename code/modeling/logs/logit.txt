@@ -250,3 +250,13 @@ Scores: {'recall_score': 0.090163664504231564, 'accuracy_score': 0.5994258554618
 *************************************************************************************************************
 *************************************************************************************************************
 *************************************************************************************************************
+2015-09-22 01:09:28
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 10, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l1', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.0845654822669345, 'accuracy_score': 0.5991008679873796, 'precision_score': 0.58697142857142859, 'roc_auc_score': 0.71230883818967694}
+
