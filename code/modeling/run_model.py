@@ -3,6 +3,7 @@ import pickle
 import time
 import datetime
 import keras
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
@@ -90,11 +91,12 @@ def grid_search(model_name, train_data, test_data):
 
 	model = get_model(model_name, train_data)
 	if isinstance(model, keras.models.Sequential): 
+		np.random.seed(24)
 		train_target, train_features = get_target_features(train_data)
 		test_target, test_features = get_target_features(test_data)
 		train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
 		train_features, test_features = train_features.values, test_features.values
-		model.fit(train_features, train_target, batch_size=150, nb_epoch=20, validation_data=(test_features, test_target))
+		model.fit(train_features, train_target, batch_size=150, nb_epoch=10, validation_data=(test_features, test_target))
 		return model
 	grid_parameters = get_grid_params(model_name)
 	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
@@ -110,8 +112,9 @@ def get_neural_net(train_data):
 
 	Instantiate the neural net model and output it to train with. 
 	'''
+	np.random.seed(24)
 	hlayer_1_nodes = 200
-	hlayer_2_nodes = 200
+	hlayer_2_nodes = 75
 	model = Sequential()
 
 	model.add(Dense(train_data.shape[1] - 1, hlayer_1_nodes, init='uniform'))
@@ -152,6 +155,22 @@ def get_target_features(df):
 	features = df.drop('fire_bool', axis=1)
 	return target, features
 
+def output_model(filename, model_name, preds_probs, fire_bool): 
+	'''
+	Input: String, Instantiated Model, Predicted Probability, Boolean 
+	Output: Pickled 
+	'''
+	if not os.path.isfile(filename): 
+		df = pd.DataFrame()
+		df['fire_bool'] = fire_bool
+		df[model_name] = preds_probs
+		df.to_csv(filename)
+	else: 
+		df = pd.read_csv(filename)
+		df[model_name] = preds_probs
+		df.to_csv(filename)
+
+	return df
 
 if __name__ == '__main__': 
 	# sys.argv[1] will hold the name of the model we want to run (logit, random forest, etc.), 
@@ -175,6 +194,9 @@ if __name__ == '__main__':
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
+
+	filename = '../../data/csvs/model_preds.csv'
+	output_model(filename, model_name, preds_probs, test.fire_bool)
 
 
 

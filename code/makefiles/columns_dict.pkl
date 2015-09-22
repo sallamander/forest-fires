@@ -11,7 +11,7 @@ p5
 (dp6
 S'dist_measure'
 p7
-F0.01
+F0.15
 sS'time_measure'
 p8
 I7
