@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
-from data_manip.tt_splits import tt_split_all_less60
+from data_manip.tt_splits import tt_split_all_less_n_days
 from sklearn.grid_search import GridSearchCV
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
@@ -186,7 +186,7 @@ if __name__ == '__main__':
 	with open(sys.argv[2]) as f: 
 		input_df = pickle.load(f)
 	
-	train, test = tt_split_all_less60(input_df)
+	train, test = tt_split_all_less_n_days(input_df, days_back=60)
 
 	'''
 	keep_list = ['conf']

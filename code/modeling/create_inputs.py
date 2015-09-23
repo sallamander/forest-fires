@@ -23,6 +23,8 @@ if __name__ == '__main__':
 
 
 	df = combine_dfs(dfs_list)
+
+	df.to_csv('master.csv')
 	df = grab_columns(df, columns_list)
 	df = break_time_col(df, 'date_fire')
 
