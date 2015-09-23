@@ -21,6 +21,4 @@ aS'gmt'
 p10
 aS'temp'
 p11
-aS'dewPoint'
-p12
 a.

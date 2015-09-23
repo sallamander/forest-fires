@@ -455,11 +455,6 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_co
 
 Scores: {'recall_score': 0.21473968452596567, 'accuracy_score': 0.63094964048260638, 'precision_score': 0.65676301742370835, 'roc_auc_score': 0.7399321649907904}
 
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
-
 2015-09-23 00:07:10
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
@@ -469,11 +464,6 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
 
 Scores: {'recall_score': 0.0, 'accuracy_score': 0.58879605681864344, 'precision_score': 0.0, 'roc_auc_score': 0.73233145725606175}
-
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
 
 2015-09-23 01:16:22
 ----------------------------------------------------------------------------------------------------
@@ -494,4 +484,76 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'ma
 Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, dewPoint, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
 
 Scores: {'recall_score': 0.0, 'accuracy_score': 0.58790470372632864, 'precision_score': 0.0, 'roc_auc_score': 0.72727659102729059}
+
+2015-09-23 12:46:28
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 3, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, dewPoint, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.58790470372632864, 'precision_score': 0.0, 'roc_auc_score': 0.72727659102729059}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+2015-09-23 13:49:27
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 3, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.58790470372632864, 'precision_score': 0.0, 'roc_auc_score': 0.73148142671617555}
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+2015-09-23 14:56:47
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 3, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.58790470372632864, 'precision_score': 0.0, 'roc_auc_score': 0.72067360655361079}
+
+dist 0.05, days 1
+
+2015-09-23 16:14:53
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 10, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.3605839416058394, 'accuracy_score': 0.69947773103148125, 'precision_score': 0.61617961511047759, 'roc_auc_score': 0.77532527313549204}
+
+30 days
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+2015-09-23 18:53:32
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 1, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 3, 'class_weight': None}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.60263209329598022, 'precision_score': 0.0, 'roc_auc_score': 0.74655697442038782}
+
+60 days
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
 
