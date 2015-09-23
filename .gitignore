@@ -3,3 +3,4 @@
 /data/csvs/*
 /data/zipped_files/*
 /code/modeling/input*
+/code/master.csv
