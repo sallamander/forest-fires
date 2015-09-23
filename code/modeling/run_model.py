@@ -185,8 +185,9 @@ if __name__ == '__main__':
 
 	with open(sys.argv[2]) as f: 
 		input_df = pickle.load(f)
-	
-	train, test = tt_split_all_less_n_days(input_df, days_back=60)
+
+	days_back = 30
+	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
 
 	'''
 	keep_list = ['conf']
@@ -201,7 +202,7 @@ if __name__ == '__main__':
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
 
-	filename = '../data/csvs/model_preds.csv'
+	filename = '../data/csvs/model_preds_' + str(days_back) + '.csv'
 	output_model(filename, model_name, preds_probs, test.fire_bool)
 
 

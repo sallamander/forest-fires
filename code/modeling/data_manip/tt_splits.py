@@ -11,7 +11,7 @@ def tt_split_all_less_n_days(df, days_back=60):
 	'''
 
 	df['date_fire'] = pd.to_datetime(df['date_fire'])
-	today = date.today()
+	today = df['date_fire'].max().date()
 	today_less_days = today - pd.Timedelta(days=days_back)
 	train = df.query('date_fire < @today_less_days')
 	test = df.query('date_fire >= @today_less_days')
