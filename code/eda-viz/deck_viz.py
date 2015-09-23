@@ -48,34 +48,14 @@ def plot_model(final_groups, model_name, num_bins):
 	'''
 
 	df = pd.DataFrame()
-	df['group'] = np.linspace(0, 1, num_bins + 1)
-	df['total'] = final_groups[model_name][0] + final_groups[model_name][1]
-	df['non_fires'] = final_groups[0]
+	df['group'] = np.linspace(0, 1, num_bins + 1)[:-1]
+	df['percentage'] = np.array(final_groups[model_name][1]).astype(float) / (np.array(final_groups[model_name][0]) + np.array(final_groups[model_name][1]))
 
-	sns.set_style("white")
-	sns.set_context({"figure.figsize": (24, 10)})
-
-	# Plot 1 - background - "total" (top) series
-	sns.barplot(x = stacked_bar_data.group, y = stacked_bar_data.total, color = "red")
-
-	#Plot 2 - overlay - "bottom" series
-	bottom_plot = sns.barplot(x = stacked_bar_data.Group, y = stacked_bar_data.non_fires, color = "#0000A3")
+	sns.barplot(x = df.group, y = df.percentage)
 
 	topbar = plt.Rectangle((0,0),1,1,fc="red", edgecolor = 'none')
 	bottombar = plt.Rectangle((0,0),1,1,fc='#0000A3',  edgecolor = 'none')
-	l = plt.legend([bottombar, topbar], ['Bottom Bar', 'Top Bar'], loc=1, ncol = 2, prop={'size':16})
-	l.draw_frame(False)
 
-	#Optional code - Make plot look nicer
-	sns.despine(left=True)
-	bottom_plot.set_ylabel("Y-axis label")
-	bottom_plot.set_xlabel("X-axis label")
-
-	#Set fonts to consistent 16pt size
-	for item in ([bottom_plot.xaxis.label, bottom_plot.yaxis.label] +
-	         bottom_plot.get_xticklabels() + bottom_plot.get_yticklabels()):
-		item.set_fontsize(16)
-	
 	plt.show()
 
 if __name__ == '__main__': 
