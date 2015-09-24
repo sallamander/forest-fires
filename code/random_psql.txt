@@ -136,15 +136,33 @@ CREATE TABLE douglas_info2 AS
 COPY douglas_info1 to '/Users/sallamander/Desktop/douglas1.csv'
 DELIMITER AS ',' CSV HEADER;  
 
- 
+COPY merged_2013 to '/Users/sallamander/Desktop/merged_20132.csv' DELIMITER AS ',' CSV HEADER;
+
+CREATE TABLE part1 AS 
+(SELECT c.wkb_geometry, c.name 
+FROM county_shapefiles_2014 c
+LEFT JOIN detected_fires_2012 d
+	ON c.name = d.county_name); 
 
 
+*************************************************
+Creating tables for getting heatmap by county
+*************************************************
 
+CREATE TABLE county_heatmap AS
+				(WITH 
+					distinct_to_merge AS 
+						(SELECT DISTINCT ON (lat, long) * 
+						FROM detected_fires_2012), 
+					merged AS 
+						(SELECT DISTINCT points.lat, points.long, polys.countyns
+						FROM distinct_to_merge as points
+						INNER JOIN county_shapefiles_2014 as polys
+							ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry))
 
-
-
-
-
-
-
-		COPY merged_2013 to '/Users/sallamander/Desktop/merged_20132.csv' DELIMITER AS ',' CSV HEADER;
+				SELECT df.fire_bool, merged.countyns 
+				FROM detected_fires_2012 df
+				LEFT JOIN merged 
+					ON df.lat = merged.lat
+					AND df.long = merged.long
+					AND df.date = merged.date); 
