@@ -98,7 +98,7 @@ def grid_search(model_name, train_data, test_data):
 		test_target, test_features = get_target_features(test_data)
 		train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
 		train_features, test_features = train_features.values, test_features.values
-		model.fit(train_features, train_target, batch_size=115, nb_epoch=10, validation_data=(test_features, test_target))
+		model.fit(train_features, train_target, batch_size=100, nb_epoch=10, validation_data=(test_features, test_target))
 		return model
 	grid_parameters = get_grid_params(model_name)
 	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
@@ -142,12 +142,12 @@ def get_grid_params(model_name):
 	Output: Dictionary
 	'''
 	if model_name == 'logit': 
-		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 10]}
+		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 5]}
 	elif model_name == 'random_forest': 
 		return {'n_estimators': [500], 
 				'max_depth': [3, 5, 10, 20]}
 	elif model_name == 'gradient_boosting': 
-		return {'learning_rate': [0.01, 0.05, 0.1]}
+		return {'learning_rate': [0.125]}
 
 def get_target_features(df): 
 	'''
@@ -178,6 +178,19 @@ def output_model(filename, model_name, preds_probs, fire_bool):
 
 	return df
 
+def normalize_df(input_df): 
+	'''
+	Input: Pandas DataFrame
+	Output: Pandas DataFrame
+	'''
+
+	input_df2 = input_df.copy()
+	for col in input_df.columns: 
+		if col != 'fire_bool': 
+			input_df2[col] = (input_df[col] - input_df[col].mean()) / input_df[col].std()
+
+	return input_df
+
 if __name__ == '__main__': 
 	# sys.argv[1] will hold the name of the model we want to run (logit, random forest, etc.), 
 	# and sys.argv[2] will hold our input dataframe (data will all the features and target). 
@@ -186,8 +199,12 @@ if __name__ == '__main__':
 	with open(sys.argv[2]) as f: 
 		input_df = pickle.load(f)
 
-	days_back = 30
+	days_back = 60
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
+
+	if model_name == 'neural_net': 
+		train = normalize_df(train)
+		test = normalize_df(test)
 
 	'''
 	keep_list = ['conf']
@@ -202,7 +219,10 @@ if __name__ == '__main__':
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
 
-	filename = '../data/csvs/model_preds_' + str(days_back) + '.csv'
+	if model_name == 'neural_net': 
+		filename = '../data/csvs/model_preds2_' + str(days_back) + '.csv'
+	else: 
+		filename = '../data/csvs/model_preds_lessconf_' + str(days_back) + '.csv'
 	output_model(filename, model_name, preds_probs, test.fire_bool)
 
 

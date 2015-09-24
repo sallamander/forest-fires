@@ -559,9 +559,7 @@ Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_co
 
 Scores: {'recall_score': 0.36746611053180395, 'accuracy_score': 0.69258668214130281, 'precision_score': 0.59386585776878997, 'roc_auc_score': 0.77760594565136343}
 
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
+60 days
 
 2015-09-23 18:18:02
 ----------------------------------------------------------------------------------------------------
@@ -576,7 +574,9 @@ Scores: {'recall_score': 0.45851915005246591, 'accuracy_score': 0.67459769366082
 *************************************************************************************************************
 *************************************************************************************************************
 *************************************************************************************************************
-2015-09-23 19:13:00
+
+
+2015-09-23 20:14:58
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
 
@@ -584,5 +584,52 @@ Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0
 
 Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
 
-Scores: {'recall_score': 0.45431763600292369, 'accuracy_score': 0.6545476095233862, 'precision_score': 0.63082350666924414, 'roc_auc_score': 0.74515286844892548}
+Scores: {'recall_score': 0.45851915005246591, 'accuracy_score': 0.67459769366082478, 'precision_score': 0.62304504745354894, 'roc_auc_score': 0.76520412577991248}
+
+60 days
+
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+
+2015-09-24 01:17:12
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 1, 'n_estimators': 500, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 1}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.43674580272822666, 'accuracy_score': 0.6667665645970422, 'precision_score': 0.61332657948056735, 'roc_auc_score': 0.76286797660433237}
+
+2015-09-24 03:05:23
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.125, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, conf, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.44097586568730324, 'accuracy_score': 0.67010228679392791, 'precision_score': 0.61920987199557975, 'roc_auc_score': 0.76471789359127862}
+
+2015-09-24 03:17:10
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.125, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: conf, fire_bool, year, month
+
+Scores: {'recall_score': 0.0, 'accuracy_score': 0.60263209329598022, 'precision_score': 0.0, 'roc_auc_score': 0.63501151719408722}
+
+2015-09-24 03:47:05
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.125, 'min_samples_leaf': 1, 'n_estimators': 100, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.43553252885624344, 'accuracy_score': 0.67034985992572804, 'precision_score': 0.62161276735152338, 'roc_auc_score': 0.76366728027947262}
 
