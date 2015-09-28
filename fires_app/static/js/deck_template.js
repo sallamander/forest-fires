@@ -1,6 +1,5 @@
-/*
 
-This was for generating the pictures of maps for the deck. 
+// This was for generating the pictures of maps for the deck. 
 //Width and height
 var w = 500;
 var h = 500;
@@ -10,7 +9,7 @@ var svg = d3.select("body")
 			.append("svg")
 			.attr("width", w)
 			.attr("height", h)
-			.style("background", "#000");
+			.style("background", "#fff");
 
 var projection = d3.geo.albers()
 						.translate([w/2, h/2])
@@ -19,7 +18,7 @@ var projection = d3.geo.albers()
 var path = d3.geo.path().projection(projection); 
 color = d3.rgb(120, 175, 120)
 
-d3.json('/static/data/2014_county.json', function(json){
+d3.json('/static/data/2014_state.json', function(json){
 	svg.selectAll("path")
 	.data(json)
 	.enter()
@@ -27,12 +26,26 @@ d3.json('/static/data/2014_county.json', function(json){
 	.attr("d", path)
 	.style("fill", color)
 	.style('stroke-width', '3');  
+
+	d3.csv('/static/data/day_2014_fires.csv', function(data) {
+		console.log(data)
+		svg.selectAll("circle") 
+		.data(data)
+		.enter()
+		.append("circle")
+		.attr("cx", function(d) {
+			return projection([d.long, d.lat])[0]; 
+		})
+		.attr("cy", function(d) {
+			return projection([d.long, d.lat])[1]; 
+		})
+		.attr("r", 1)
+		.style("fill", "red"); 
+	}); 
 }); 
-*/
 
 /*
-This is for generating something else
-*/ 
+This is for generating bar charts. 
 
 
 var margin = {top: 20, right: 50, bottom: 30, left: 80},
@@ -130,4 +143,5 @@ d3.csv("/static/data/gboosting_preds.csv", function(error, data) {
 	  .text(function(d) { return d; })
 	  .attr("fill", "white");
 });
+*/
 	
