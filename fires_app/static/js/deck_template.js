@@ -35,8 +35,8 @@ This is for generating something else
 */ 
 
 
-var margin = {top: 20, right: 20, bottom: 30, left: 80},
-    width = 650 - margin.left - margin.right,
+var margin = {top: 20, right: 50, bottom: 30, left: 80},
+    width = 750 - margin.left - margin.right,
     height = 350 - margin.top - margin.bottom;
 
 var x0 = d3.scale.ordinal()
@@ -65,7 +65,7 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
 
-d3.csv("/static/data/model_preds.csv", function(error, data) {
+d3.csv("/static/data/gboosting_preds.csv", function(error, data) {
 	if (error) throw error;
 
 	var probBins = d3.keys(data[0]).filter(function(key) { return key !== "model_name"; });
