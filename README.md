@@ -1,15 +1,22 @@
 # Building a Model for the Early-Detection of Forest-Fires
 
-With the right compilation of datasets, can we build a machine learning model for the early detection of forest fires?
-Furthermore, can we extend that early detection model to predict ahead of time how severe a forest fire will be?
+![Intro Image 1](./readme_imgs/readme_1.png)
 
-Using the [fire detection data set from the National Forest Services](http://firemapper.sc.egov.usda.gov/gisdata.php),
-I aim to predict whether each 'detected fire' is (a.) An actual fire, and (b.) Whether or not those fires which are 
-actual fires are forest fires. To do so, I plan to train a model using [historical forest fire perimeter boundaries]
-(http://rmgsc.cr.usgs.gov/outgoing/GeoMAC/historic_fire_data/) as the target variable/ground truth. That is, if a 
-detected fire falls within a forest fire perimeter boundary for the given date that it occurs, I will consider it 
-a forest fire and use that as my ground truth. 
+Each day, there are hundreds of satellite images from NASA's AQUA and TERRA satellites that are run through the MODIS active fire product. The output of this active fire product is a data set that holds hundreds of 'detected fires' at given latitude/longitude coordinates. We can aggregate this data set to the year level, and see that a map of all detected fires for a given year is incredibly crowded. It's important to note, though, that these fires could be house fires, farmer burn piles, or even forest fires. Currently, this detected fires data set is not used in real-time for forest fire prevention. A large part of this could be that there is no easy way to tease out which of these detected fires are forest fires. What if there was a way that we could parse down this data set into only those detected fires which are forest fires? There is!
 
-### Current Status
+![Intro Image 2](./readme_imgs/readme_2.png)
 
-Right now, I am working on finalizing the data set to start training a model. 
+Each day, states are required to submit forest-fire perimeter boundaries. If we compare the latitude/longitude coordinates of the dectected fires with the forest-fire perimeter boundaries, we can pare down the detected fires data set to only those fires which are forest fires. The problem with this, though, is that we are doing it historically / after-the-fact. What if we wanted to do this in real time? This is where data science comes in... 
+
+Using data science and machine learning, we can build a model that takes in the detected fires data set and tells us which of those detected fires are actually forest fires.  My current methodology has focused upon using the detected fires data set, along with geographical features, to fit the best predictive model as measured by ROC area under the curve. 
+
+![Intro Image 3](./readme_imgs/readme_3.png)
+
+## Current Status / Next steps
+
+Currently, I have finished fitting models (Logistic, Random Forest, Gradient Boosting, Neural Network) using the detected fires data set, along with geographical features. I found that the Gradient Boosting model gave me the highest ROC area under the curve (~0.76).  
+
+My next step is to start including weather data into the model. At this point I have attempted to do this already, but the weather data that I have is not as robust and granular as I need. Once I find such a data set, I am hoping that including weather data will increase predictive power substantially. 
+
+
+
