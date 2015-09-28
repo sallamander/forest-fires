@@ -1,6 +1,6 @@
 # Building a Model for the Early-Detection of Forest-Fires
 
-To date, hundreds of forest fires have burned over 9 million acres of land in 2015, causing millions of dollars in property damage and unmeasureable loss and pain to those families effected. Currently, satellite imagery of detected fires is not used in real-time to aid in forest fire protection. What if we **could** use that satellite imagery to aid in forest fire protection?
+To date, hundreds of forest fires have burned over 9 million acres of land in 2015, causing millions of dollars in property damage and immeasureable loss and pain to those families effected. Currently, satellite imagery of detected fires is not used in real-time to aid in forest fire protection. What if we **could** use that satellite imagery to aid in forest fire protection?
 
 ![Intro Image 1](./readme_imgs/readme_1.png)
 
