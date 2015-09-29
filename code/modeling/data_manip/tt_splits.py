@@ -33,6 +33,28 @@ def tt_split_early_late(df, year, months_forward):
 
     df['date_fire'] = pd.to_datetime(df['date_fire'])
     date_split = datetime.date(year, 1, 1) + pd.Timedelta(months=months_forward)
-    train = df.query('date_fire.year() < @year or (date_fire.year() == (@year + 1) and date_fire.month() < @months_forward)) 
+    train = df.query('date_fire.year() < @year or (date_fire.year() == (@year + 1) and date_fire.month() < @months_forward)') 
 
+def return_next_month_start(t, n): 
+    '''
+    Input: datetime.date
+    Output: datetime.date
 
+    For the given datetime.date, return a datetime.date object that is the date for the first day in the 
+    nth month ahead. For example, if I feed in January and the number 3, then I want this to spit back a 
+    datetime.date that is the first day of the month of April in the same year.
+    '''
+    
+    # Go ahead and move the inputted time forward at least 28 days forward for the number of months 
+    # that we want. We know that there are at least 28 days in each month, and that this step will 
+    # put us only a handful of days before the start of the month we want. We can then step through 
+    # day by day until the month changes. 
+    t = t + datetime.timedelta(days=(28 * n))
+
+    one_day = datetime.timedelta(days=1)
+    one_month_later = t + one_day 
+    
+    while one_month_later.month == t.month: 
+        one_month_later += one_day
+
+    return one_month_later
