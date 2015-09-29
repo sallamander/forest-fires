@@ -13,7 +13,7 @@ def tt_split_all_less_n_days(df, days_back=60):
 	df['date_fire'] = pd.to_datetime(df['date_fire'])
 	today = df['date_fire'].max().date()
 	today_less_days = today - pd.Timedelta(days=days_back)
-	train = df.query('date_fire < @today_less_days')
+    train = df.query('date_fire < @today_less_days')
 	test = df.query('date_fire >= @today_less_days')
 	del train['date_fire']
 	del test['date_fire']
@@ -32,8 +32,18 @@ def tt_split_early_late(df, year, months_forward):
     ''' 
 
     df['date_fire'] = pd.to_datetime(df['date_fire'])
-    date_split = datetime.date(year, 1, 1) + pd.Timedelta(months=months_forward)
-    train = df.query('date_fire.year() < @year or (date_fire.year() == (@year + 1) and date_fire.month() < @months_forward)') 
+    # If we want more than 12 months forward, then we want a whole nother year, so let's just adjust the 
+    # year and months_forward variables to handle that. 
+    if months_forward >= 12: 
+        year += 1
+        months_foward -= 12
+    date_split = datetime.date(year, 1, 1)
+    date_split = return_next_month_start(date_split, months_forward)
+
+    train = df.query('date_fire < @date_split')
+	test = df.query('date_fire >= @date_split')
+
+    return train, test
 
 def return_next_month_start(t, n): 
     '''
@@ -49,7 +59,7 @@ def return_next_month_start(t, n):
     # that we want. We know that there are at least 28 days in each month, and that this step will 
     # put us only a handful of days before the start of the month we want. We can then step through 
     # day by day until the month changes. 
-    t = t + datetime.timedelta(days=(28 * n))
+    t = t + datetime.timedelta(days=(27 * n))
 
     one_day = datetime.timedelta(days=1)
     one_month_later = t + one_day 
