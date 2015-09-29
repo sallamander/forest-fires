@@ -55,8 +55,8 @@ def return_next_month_start(t, n):
     datetime.date that is the first day of the month of April in the same year.
     '''
     
-    # Go ahead and move the inputted time forward at least 28 days forward for the number of months 
-    # that we want. We know that there are at least 28 days in each month, and that this step will 
+    # Go ahead and move the inputted time forward at least 27 days forward for the number of months 
+    # that we want. We know that there are at least 27 days in each month, and that this step will 
     # put us only a handful of days before the start of the month we want. We can then step through 
     # day by day until the month changes. 
     t = t + datetime.timedelta(days=(27 * n))
