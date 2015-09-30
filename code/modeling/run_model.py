@@ -201,11 +201,8 @@ if __name__ == '__main__':
 
 	days_back = 60
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
-	
-	train2, test2 = tt_split_early_late(train, 2012, 0)
-
-	import pdb
-	pdb.set_trace()
+	train.drop('date_fire', inplace=True, axis =1)
+	test.drop('date_fire', inplace=True, axis = 1)	
 	if model_name == 'neural_net': 
 		train = normalize_df(train)
 		test = normalize_df(test)
