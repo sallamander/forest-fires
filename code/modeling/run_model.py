@@ -82,9 +82,9 @@ def log_results(model_name, train, fitted_model, scores):
 		f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
 		f.write('Scores: ' + str(scores) + '\n' * 2)
 
-def grid_search(model_name, train_data, test_data): 
+def sklearn_grid_search(model_name, train_data, test_data): 
 	'''
-	Input: String
+	Input: String, Pandas DataFrame, Pandas DataFrame
 	Output: Best fit model from grid search parameters. 
 
 	For the given model name, grab a model and the relevant grid parameters, perform a grid search 
@@ -93,19 +93,42 @@ def grid_search(model_name, train_data, test_data):
 
 	model = get_model(model_name, train_data)
 	if isinstance(model, keras.models.Sequential): 
-		np.random.seed(24)
-		train_target, train_features = get_target_features(train_data)
-		test_target, test_features = get_target_features(test_data)
-		train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
-		train_features, test_features = train_features.values, test_features.values
-		model.fit(train_features, train_target, batch_size=100, nb_epoch=10, validation_data=(test_features, test_target))
-		return model
+        model = fit_neural_net(model, train_data, test_data)
+        return model
 	grid_parameters = get_grid_params(model_name)
 	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
 	target, features = get_target_features(train_data)
 	grid_search.fit(features, target)
 
 	return grid_search.best_estimator_
+
+def own_grid_search(model_name, train_data, test_data): 
+    '''
+    Input: String, Pandas DataFrame, Pandas DataFrame
+    Output: Best fit model from grid search of parameters. 
+    '''
+    roc_auc = []    
+    model = get_model(model_name, train_data)
+    for months_forward in xrange(0, 31, 3): 
+        training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward)
+        if isinstance(model, keras.models.Sequential): 
+            model =  fit_neural_net(model, train_data, test_data)
+            return model
+        grid_parameters = get_rid_params(model_name)
+
+def fit_neural_net(model, train_data, test_data):  
+    '''
+    Input: Instantiated Neural Network, Pandas DataFrame, Pandas DataFrame
+    Output: Fitted model 
+    '''
+
+    np.random.seed(24)
+    train_target, train_features = get_target_features(train_data)
+    test_target, test_features = get_target_features(test_data)
+    train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
+    train_features, test_features = train_features.values, test_features.values
+    model.fit(train_features, train_target, batch_size=100, nb_epoch=10, validation_data=(test_features, test_target))
+    return model
 
 def get_neural_net(train_data): 
 	'''
@@ -161,7 +184,7 @@ def get_target_features(df):
 	features = df.drop('fire_bool', axis=1)
 	return target, features
 
-def output_model(filename, model_name, preds_probs, fire_bool): 
+def output_model_preds(filename, model_name, preds_probs, fire_bool): 
 	'''
 	Input: String, Instantiated Model, Predicted Probability, Boolean 
 	Output: Pickled 
@@ -224,7 +247,7 @@ if __name__ == '__main__':
 		filename = '../data/csvs/model_preds2_' + str(days_back) + '.csv'
 	else: 
 		filename = '../data/csvs/model_preds_lessconf_' + str(days_back) + '.csv'
-	output_model(filename, model_name, preds_probs, test.fire_bool)
+	output_model_preds(filename, model_name, preds_probs, test.fire_bool)
 
 
 
