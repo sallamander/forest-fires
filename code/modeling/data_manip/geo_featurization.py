@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import multiprocessing
+from itertools import izip
 from datetime import timedelta
 
 def gen_nearby_fires_count(df, dist_measure, time_measure):
@@ -17,6 +18,8 @@ def gen_nearby_fires_count(df, dist_measure, time_measure):
 	nearby_count_dict = pool.map(query_for_nearby_fires, df2.values) 
 	nearby_count_df = pd.DataFrame(nearby_count_dict)
 	df = merge_results(df, nearby_count_df)
+	import pdb
+	pdb.set_trace()
 	query_prep_clean(df, dist_measure, time_measure, beginning=False)
 	return df
 
@@ -28,7 +31,7 @@ def query_for_nearby_fires(row):
 	For the inputted row, query the dataframe for the number of 'detected fires' (i.e. other rows) that 
 	are within dist_measure of the inputted row and within the time_measure of the inputted row. 
 	'''
-	lat, lng, date = row[lat_idx], row[lng_idx], row[dt_idx].date()
+	lat, lng, date = row[lat_idx], row[lng_idx], row[dt_idx]
 	lat_min, lat_max = lat - dist_measure2, lat + dist_measure2
 	long_min, long_max = lng - dist_measure2, lng + dist_measure2
 	# Note we're not doing day_max here because in real time we wouldn't have forward dates. 
@@ -54,6 +57,7 @@ def query_prep_clean(df, dist_measure, time_measure, beginning=True):
 		dist_measure2, time_measure2 = dist_measure, time_measure
 		df2 = df.copy()
 		df2['date_temp'] = pd.to_datetime(df2['date_fire'])
+		df2 = add_hour_second(df2, 'date_temp')
 		df_columns = df2.columns
 		lat_idx, lng_idx, dt_idx = np.where(df_columns == 'lat')[0][0], np.where(df_columns == 'long')[0][0], np.where(df_columns == 'date_temp')[0][0] 
 	if beginning == False:
@@ -69,10 +73,38 @@ def merge_results(df, nearby_fires_df):
 	'''
 	df['date_count'] = pd.to_datetime(df['date_fire'])
 	df['date_count'] = df['date_count'].astype(str)
-	df['date_count'] = [dt[0:10] for dt in df['date_count'].values]
-	nearby_fires_df['date_count'] = nearby_fires_df['date_count'].astype(str)
+	df = add_hour_second(df, 'date_count')
+	import pdb
+	pdb.set_trace()
 	nearby_fires_df = nearby_fires_df.drop_duplicates()
 	df = pd.merge(df, nearby_fires_df, how='left', on=['lat', 'long', 'date_count'])
 	df.drop('date_count', axis=1, inplace=True)
 
 	return df
+
+def add_hour_second(df, date_col_to_add_to): 
+	'''
+	Input: Pandas DataFrame 
+	Output: Pandas DataFrame
+
+	Take in the data frame, and add to the date_temp the hours and seconds so that we can make sure to only grab 
+	those fires that are less than in time (where less than includes hours and seconds and not just the day). 
+	'''
+	
+	hour = []
+	minute = []
+	for gmt in df.gmt.values:
+		gmt = str(gmt)
+		if len(gmt) == 3: 
+			hour.append(int(gmt[0]))
+			minute.append(int(gmt[1:]))
+		else: 
+			hour.append(int(gmt[0:2]))
+			minute.append(int(gmt[2:]))
+
+	df['hour'] = hour
+	df['minute'] = minute
+	df[date_col_to_add_to] = [date_temp + pd.Timedelta(hours=hour) + pd.Timedelta(minutes=minute) for date_temp, hour, minute in \
+			  izip(df[date_col_to_add_to], df.hour, df.minute)]
+
+	return df 
