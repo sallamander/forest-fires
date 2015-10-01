@@ -97,7 +97,7 @@ def sklearn_grid_search(model_name, train_data, test_data):
 		model = fit_neural_net(model, train_data, test_data)
 		return model
 	grid_parameters = get_grid_params(model_name)
-	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
+	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc', cv=10)
 	target, features = get_target_features(train_data)
 	grid_search.fit(features, target)
 
@@ -192,7 +192,7 @@ def fit_neural_net(model, train_data, test_data):
     test_target, test_features = get_target_features(test_data)
     train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
     train_features, test_features = train_features.values, test_features.values
-    model.fit(train_features, train_target, batch_size=100, nb_epoch=10, validation_data=(test_features, test_target))
+    model.fit(train_features, train_target, batch_size=100, nb_epoch=15, validation_data=(test_features, test_target))
     return model
 
 def get_neural_net(train_data): 
@@ -203,9 +203,9 @@ def get_neural_net(train_data):
 	Instantiate the neural net model and output it to train with. 
 	'''
 	np.random.seed(24)
-	hlayer_1_nodes = 200
-	hlayer_2_nodes = 50
-	hlayer_3_nodes = 25
+	hlayer_1_nodes = 250
+	hlayer_2_nodes = 100
+	hlayer_3_nodes = 100
 	model = Sequential()
 
 	model.add(Dense(train_data.shape[1] - 1, hlayer_1_nodes, init='uniform'))
@@ -220,7 +220,7 @@ def get_neural_net(train_data):
 	model.add(Dense(hlayer_3_nodes, 2, init='uniform'))
 	model.add(Activation('softmax'))
 
-	model.compile(loss='categorical_crossentropy', optimizer='adadelta')
+	model.compile(loss='categorical_crossentropy', optimizer='RMSprop')
 
 	return model
 
@@ -232,10 +232,10 @@ def get_grid_params(model_name):
 	if model_name == 'logit': 
 		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 5]}
 	elif model_name == 'random_forest': 
-		return {'n_estimators': [500], 
+		return {'n_estimators': [500, 1000], 
 				'max_depth': [3, 5, 10, 20]}
 	elif model_name == 'gradient_boosting': 
-		return {'learning_rate': [0.125]}
+		return {'learning_rate': [0.01, 0.05, 0.1, 0.125]}
 
 def get_target_features(df): 
 	'''
@@ -289,8 +289,10 @@ if __name__ == '__main__':
 
 	days_back = 60
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
-	train.drop('date_fire', inplace=True, axis =1)
-	test.drop('date_fire', inplace=True, axis = 1)	
+
+	train = train.drop('date_fire', axis =1)
+	test = test.drop('date_fire', axis = 1)	
+
 	if model_name == 'neural_net': 
 		train = normalize_df(train)
 		test = normalize_df(test)
@@ -307,12 +309,8 @@ if __name__ == '__main__':
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
-
-	if model_name == 'neural_net': 
-		filename = '../data/csvs/model_preds2_' + str(days_back) + '.csv'
-	else: 
-		filename = '../data/csvs/model_preds_lessconf_' + str(days_back) + '.csv'
-	output_model_preds(filename, model_name, preds_probs, test.fire_bool)
+	
+	# output_model_preds(filename, model_name, preds_probs, test.fire_bool)
 
 
 
