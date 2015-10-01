@@ -6,6 +6,7 @@ import keras
 import numpy as np
 import os
 import pandas as pd
+import itertools
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
@@ -26,7 +27,7 @@ def get_model(model_name, train_data):
 	if model_name == 'logit': 
 		return LogisticRegression(random_state=random_seed)
 	elif model_name == 'random_forest': 
-		return RandomForestClassifier(random_state=random_seed)
+		return RandomForestClassifier(random_state=random_seed, n_jobs=20)
 	elif model_name == 'gradient_boosting': 
 		return GradientBoostingClassifier(random_state=random_seed)
 	elif model_name == 'neural_net': 
@@ -93,8 +94,8 @@ def sklearn_grid_search(model_name, train_data, test_data):
 
 	model = get_model(model_name, train_data)
 	if isinstance(model, keras.models.Sequential): 
-        model = fit_neural_net(model, train_data, test_data)
-        return model
+		model = fit_neural_net(model, train_data, test_data)
+		return model
 	grid_parameters = get_grid_params(model_name)
 	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc')
 	target, features = get_target_features(train_data)
@@ -103,18 +104,82 @@ def sklearn_grid_search(model_name, train_data, test_data):
 	return grid_search.best_estimator_
 
 def own_grid_search(model_name, train_data, test_data): 
-    '''
-    Input: String, Pandas DataFrame, Pandas DataFrame
-    Output: Best fit model from grid search of parameters. 
-    '''
-    roc_auc = []    
-    model = get_model(model_name, train_data)
-    for months_forward in xrange(0, 31, 3): 
-        training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward)
-        if isinstance(model, keras.models.Sequential): 
-            model =  fit_neural_net(model, train_data, test_data)
-            return model
-        grid_parameters = get_rid_params(model_name)
+	'''
+	Input: String, Pandas DataFrame, Pandas DataFrame
+	Output: Best fit model from grid search of parameters. 
+	'''
+	model = get_model(model_name, train_data)
+	if isinstance(model, keras.models.Sequential): 
+	    model =  fit_neural_net(model, train_data, test_data)
+	    return model
+	roc_auc = []  
+	grid_parameters = get_grid_params(model_name)
+	param_names, param_combs = prepare_grid_params(grid_parameters)  
+	for idx, param_comb in enumerate(param_combs): 
+		output_dict = defaultdict(list)
+		param_dict = {}
+		output_dict['model'] = idx
+		for idx, param in enumerate(param_names): 
+			output_dict[param] = param_comb[idx]
+			param_dict[param] = param_comb[idx]
+		for months_forward in xrange(0, 31, 3): 
+			training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward)
+			model = fit_model(model, param_dict, training_set)
+			roc_auc = predict_score_model(model, validation_set)
+			output_dict['roc_auc'].append(roc_auc)
+		roc_auc.append(output_dict)
+
+	return roc_auc 
+
+def prepare_grid_params(grid_parameters): 
+	'''
+	Input: Dictionary (of grid parameters)
+	Output: List, List
+
+	For the given grid of parameters inputted, output a list that holds the names of each parameter, 
+	and another list that holds all of the possible combinations of those parameters (its these we will
+	cycle through). 
+	'''
+	param_names, param_values = [], []
+	key_val_pairs = grid_parameters.items()
+
+	for key_val_pair in key_val_pairs: 
+		param_names.append(key_val_pair[0])
+		param_values.append(key_val_pair[1])
+	
+	param_combs =list(itertools.product(*param_values))
+
+	return param_names, param_combs
+
+def fit_model(model, param_dict, training_set): 
+	'''
+	Input: Instantiated Model, dictionary, Pandas DataFrame
+	Output: Fitted Model
+
+	Set the parameters for the instantiated model using the param_dict dictionary, and train it 
+	using the training data in the pandas dataframe. 
+	'''
+
+	target, features = get_target_features(training_set)
+	model.set_params(param_dict)
+	model.fit(features)
+
+	return model
+
+def predict_score_model(model, validation_set): 
+	'''
+	Input: Instantiated and fitted model, Pandas DataFrame
+	Output: Floating point number	
+
+	Obtain predicted probabilities for the test data set, and then an roc_auc score for how good 
+	those probabilities were. 
+	'''
+
+	target, features = get_target_features(validation_set)
+	preds, preds_probs = model.predict(features), model.predict_proba(features)
+	scores = return_scores(target, preds, preds_probs)
+
+	return scores['roc_auc_score']
 
 def fit_neural_net(model, train_data, test_data):  
     '''
@@ -238,7 +303,7 @@ if __name__ == '__main__':
 	test = test.drop(keep_list, axis=1)
 	'''
 	
-	fitted_model = grid_search(model_name, train, test)
+	fitted_model = sklearn_grid_search(model_name, train, test)
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)

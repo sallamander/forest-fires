@@ -19,4 +19,6 @@ aS'gmt'
 p9
 aS'temp'
 p10
+aS'conf'
+p11
 a.
