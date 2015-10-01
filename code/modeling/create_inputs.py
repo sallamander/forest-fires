@@ -30,8 +30,8 @@ if __name__ == '__main__':
 
 	if 'add_nearby_fires' in columns_dict.keys(): 
 		dist_measure = columns_dict['add_nearby_fires']['dist_measure']
-		time_measure = columns_dict['add_nearby_fires']['time_measure']
-		df = gen_nearby_fires_count(df, dist_measure, time_measure)
+		time_measures = columns_dict['add_nearby_fires']['time_measures']
+		df = gen_nearby_fires_count(df, dist_measure, time_measures)
 
 
 	featurization_dict = {'all_dummies': return_all_dummies, 'bool_col': boolean_col, 'return_top_n': return_top_n, 

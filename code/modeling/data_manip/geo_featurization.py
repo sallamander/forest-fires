@@ -4,23 +4,23 @@ import multiprocessing
 from itertools import izip
 from datetime import timedelta
 
-def gen_nearby_fires_count(df, dist_measure, time_measure):
+def gen_nearby_fires_count(df, dist_measure, time_measures):
 	'''
-	Input: Pandas DataFrame, Float, Integer
+	Input: Pandas DataFrame, Float, List
 	Output:  Pandas DataFrame
 
 	For each row in the detected fires data set, create a new column that is the count of nearby 
 	potential detected fires, where nearby detected fires are determined by the inputted dist_measure
-	and time_measure. 
+	and time_measures list.  
 	'''
-	query_prep_clean(df, dist_measure, time_measure, beginning = True) 
-	pool = multiprocessing.Pool(multiprocessing.cpu_count())
-	nearby_count_dict = pool.map(query_for_nearby_fires, df2.values) 
-	nearby_count_df = pd.DataFrame(nearby_count_dict)
-	df = merge_results(df, nearby_count_df)
-	import pdb
-	pdb.set_trace()
-	query_prep_clean(df, dist_measure, time_measure, beginning=False)
+	for time_measure in time_measures: 
+		query_prep_clean(df, dist_measure, time_measure, beginning = True) 
+		pool = multiprocessing.Pool(multiprocessing.cpu_count())
+		nearby_count_dict = pool.map(query_for_nearby_fires, df2.values) 
+		nearby_count_df = pd.DataFrame(nearby_count_dict)
+		df = merge_results(df, nearby_count_df)
+		query_prep_clean(df, dist_measure, time_measure, beginning=False)
+
 	return df
 
 def query_for_nearby_fires(row): 
@@ -36,10 +36,11 @@ def query_for_nearby_fires(row):
 	long_min, long_max = lng - dist_measure2, lng + dist_measure2
 	# Note we're not doing day_max here because in real time we wouldn't have forward dates. 
 	date_min  = date - timedelta(days=time_measure2)
-	query = 'lat >= @lat_min and lat <= @lat_max and long >= @long_min and long <= @long_max and date_temp >= @date_min'
+	query = '''lat >= @lat_min and lat <= @lat_max and long >= @long_min and long <= @long_max and date_temp >= @date_min and date_temp <= @date'''
 	nearby_count = df2.query(query).shape[0]
-	
-	output_dict = {'lat': lat, 'long': lng, 'date_count': date, 'nearby_count': nearby_count}
+
+	nearby_count_label = 'nearby_count_' + str(time_measure2)	
+	output_dict = {'lat': lat, 'long': lng, 'date_count': date, nearby_count_label: nearby_count}
 	return output_dict
 
 def query_prep_clean(df, dist_measure, time_measure, beginning=True): 
@@ -72,10 +73,7 @@ def merge_results(df, nearby_fires_df):
 	to run it through the model. We will be merging by lat, long, and date
 	'''
 	df['date_count'] = pd.to_datetime(df['date_fire'])
-	df['date_count'] = df['date_count'].astype(str)
 	df = add_hour_second(df, 'date_count')
-	import pdb
-	pdb.set_trace()
 	nearby_fires_df = nearby_fires_df.drop_duplicates()
 	df = pd.merge(df, nearby_fires_df, how='left', on=['lat', 'long', 'date_count'])
 	df.drop('date_count', axis=1, inplace=True)

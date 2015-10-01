@@ -626,3 +626,33 @@ Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, nearby_count, m
 
 Scores: {'recall_score': 0.17844963273871983, 'accuracy_score': 0.6417747084500619, 'precision_score': 0.6906091370558376, 'roc_auc_score': 0.75844518415837336}
 
+2015-09-30 21:40:43
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 5, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, hour, minute, nearby_count, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.1499868835257083, 'accuracy_score': 0.63744869372597568, 'precision_score': 0.70630018529956762, 'roc_auc_score': 0.75986246012987735}
+
+2015-10-01 00:30:20
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.5, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, hour, minute, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.29430089192025183, 'accuracy_score': 0.65630334223727926, 'precision_score': 0.64890463451666547, 'roc_auc_score': 0.75868096780777217}
+
+2015-10-01 00:59:19
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.5, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, hour, minute, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.29430089192025183, 'accuracy_score': 0.65630334223727926, 'precision_score': 0.64890463451666547, 'roc_auc_score': 0.75868096780777217}
+
