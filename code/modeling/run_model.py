@@ -129,8 +129,11 @@ def own_grid_search(model_name, train_data, test_data):
 			roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
 			output_dict['roc_auc'].append(roc_auc_score)
 		roc_auc_scores_list.append(output_dict)
-    
-	return roc_auc_scores_list
+   
+    best_params = return_best_params(roc_auc_scores_list) 
+    model = fit_model(model, best_params, train_data.drop('date_fire', axis=1))
+
+    return model
 
 def prepare_grid_params(grid_parameters): 
 	'''
@@ -332,15 +335,15 @@ if __name__ == '__main__':
 	test = test.drop(keep_list, axis=1)
 	'''
 	
-	roc_auc_scores = own_grid_search(model_name, train, test)
+	fitted_model = own_grid_search(model_name, train, test)
+    '''
 	roc_save_filename = 'roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores, f)
-	# preds, preds_probs = predict_with_model(test, fitted_model)
-	# scores = return_scores(test.fire_bool, preds, preds_probs)
-
-
-	# log_results(model_name, train, fitted_model, scores)
+    '''
+	preds, preds_probs = predict_with_model(test, fitted_model)
+	scores = return_scores(test.fire_bool, preds, preds_probs)
+    log_results(model_name, train, fitted_model, scores)
 	
 	# output_model_preds(filename, model_name, preds_probs, test.fire_bool)
 
