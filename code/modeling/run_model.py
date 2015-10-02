@@ -238,7 +238,7 @@ def get_grid_params(model_name):
 				'max_depth': [3, 5, 10, 15, 20]}
 	elif model_name == 'gradient_boosting': 
 		return {'n_estimators': [250], 
-				'learning_rate': [0.01, 0.05, 0.1, 0.125]}
+				'learning_rate': [0.01, 0.05, 0.1, 0.125, 0.15]}
 
 def get_target_features(df): 
 	'''
