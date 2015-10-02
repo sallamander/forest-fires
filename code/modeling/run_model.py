@@ -234,10 +234,11 @@ def get_grid_params(model_name):
 	if model_name == 'logit': 
 		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 5]}
 	elif model_name == 'random_forest': 
-		return {'n_estimators': [10, 20], 
-				'max_depth': [5]}
+		return {'n_estimators': [1000], 
+				'max_depth': [3, 5, 10, 15, 20]}
 	elif model_name == 'gradient_boosting': 
-		return {'learning_rate': [0.01, 0.05, 0.1, 0.125]}
+		return {'n_estimators': [250], 
+				'learning_rate': [0.01, 0.05, 0.1, 0.125]}
 
 def get_target_features(df): 
 	'''
