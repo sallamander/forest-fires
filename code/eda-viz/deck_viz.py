@@ -133,7 +133,23 @@ def get_feature_set_name(idx):
 	elif idx == 2: 
 		return 'confidence + geo'
 
+def output_fires_only(df): 
+    '''
+    Input: Pandas DataFrame
+    Output: Pandas DataFrame
+
+    Take in the dataframe, and restrict the rows to only those rows which are actually forest fires, 
+    and the columns to only those we need to plot the location of each fire (i.e. lat/long). 
+    '''
+
+    output_df = df.query('fire_bool == 1')
+    keep_columns = ['lat', 'long']
+    output_df = output_df[keep_columns]
+
+    return output_df 
+
 if __name__ == '__main__': 
+    '''
 	df = pd.read_csv('../../data/csvs/model_preds2_60.csv')
 
 	num_bins = 5
@@ -141,12 +157,18 @@ if __name__ == '__main__':
 
 	g_boosting_groups = output_gboosting_preds_hist(num_bins)
 
-	'''
 	num_bins = 50
 	fine_final_groups = output_fine_preds(df, num_bins)
 	model_name = 'gradient_boosting'
 	plot_model(final_groups, model_name, num_bins)
-	'''
 	output_d3_csv(final_groups, 'model_preds.csv')
 	output_d3_csv(g_boosting_groups, 'gboosting_preds.csv')
+    '''
+
+    filenames = ['../../data/csvs/train.csv', '../../data/csvs/test.csv']
+    for filename in filenames: 
+        df = pd.read_csv(filename)
+        df = output_fires_only(df)
+        output_filename = filename[:-4] + '_fires.csv'
+        df.to_csv(output_filename)
 
