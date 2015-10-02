@@ -4,7 +4,7 @@ import multiprocessing
 from itertools import izip
 from datetime import timedelta
 
-def gen_nearby_fires_count(df, dist_measure, time_measures):
+def gen_nearby_fires_count(df, dist_measure, time_measures, rate_measures):
 	'''
 	Input: Pandas DataFrame, Float, List
 	Output:  Pandas DataFrame
@@ -20,9 +20,10 @@ def gen_nearby_fires_count(df, dist_measure, time_measures):
 		nearby_count_df = pd.DataFrame(nearby_count_dict)
 		df = merge_results(df, nearby_count_df)
 		query_prep_clean(df, dist_measure, time_measure, beginning=False)
-	
-	for time_measure in time_measures[:-1]: 
-		df = gen_rate_nearby_fires(time_measure)
+
+	if rate_measures == True: 
+		for time_measure in time_measures[:-1]: 
+			df = gen_rate_nearby_fires(df, time_measure)
 
 	return df
 
