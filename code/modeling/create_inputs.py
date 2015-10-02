@@ -42,7 +42,7 @@ if __name__ == '__main__':
 						'create_new_col': create_new_col, 'outlier_boolean': return_outlier_boolean}
 
 	for k, v in columns_dict.iteritems(): 
-		if k != 'add_nearby_fires':
+		if k != 'add_nearby_fires' and k!= 'nearby_fires_done':
 			df = featurization_dict[v['transformation']](df, k, v)
 	
 	input_df_filename = './modeling/input_df_' + str(columns_dict['add_nearby_fires']['dist_measure']) + '.pkl'

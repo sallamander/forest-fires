@@ -12,7 +12,13 @@ p5
 S'time_measures'
 p7
 (lp8
-I7
+I1
+aI2
+aI3
+aI4
+aI5
+aI6
+aI7
 asS'dist_measure'
 p9
 F0.1
