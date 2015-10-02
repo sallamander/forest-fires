@@ -113,7 +113,7 @@ def own_grid_search(model_name, train_data, test_data):
 	if isinstance(model, keras.models.Sequential): 
 	    model =  fit_neural_net(model, train_data, test_data)
 	    return model
-	roc_auc = []  
+	roc_auc_scores_list = []  
 	grid_parameters = get_grid_params(model_name)
 	param_names, param_combs = prepare_grid_params(grid_parameters)  
 	for idx, param_comb in enumerate(param_combs): 
@@ -128,9 +128,9 @@ def own_grid_search(model_name, train_data, test_data):
 			model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
 			roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
 			output_dict['roc_auc'].append(roc_auc_score)
-		roc_auc.append(output_dict)
+		roc_auc_scores_list.append(output_dict)
     
-	return roc_auc 
+	return roc_auc_scores_list
 
 def prepare_grid_params(grid_parameters): 
 	'''
@@ -181,6 +181,33 @@ def predict_score_model(model, validation_set):
 	scores = return_scores(target, preds, preds_probs)
 
 	return scores['roc_auc_score']
+
+def return_best_params(roc_auc_scores_list):
+    '''
+    Input: List of Dictionaries 
+    Output: Dictionary
+
+    For the inputted dictionaries, cycle through them and pick the parameters that gave the highest set of 
+    mean auc_scores accross the folds of CV. Each dictionary contains a list of roc_auc scores, a model number, 
+    and the parameters for that model. We want to find the one with the highest mean roc_auc scores, and then 
+    return a dictionary of only the parameters for that model. 
+    '''
+    
+    max_mean_roc_auc = 0
+    final_params_list = {}
+    for roc_auc_dict in roc_auc_scores_list: 
+        mean_roc_auc = np.mean(roc_auc_dict['roc_auc'])
+        if mean_roc_auc > max_mean_roc_auc: 
+            max_mean_roc_auc = mean_roc_auc
+            del roc_auc_dict['model']
+            del roc_auc_dict['roc_auc']
+            final_params_list = roc_auc_dict
+
+    import pdb
+    pdb.set_trace()
+
+    return final_params_list
+
 
 def fit_neural_net(model, train_data, test_data):  
     '''
