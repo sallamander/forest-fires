@@ -192,7 +192,7 @@ def fit_neural_net(model, train_data, test_data):
     test_target, test_features = get_target_features(test_data)
     train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
     train_features, test_features = train_features.values, test_features.values
-    model.fit(train_features, train_target, batch_size=100, nb_epoch=15, validation_data=(test_features, test_target))
+    model.fit(train_features, train_target, batch_size=100, nb_epoch=10, validation_data=(test_features, test_target))
     return model
 
 def get_neural_net(train_data): 
@@ -204,8 +204,9 @@ def get_neural_net(train_data):
 	'''
 	np.random.seed(24)
 	hlayer_1_nodes = 250
-	hlayer_2_nodes = 100
+	hlayer_2_nodes = 115
 	hlayer_3_nodes = 100
+	hlayer_4_nodes = 100
 	model = Sequential()
 
 	model.add(Dense(train_data.shape[1] - 1, hlayer_1_nodes, init='uniform'))
