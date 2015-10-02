@@ -27,7 +27,7 @@ d3.json('/static/data/2014_state.json', function(json){
 	.style("fill", color)
 	.style('stroke-width', '3');  
 
-	d3.csv('/static/data/day_2014_fires.csv', function(data) {
+	d3.csv('/static/data/test_fires.csv', function(data) {
 		console.log(data)
 		svg.selectAll("circle") 
 		.data(data)
