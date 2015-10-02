@@ -666,4 +666,13 @@ Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 20, 'verbose': 0, 'm
 Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio, perc_change_1_2, perc_change_2_3, perc_change_3_4, perc_change_4_5, perc_change_5_6, perc_change_6_7
 
 Scores: {'recall_score': 0.46556925498426022, 'accuracy_score': 0.67640888657241516, 'precision_score': 0.62452713996656994, 'roc_auc_score': 0.77182789672977115}
+2015-10-02 14:35:52
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 20, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, date_fire, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.46793022035676812, 'accuracy_score': 0.67808977783568958, 'precision_score': 0.62728032001406653, 'roc_auc_score': 0.77395404554789504}
 

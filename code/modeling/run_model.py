@@ -56,7 +56,7 @@ def predict_with_model(test_data, model):
 	Using the fitted model, make predictions with the test data and return those predictions. 
 	'''
 
-	target, features = get_target_features(test_data)
+	target, features = get_target_features(test_data.drop('date_fire', axis=1))
 	if isinstance(model, keras.models.Sequential): 
 		predictions, predicted_probs = model.predict(features.values)[:, 1] > 0.50, model.predict_proba(features.values)
 	else: 
@@ -130,10 +130,10 @@ def own_grid_search(model_name, train_data, test_data):
 			output_dict['roc_auc'].append(roc_auc_score)
 		roc_auc_scores_list.append(output_dict)
    
-    best_params = return_best_params(roc_auc_scores_list) 
-    model = fit_model(model, best_params, train_data.drop('date_fire', axis=1))
+	best_params = return_best_params(roc_auc_scores_list) 
+	model = fit_model(model, best_params, train_data.drop('date_fire', axis=1))
 
-    return model
+	return model
 
 def prepare_grid_params(grid_parameters): 
 	'''
@@ -186,30 +186,28 @@ def predict_score_model(model, validation_set):
 	return scores['roc_auc_score']
 
 def return_best_params(roc_auc_scores_list):
-    '''
-    Input: List of Dictionaries 
-    Output: Dictionary
+	'''
+	Input: List of Dictionaries 
+	Output: Dictionary
 
-    For the inputted dictionaries, cycle through them and pick the parameters that gave the highest set of 
-    mean auc_scores accross the folds of CV. Each dictionary contains a list of roc_auc scores, a model number, 
-    and the parameters for that model. We want to find the one with the highest mean roc_auc scores, and then 
-    return a dictionary of only the parameters for that model. 
-    '''
-    
-    max_mean_roc_auc = 0
-    final_params_list = {}
-    for roc_auc_dict in roc_auc_scores_list: 
-        mean_roc_auc = np.mean(roc_auc_dict['roc_auc'])
-        if mean_roc_auc > max_mean_roc_auc: 
-            max_mean_roc_auc = mean_roc_auc
-            del roc_auc_dict['model']
-            del roc_auc_dict['roc_auc']
-            final_params_list = roc_auc_dict
+	For the inputted dictionaries, cycle through them and pick the parameters that gave the highest set of 
+	mean auc_scores accross the folds of CV. Each dictionary contains a list of roc_auc scores, a model number, 
+	and the parameters for that model. We want to find the one with the highest mean roc_auc scores, and then 
+	return a dictionary of only the parameters for that model. 
+	'''
+	max_mean_roc_auc = 0
+	final_params_list = {}
 
-    import pdb
-    pdb.set_trace()
+	for roc_auc_dict in roc_auc_scores_list: 
+	    mean_roc_auc = np.mean(roc_auc_dict['roc_auc'])
+	    if mean_roc_auc > max_mean_roc_auc: 
+	        max_mean_roc_auc = mean_roc_auc
+	        del roc_auc_dict['model']
+	        del roc_auc_dict['roc_auc']
+	        final_params_list = roc_auc_dict
 
-    return final_params_list
+
+	return final_params_list
 
 
 def fit_neural_net(model, train_data, test_data):  
@@ -336,15 +334,15 @@ if __name__ == '__main__':
 	'''
 	
 	fitted_model = own_grid_search(model_name, train, test)
-    '''
+	'''
 	roc_save_filename = 'roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores, f)
-    '''
+	'''
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
-    log_results(model_name, train, fitted_model, scores)
-	
+	log_results(model_name, train, fitted_model, scores)
+
 	# output_model_preds(filename, model_name, preds_probs, test.fire_bool)
 
 
