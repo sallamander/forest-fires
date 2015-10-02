@@ -3,6 +3,7 @@
 /data/csvs/*
 /data/zipped_files/*
 /code/modeling/input*
+/code/modeling/nearby_done*
 /code/master.csv
 /fires_app/deck_pics/*
 /fires_app/static/data/*
