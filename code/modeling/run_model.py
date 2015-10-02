@@ -7,6 +7,7 @@ import numpy as np
 import os
 import pandas as pd
 import itertools
+from collections import defaultdict
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
@@ -124,11 +125,11 @@ def own_grid_search(model_name, train_data, test_data):
 			param_dict[param] = param_comb[idx]
 		for months_forward in xrange(0, 31, 3): 
 			training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward)
-			model = fit_model(model, param_dict, training_set)
-			roc_auc = predict_score_model(model, validation_set)
-			output_dict['roc_auc'].append(roc_auc)
+			model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
+			roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
+			output_dict['roc_auc'].append(roc_auc_score)
 		roc_auc.append(output_dict)
-
+    
 	return roc_auc 
 
 def prepare_grid_params(grid_parameters): 
@@ -161,8 +162,8 @@ def fit_model(model, param_dict, training_set):
 	'''
 
 	target, features = get_target_features(training_set)
-	model.set_params(param_dict)
-	model.fit(features)
+	model.set_params(**param_dict)
+	model.fit(features, target)
 
 	return model
 
@@ -233,8 +234,8 @@ def get_grid_params(model_name):
 	if model_name == 'logit': 
 		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 5]}
 	elif model_name == 'random_forest': 
-		return {'n_estimators': [500, 1000], 
-				'max_depth': [3, 5, 10, 20]}
+		return {'n_estimators': [10, 20], 
+				'max_depth': [5]}
 	elif model_name == 'gradient_boosting': 
 		return {'learning_rate': [0.01, 0.05, 0.1, 0.125]}
 
@@ -291,9 +292,6 @@ if __name__ == '__main__':
 	days_back = 60
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
 
-	train = train.drop('date_fire', axis =1)
-	test = test.drop('date_fire', axis = 1)	
-
 	if model_name == 'neural_net': 
 		train = normalize_df(train)
 		test = normalize_df(test)
@@ -306,10 +304,15 @@ if __name__ == '__main__':
 	test = test.drop(keep_list, axis=1)
 	'''
 	
-	fitted_model = sklearn_grid_search(model_name, train, test)
-	preds, preds_probs = predict_with_model(test, fitted_model)
-	scores = return_scores(test.fire_bool, preds, preds_probs)
-	log_results(model_name, train, fitted_model, scores)
+	roc_auc_scores = own_grid_search(model_name, train, test)
+	roc_save_filename = 'roc_auc_' + model_name
+	with open(roc_save_filename, 'w+') as f: 
+		pickle.dump(roc_auc_scores, f)
+	# preds, preds_probs = predict_with_model(test, fitted_model)
+	# scores = return_scores(test.fire_bool, preds, preds_probs)
+
+
+	# log_results(model_name, train, fitted_model, scores)
 	
 	# output_model_preds(filename, model_name, preds_probs, test.fire_bool)
 
