@@ -28,7 +28,7 @@ def get_model(model_name, train_data):
 	if model_name == 'logit': 
 		return LogisticRegression(random_state=random_seed)
 	elif model_name == 'random_forest': 
-		return RandomForestClassifier(random_state=random_seed, n_jobs=20)
+		return RandomForestClassifier(random_state=random_seed, n_jobs=2)
 	elif model_name == 'gradient_boosting': 
 		return GradientBoostingClassifier(random_state=random_seed)
 	elif model_name == 'neural_net': 
@@ -130,6 +130,9 @@ def own_grid_search(model_name, train_data, test_data):
 			output_dict['roc_auc'].append(roc_auc_score)
 		roc_auc_scores_list.append(output_dict)
    
+	roc_save_filename = 'roc_auc_' + model_name
+	with open(roc_save_filename, 'w+') as f: 
+		pickle.dump(roc_auc_scores_list, f)
 	best_params = return_best_params(roc_auc_scores_list) 
 	model = fit_model(model, best_params, train_data.drop('date_fire', axis=1))
 
@@ -262,8 +265,8 @@ def get_grid_params(model_name):
 	if model_name == 'logit': 
 		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 5]}
 	elif model_name == 'random_forest': 
-		return {'n_estimators': [1000], 
-				'max_depth': [3, 5, 10, 15, 20]}
+		return {'n_estimators': [100], 
+				'max_depth': [3]}
 	elif model_name == 'gradient_boosting': 
 		return {'n_estimators': [250], 
 				'learning_rate': [0.01, 0.05, 0.1, 0.125, 0.15]}

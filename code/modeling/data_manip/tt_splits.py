@@ -18,7 +18,7 @@ def tt_split_all_less_n_days(df, days_back=60):
 
 	return train, test
 
-def tt_split_early_late(df, year, months_forward): 
+def tt_split_early_late(df, year, months_forward, test_days_ahead = 90): 
 	'''
 	Input: Pandas DataFrame, Integer
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -37,9 +37,10 @@ def tt_split_early_late(df, year, months_forward):
 		months_forward -= 12
 	date_split = datetime.date(year + 1, 1, 1)
 	date_split = return_next_month_start(date_split, months_forward)
+	test_date_split = date_split + datetime.timedelta(days=test_days_ahead)
 
 	train = df.query('date_fire < @date_split')
-	test = df.query('date_fire >= @date_split')
+	test = df.query('date_fire >= @date_split and date_fire <= @test_date_split')
 
 	return train, test
 
