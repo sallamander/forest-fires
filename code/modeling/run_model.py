@@ -28,7 +28,7 @@ def get_model(model_name, train_data):
 	if model_name == 'logit': 
 		return LogisticRegression(random_state=random_seed)
 	elif model_name == 'random_forest': 
-		return RandomForestClassifier(random_state=random_seed, n_jobs=2)
+		return RandomForestClassifier(random_state=random_seed)
 	elif model_name == 'gradient_boosting': 
 		return GradientBoostingClassifier(random_state=random_seed)
 	elif model_name == 'neural_net': 
@@ -265,11 +265,13 @@ def get_grid_params(model_name):
 	if model_name == 'logit': 
 		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 5]}
 	elif model_name == 'random_forest': 
-		return {'n_estimators': [100], 
-				'max_depth': [3]}
+		return {'n_estimators': [1000], 
+				'max_depth': [15, 16, 17, 18, 19, 20], 
+				'min_samples_leaf': [1, 250, 500]}
 	elif model_name == 'gradient_boosting': 
 		return {'n_estimators': [250], 
-				'learning_rate': [0.01, 0.05, 0.1, 0.125, 0.15]}
+				'learning_rate': [0.01, 0.05, 0.1], 
+				'min_samples_leaf': [1, 250, 500]}
 
 def get_target_features(df): 
 	'''
@@ -346,7 +348,8 @@ if __name__ == '__main__':
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
 
-	# output_model_preds(filename, model_name, preds_probs, test.fire_bool)
+	filename = 'preds_probs.csv'
+	output_model_preds(filename, model_name, preds_probs, test.fire_bool)
 
 
 

@@ -18,7 +18,7 @@ def tt_split_all_less_n_days(df, days_back=60):
 
 	return train, test
 
-def tt_split_early_late(df, year, months_forward, test_days_ahead = 90): 
+def tt_split_early_late(df, year, months_forward, test_days_ahead = 150): 
 	'''
 	Input: Pandas DataFrame, Integer
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -29,7 +29,7 @@ def tt_split_early_late(df, year, months_forward, test_days_ahead = 90):
 	data. In addition, put the first 3 months of 2014 into the training data. Use the rest as the test data set.
 	''' 
 
-	df['date_fire'] = pd.to_datetime(df['date_fire'])
+	df.loc[:, 'date_fire'] = pd.to_datetime(df['date_fire'].copy())
 	# If we want more than 12 months forward, then we want a whole nother year, so let's just adjust the 
 	# year and months_forward variables to handle that. 
 	if months_forward >= 12: 
@@ -37,10 +37,9 @@ def tt_split_early_late(df, year, months_forward, test_days_ahead = 90):
 		months_forward -= 12
 	date_split = datetime.date(year + 1, 1, 1)
 	date_split = return_next_month_start(date_split, months_forward)
-	test_date_split = date_split + datetime.timedelta(days=test_days_ahead)
 
 	train = df.query('date_fire < @date_split')
-	test = df.query('date_fire >= @date_split and date_fire <= @test_date_split')
+	test = df.query('date_fire >= @date_split')
 
 	return train, test
 
