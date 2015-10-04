@@ -28,7 +28,7 @@ def get_model(model_name, train_data):
 	if model_name == 'logit': 
 		return LogisticRegression(random_state=random_seed)
 	elif model_name == 'random_forest': 
-		return RandomForestClassifier(random_state=random_seed)
+		return RandomForestClassifier(random_state=random_seed, n_jobs=2)
 	elif model_name == 'gradient_boosting': 
 		return GradientBoostingClassifier(random_state=random_seed)
 	elif model_name == 'neural_net': 
@@ -130,7 +130,7 @@ def own_grid_search(model_name, train_data, test_data):
 			output_dict['roc_auc'].append(roc_auc_score)
 		roc_auc_scores_list.append(output_dict)
    
-	roc_save_filename = 'roc_auc_' + model_name
+	roc_save_filename = './model_output/roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores_list, f)
 	best_params = return_best_params(roc_auc_scores_list) 
@@ -285,22 +285,14 @@ def get_target_features(df):
 	features = df.drop('fire_bool', axis=1)
 	return target, features
 
-def output_model_preds(filename, model_name, preds_probs, fire_bool): 
+def output_model_preds(filename, model_name, preds_probs, test_df): 
 	'''
 	Input: String, Instantiated Model, Predicted Probability, Boolean 
-	Output: Pickled 
+	Output: CSV
 	'''
-	if not os.path.isfile(filename): 
-		df = pd.DataFrame()
-		df['fire_bool'] = fire_bool
-		df[model_name] = preds_probs[:, 1]
-		df.to_csv(filename, index=False)
-	else: 
-		df = pd.read_csv(filename)
-		df[model_name] = preds_probs[:, 1]
-		df.to_csv(filename, index=False)
 
-	return df
+	test_df[model_name] = preds_probs[:, 1]
+	test_df.to_csv(filename, index=False)
 
 def normalize_df(input_df): 
 	'''
@@ -348,8 +340,8 @@ if __name__ == '__main__':
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train, fitted_model, scores)
 
-	filename = 'preds_probs.csv'
-	output_model_preds(filename, model_name, preds_probs, test.fire_bool)
+	filename = './model_output/' + model_name + '_preds_probs.csv'
+	output_model_preds(filename, model_name, preds_probs, test)
 
 
 
