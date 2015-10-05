@@ -1214,3 +1214,13 @@ Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_co
 
 Scores: {'recall_score': 0.1881886149003148, 'accuracy_score': 0.64413316828457878, 'precision_score': 0.69202942240443743, 'roc_auc_score': 0.76119629544129908}
 
+2015-10-05 05:32:36
+----------------------------------------------------------------------------------------------------
+Model Run: neural_net
+
+Params: ([<TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>, <TensorType(float64, matrix)>, <TensorType(float64, vector)>], [], [<keras.constraints.Constraint object at 0x1097c5d90>, <keras.constraints.Constraint object at 0x1097c5dd0>, <keras.constraints.Constraint object at 0x1097cf210>, <keras.constraints.Constraint object at 0x1097cf250>, <keras.constraints.Constraint object at 0x1097cf650>, <keras.constraints.Constraint object at 0x1097cf690>, <keras.constraints.Constraint object at 0x1097cf750>, <keras.constraints.Constraint object at 0x1097cf790>])
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.42602308499475339, 'accuracy_score': 0.67251286728777115, 'precision_score': 0.63003734057514182, 'roc_auc_score': 0.75846426053294658}
+

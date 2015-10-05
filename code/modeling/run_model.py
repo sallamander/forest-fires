@@ -56,10 +56,11 @@ def predict_with_model(test_data, model):
 	Using the fitted model, make predictions with the test data and return those predictions. 
 	'''
 
-	target, features = get_target_features(test_data.drop('date_fire', axis=1))
 	if isinstance(model, keras.models.Sequential): 
+		target, features = get_target_features(test_data)
 		predictions, predicted_probs = model.predict(features.values)[:, 1] > 0.50, model.predict_proba(features.values)
 	else: 
+		target, features = get_target_features(test_data.drop('date_fire', axis=1))
 		predictions, predicted_probs = model.predict(features), model.predict_proba(features)
 
 	return predictions, predicted_probs
@@ -319,8 +320,8 @@ if __name__ == '__main__':
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
 
 	if model_name == 'neural_net': 
-		train = normalize_df(train)
-		test = normalize_df(test)
+		train = normalize_df(train.drop('date_fire', axis=1))
+		test = normalize_df(test.drop('date_fire', axis=1))
 
 	'''
 	keep_list = ['conf']
