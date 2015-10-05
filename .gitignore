@@ -8,3 +8,4 @@
 /fires_app/deck_pics/*
 /fires_app/static/data/*
 /code/roc*
+/code/model_output/*
