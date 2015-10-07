@@ -132,7 +132,7 @@ def own_grid_search(model_name, train_data, test_data):
 			output_dict['roc_auc'].append(roc_auc_score)
 		roc_auc_scores_list.append(output_dict)
    
-	roc_save_filename = './model_output/roc_auc_' + model_name
+	roc_save_filename = './model_output/roc_auc2_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores_list, f)
 	best_params, best_roc_auc = return_best_params(roc_auc_scores_list) 
@@ -265,15 +265,14 @@ def get_grid_params(model_name):
 	Output: Dictionary
 	'''
 	if model_name == 'logit': 
-		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 5]}
+		return {'penalty': ['l2'], 'C': [0.1]}
 	elif model_name == 'random_forest': 
-		return {'n_estimators': [10], 
-				'max_depth': [1, 2, 3], 
-				'min_samples_leaf': [1]}
+		return {'n_estimators': [1000], 
+				'max_depth': [15]}
 	elif model_name == 'gradient_boosting': 
 		return {'n_estimators': [250], 
-				'learning_rate': [0.01, 0.05, 0.1], 
-				'min_samples_leaf': [1, 250, 500]}
+		'learning_rate': [0.1], 
+		'min_samples_leaf': [250]}
 
 def get_target_features(df): 
 	'''
@@ -333,6 +332,7 @@ if __name__ == '__main__':
 	'''
 	
 	fitted_model, best_roc_auc = own_grid_search(model_name, train, test)
+	print fitted_model.coef_
 	'''
 	roc_save_filename = 'roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
@@ -340,7 +340,7 @@ if __name__ == '__main__':
 	'''
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
-	log_results(model_name, train, fitted_model, scores, best_roc_auc)
+	log_results(model_name, train.drop('date_fire', axis=1), fitted_model, scores, best_roc_auc)
 
 	filename = './model_output/' + model_name + '_preds_probs.csv'
 	output_model_preds(filename, model_name, preds_probs, test)
