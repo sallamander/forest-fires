@@ -1,17 +1,30 @@
 import pandas as pd
 from sklearn.metrics import roc_auc_score
+import sys
 
-def output_csv_to_merge(model_name): 
+def output_csv_to_merge(model_name, all_cols=False): 
     '''
-    Input: String
-    Output: Pandas DataFrame 
+    Input: String, Boolean
+    Output: Pandas DataFrame, Numpy Array 
+
+    Take in the model name, and from that, read in a .csv into a pandas 
+    dataframe. If all_cols is equal to true, then output all columns, plus one
+    that holds the absolute difference between the fire boolean and the predicted
+    probabilities from that model. Otherwise, output only the predicted 
+    probabilities column from that model df. 
     '''
     filepath = '../model_output/' + model_name + '_preds_probs.csv'
     df = pd.read_csv(filepath) 
     
-    fire_bool = df.fire_bool
-    keep_columns = [model_name]
-    df = df[keep_columns]
+    fire_bool = df.fire_bool 
+
+    if all_cols == False: 
+        keep_columns = [model_name] 
+        df = df[keep_columns]
+    else: 
+        df['abs_diff'] = df.eval('fire_bool - ' + model_name)
+        df['abs_diff'] = df['abs_diff'].abs()
+
     
     return df, fire_bool
 
@@ -19,6 +32,8 @@ def combine_dfs(input_df_list):
     '''
     Input: List of Pandas DataFrames 
     Output: Pandas DataFrame
+
+    For the inputted Dataframes, merge them all together. 
     '''
     
     output_df = input_df_list[0]
@@ -47,15 +62,38 @@ def average_model_preds(combined_df):
 
     return combined_df 
 
+def grab_top_n(df, top_n): 
+    '''
+    Input: Pandas DataFrame, Integer
+    Output: Pandas DataFrame
+
+    For the pandas dataframe, grab the rows with the top n values for the 
+    absolute difference (between the fire_bool and the predicted probability).
+    Here we are just looking to examine the observations that are the farthest
+    off. 
+    '''
+
+    df.sort('abs_diff', inplace=True, ascending = False)
+    return df.iloc[0:top_n, :]
+
 if __name__ == '__main__': 
+    if len(sys.argv) > 1: 
+        all_cols = sys.argv[1]
+    else: 
+        all_cols = False
+
     model_csv_list = ['random_forest', 'gradient_boosting', 'logit']
     
     input_df_list = []
     for model_name in model_csv_list:
-        input_df, fire_bool = output_csv_to_merge(model_name)
+        input_df, fire_bool = output_csv_to_merge(model_name, all_cols=all_cols)
+        if all_cols == True: 
+            input_df = grab_top_n(input_df, 50)
         input_df_list.append(input_df)
     
+    '''
     combined_df = combine_dfs(input_df_list) 
     averaged_df = average_model_preds(combined_df)
     roc_auc = roc_auc_score(fire_bool, averaged_df['average_col'])
+    '''
 
