@@ -125,8 +125,8 @@ def own_grid_search(model_name, train_data, test_data):
 		for idx, param in enumerate(param_names): 
 			output_dict[param] = param_comb[idx]
 			param_dict[param] = param_comb[idx]
-		for months_forward in xrange(0, 31, 3): 
-			training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward)
+		for months_forward in xrange(0, 19, 1): 
+			training_set, validation_set = tt_split_early_late(train_data, 2014, months_forward)
 			model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
 			roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
 			output_dict['roc_auc'].append(roc_auc_score)
