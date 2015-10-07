@@ -65,9 +65,9 @@ def predict_with_model(test_data, model):
 
 	return predictions, predicted_probs
 
-def log_results(model_name, train, fitted_model, scores): 
+def log_results(model_name, train, fitted_model, scores, best_roc_auc): 
 	'''
-	Input: String, Pandas DataFrame,  Dictionary
+	Input: String, Pandas DataFrame,  Dictionary, Numpy Array, Float  
 	Output: .txt file. 
 
 	Log the results of this run to a .txt file, saving the column names (so I know what features I used), 
@@ -84,6 +84,7 @@ def log_results(model_name, train, fitted_model, scores):
 		f.write('Params: ' + str(fitted_model.get_params()) + '\n' * 2)
 		f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
 		f.write('Scores: ' + str(scores) + '\n' * 2)
+		f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
 
 def sklearn_grid_search(model_name, train_data, test_data): 
 	'''
@@ -134,10 +135,10 @@ def own_grid_search(model_name, train_data, test_data):
 	roc_save_filename = './model_output/roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores_list, f)
-	best_params = return_best_params(roc_auc_scores_list) 
+	best_params, best_roc_auc = return_best_params(roc_auc_scores_list) 
 	model = fit_model(model, best_params, train_data.drop('date_fire', axis=1))
 
-	return model
+	return model, best_roc_auc
 
 def prepare_grid_params(grid_parameters): 
 	'''
@@ -192,7 +193,7 @@ def predict_score_model(model, validation_set):
 def return_best_params(roc_auc_scores_list):
 	'''
 	Input: List of Dictionaries 
-	Output: Dictionary
+	Output: Dictionary, Float
 
 	For the inputted dictionaries, cycle through them and pick the parameters that gave the highest set of 
 	mean auc_scores accross the folds of CV. Each dictionary contains a list of roc_auc scores, a model number, 
@@ -211,7 +212,7 @@ def return_best_params(roc_auc_scores_list):
 	        final_params_list = roc_auc_dict
 
 
-	return final_params_list
+	return final_params_list, mean_roc_auc
 
 
 def fit_neural_net(model, train_data, test_data):  
@@ -266,9 +267,9 @@ def get_grid_params(model_name):
 	if model_name == 'logit': 
 		return {'penalty': ['l2', 'l1'], 'C': [0.1, 0.5, 1, 2, 5]}
 	elif model_name == 'random_forest': 
-		return {'n_estimators': [1000], 
-				'max_depth': [15, 16, 17, 18, 19, 20], 
-				'min_samples_leaf': [1, 250, 500]}
+		return {'n_estimators': [10], 
+				'max_depth': [1, 2, 3], 
+				'min_samples_leaf': [1]}
 	elif model_name == 'gradient_boosting': 
 		return {'n_estimators': [250], 
 				'learning_rate': [0.01, 0.05, 0.1], 
@@ -331,7 +332,7 @@ if __name__ == '__main__':
 	test = test.drop(keep_list, axis=1)
 	'''
 	
-	fitted_model = own_grid_search(model_name, train, test)
+	fitted_model, best_roc_auc = own_grid_search(model_name, train, test)
 	'''
 	roc_save_filename = 'roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
@@ -339,7 +340,7 @@ if __name__ == '__main__':
 	'''
 	preds, preds_probs = predict_with_model(test, fitted_model)
 	scores = return_scores(test.fire_bool, preds, preds_probs)
-	log_results(model_name, train, fitted_model, scores)
+	log_results(model_name, train, fitted_model, scores, best_roc_auc)
 
 	filename = './model_output/' + model_name + '_preds_probs.csv'
 	output_model_preds(filename, model_name, preds_probs, test)
