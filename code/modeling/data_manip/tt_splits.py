@@ -37,10 +37,14 @@ def tt_split_early_late(df, year, months_forward, months_backward=None):
 		year += 1
 		months_forward -= 12
 	date_split = datetime.date(year + 1, 1, 1)
-	date_split_forward = return_next_month_start(date_split, months_forward, foward = True)
+	date_split_forward = return_month_start(date_split, months_forward, forward = True)
+	if months_backward: 
+		date_split_backward = return_month_start(date_split_forward, months_backward, forward = False)
+	else: 
+		date_split_backward = df.date_fire.min()
 
-	train = df.query('date_fire < @date_split_forward')
-	test = df.query('date_fire >= @date_split_forward')
+	train = df.query('date_fire < @date_split_forward and date_fire >= @date_split_backward')
+	test = df.query('date_fire >= @date_split_forward and date_fire >= @date_split_backward')
 
 	return train, test
 
@@ -58,12 +62,12 @@ def return_month_start(time, n_months, forward=True):
 	# that we want. We know that there are at least 27 days in each month, and that this step will 
 	# put us only a handful of days away from the start of the month we want. We can then step through 
 	# day by day until the month changes. 
-    
-    month_operator = operator.add
-    if forward = False: 
-        month_operator = operator.sub
 
-	if n == 0: 
+	month_operator = operator.add
+	if forward == False: 
+	    month_operator = operator.sub
+
+	if n_months == 0: 
 		return time
 
 	time = month_operator(time, datetime.timedelta(days=(27 * n_months)))
@@ -71,11 +75,11 @@ def return_month_start(time, n_months, forward=True):
 	one_day = datetime.timedelta(days=1)
 	date_to_return = month_operator(time, one_day) 
 
-    if foward == True: 
-        while date_to_return.month == time.month: 
-            date_to_return += one_day
-    else:
-        while date_to_return.day != 1: 
-            date_to_return -= one_day
+	if forward == True: 
+	    while date_to_return.month == time.month: 
+	        date_to_return += one_day
+	else:
+	    while date_to_return.day != 1: 
+	        date_to_return -= one_day
 
 	return date_to_return 
