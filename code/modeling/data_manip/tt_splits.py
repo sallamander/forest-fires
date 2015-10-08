@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime
+import operator
 
 def tt_split_all_less_n_days(df, days_back=60): 
 	'''
@@ -18,7 +19,7 @@ def tt_split_all_less_n_days(df, days_back=60):
 
 	return train, test
 
-def tt_split_early_late(df, year, months_forward, test_days_ahead = 150): 
+def tt_split_early_late(df, year, months_forward, months_backward=None): 
 	'''
 	Input: Pandas DataFrame, Integer
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -36,14 +37,14 @@ def tt_split_early_late(df, year, months_forward, test_days_ahead = 150):
 		year += 1
 		months_forward -= 12
 	date_split = datetime.date(year + 1, 1, 1)
-	date_split = return_next_month_start(date_split, months_forward)
+	date_split_forward = return_next_month_start(date_split, months_forward, foward = True)
 
-	train = df.query('date_fire < @date_split')
-	test = df.query('date_fire >= @date_split')
+	train = df.query('date_fire < @date_split_forward')
+	test = df.query('date_fire >= @date_split_forward')
 
 	return train, test
 
-def return_next_month_start(t, n): 
+def return_month_start(time, n_months, forward=True): 
 	'''
 	Input: datetime.date
 	Output: datetime.date
@@ -53,19 +54,28 @@ def return_next_month_start(t, n):
 	datetime.date that is the first day of the month of April in the same year.
 	'''
 
-	# Go ahead and move the inputted time forward at least 27 days forward for the number of months 
+	# Go ahead and move the inputted time forward at least 27 days for the number of months 
 	# that we want. We know that there are at least 27 days in each month, and that this step will 
-	# put us only a handful of days before the start of the month we want. We can then step through 
+	# put us only a handful of days away from the start of the month we want. We can then step through 
 	# day by day until the month changes. 
-	if n == 0: 
-		return t
+    
+    month_operator = operator.add
+    if forward = False: 
+        month_operator = operator.sub
 
-	t = t + datetime.timedelta(days=(27 * n))
+	if n == 0: 
+		return time
+
+	time = month_operator(time, datetime.timedelta(days=(27 * n_months)))
 
 	one_day = datetime.timedelta(days=1)
-	one_month_later = t + one_day 
+	date_to_return = month_operator(time, one_day) 
 
-	while one_month_later.month == t.month: 
-		one_month_later += one_day
+    if foward == True: 
+        while date_to_return.month == time.month: 
+            date_to_return += one_day
+    else:
+        while date_to_return.day != 1: 
+            date_to_return -= one_day
 
-	return one_month_later
+	return date_to_return 
