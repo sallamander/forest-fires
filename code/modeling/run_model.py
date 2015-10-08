@@ -28,7 +28,7 @@ def get_model(model_name, train_data):
 	if model_name == 'logit': 
 		return LogisticRegression(random_state=random_seed)
 	elif model_name == 'random_forest': 
-		return RandomForestClassifier(random_state=random_seed, n_jobs=2)
+		return RandomForestClassifier(random_state=random_seed, n_jobs=5)
 	elif model_name == 'gradient_boosting': 
 		return GradientBoostingClassifier(random_state=random_seed)
 	elif model_name == 'neural_net': 
@@ -125,8 +125,8 @@ def own_grid_search(model_name, train_data, test_data):
 		for idx, param in enumerate(param_names): 
 			output_dict[param] = param_comb[idx]
 			param_dict[param] = param_comb[idx]
-		for months_forward in xrange(0, 18, 1): 
-			training_set, validation_set = tt_split_early_late(train_data, 2014, months_forward)
+		for months_forward in xrange(0, 31, 3): 
+			training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward)
 			model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
 			roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
 			output_dict['roc_auc'].append(roc_auc_score)
@@ -332,7 +332,6 @@ if __name__ == '__main__':
 	'''
 	
 	fitted_model, best_roc_auc = own_grid_search(model_name, train, test)
-	print fitted_model.coef_
 	'''
 	roc_save_filename = 'roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
