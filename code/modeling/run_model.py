@@ -126,10 +126,13 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 			output_dict[param] = param_comb[idx]
 			param_dict[param] = param_comb[idx]
 		for months_forward in xrange(0, 31, 3): 
-			training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward)
-			model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
-			roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
-			output_dict['roc_auc'].append(roc_auc_score)
+			training_set, validation_set = tt_split_early_late(train, 2012, months_forward, months_backward=13, year=True, days_forward=60)
+			# If there are no actual fires here, then training/testing on it is pointless and the ROC 
+			# area under the curve can't be calculated. 
+			if validation_set.fire_bool.sum() > 0: 
+				model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
+				roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
+				output_dict['roc_auc'].append(roc_auc_score)
 		roc_auc_scores_list.append(output_dict)
    
 	roc_save_filename = './model_output/roc_auc2_' + model_name
