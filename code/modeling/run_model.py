@@ -125,8 +125,8 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 		for idx, param in enumerate(param_names): 
 			output_dict[param] = param_comb[idx]
 			param_dict[param] = param_comb[idx]
-		for months_forward in xrange(0, 31, 3): 
-			training_set, validation_set = tt_split_early_late(train, 2012, months_forward, months_backward=13, year=True, days_forward=60)
+		for months_forward in xrange(0, 31, 2): 
+			training_set, validation_set = tt_split_early_late(train, 2012, months_forward, months_backward=None, year=True, days_forward=60)
 			# If there are no actual fires here, then training/testing on it is pointless and the ROC 
 			# area under the curve can't be calculated. 
 			if validation_set.fire_bool.sum() > 0: 
@@ -139,7 +139,7 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores_list, f)
 	best_params, best_roc_auc = return_best_params(roc_auc_scores_list) 
-	model = fit_model(model, best_params, train_data.drop('date_fire', axis=1))
+	model = fit_model(model, best_params, train_data2.drop('date_fire', axis=1))
 
 	return model, best_roc_auc
 
