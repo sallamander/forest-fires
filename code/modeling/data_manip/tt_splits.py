@@ -19,7 +19,7 @@ def tt_split_all_less_n_days(df, days_back=60):
 
 	return train, test
 
-def tt_split_early_late(df, year, months_forward, months_backward=None): 
+def tt_split_early_late(df, input_date_split, months_forward, months_backward=None, year=True, days_forward=None): 
 	'''
 	Input: Pandas DataFrame, Integer
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -33,18 +33,32 @@ def tt_split_early_late(df, year, months_forward, months_backward=None):
 	df.loc[:, 'date_fire'] = pd.to_datetime(df['date_fire'].copy())
 	# If we want more than 12 months forward, then we want a whole nother year, so let's just adjust the 
 	# year and months_forward variables to handle that. 
-	if months_forward >= 12: 
-		year += 1
+	if months_forward >= 12 and year == True: 
+		input_date_split += 1
 		months_forward -= 12
-	date_split = datetime.date(year + 1, 1, 1)
+
+	if year == True: 
+		date_split = datetime.date(input_date_split + 1, 1, 1)
+	else: 
+		date_split = input_date_split
+
 	date_split_forward = return_month_start(date_split, months_forward, forward = True)
+
 	if months_backward: 
-		date_split_backward = return_month_start(date_split_forward, months_backward, forward = False)
+		if year == False: 
+			date_split_backward = date_split_forward - datetime.timedelta(days=365)
+		else: 
+			date_split_backward = return_month_start(date_split_forward, months_backward, forward = False)
 	else: 
 		date_split_backward = df.date_fire.min()
 
-	train = df.query('date_fire < @date_split_forward and date_fire >= @date_split_backward')
-	test = df.query('date_fire >= @date_split_forward and date_fire >= @date_split_backward')
+	if days_forward: 
+		date_split_forward2 = date_split_forward + datetime.timedelta(days=days_forward)
+	else: 
+		date_split_forward2 = df.date_fire.max()
+		
+	train = df.query('date_fire <= @date_split_forward and date_fire >= @date_split_backward')
+	test = df.query('date_fire > @date_split_forward and date_fire <= @date_split_forward2')
 
 	return train, test
 

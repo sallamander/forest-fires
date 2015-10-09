@@ -106,7 +106,7 @@ def sklearn_grid_search(model_name, train_data, test_data):
 
 	return grid_search.best_estimator_
 
-def own_grid_search(model_name, train_data, test_data): 
+def own_grid_search(model_name, train_data, test_data, train_data2): 
 	'''
 	Input: String, Pandas DataFrame, Pandas DataFrame
 	Output: Best fit model from grid search of parameters. 
@@ -126,7 +126,7 @@ def own_grid_search(model_name, train_data, test_data):
 			output_dict[param] = param_comb[idx]
 			param_dict[param] = param_comb[idx]
 		for months_forward in xrange(0, 31, 3): 
-			training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward, months_backward=13)
+			training_set, validation_set = tt_split_early_late(train_data, 2012, months_forward)
 			model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
 			roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
 			output_dict['roc_auc'].append(roc_auc_score)
@@ -318,6 +318,7 @@ if __name__ == '__main__':
 
 	days_back = 60
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
+	train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=13, year=False)
 
 	if model_name == 'neural_net': 
 		train = normalize_df(train.drop('date_fire', axis=1))
@@ -331,7 +332,7 @@ if __name__ == '__main__':
 	test = test.drop(keep_list, axis=1)
 	'''
 	
-	fitted_model, best_roc_auc = own_grid_search(model_name, train, test)
+	fitted_model, best_roc_auc = own_grid_search(model_name, train, test, train2)
 	'''
 	roc_save_filename = 'roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
