@@ -45,10 +45,7 @@ def tt_split_early_late(df, input_date_split, months_forward, months_backward=No
 	date_split_forward = return_month_start(date_split, months_forward, forward = True)
 
 	if months_backward: 
-		if year == False: 
-			date_split_backward = date_split_forward - datetime.timedelta(days=365)
-		else: 
-			date_split_backward = return_month_start(date_split_forward, months_backward, forward = False)
+		date_split_backward = return_month_start(date_split_forward, months_backward, forward = False)
 	else: 
 		date_split_backward = df.date_fire.min()
 
@@ -56,7 +53,7 @@ def tt_split_early_late(df, input_date_split, months_forward, months_backward=No
 		date_split_forward2 = date_split_forward + datetime.timedelta(days=days_forward)
 	else: 
 		date_split_forward2 = df.date_fire.max()
-		
+
 	train = df.query('date_fire <= @date_split_forward and date_fire >= @date_split_backward')
 	test = df.query('date_fire > @date_split_forward and date_fire <= @date_split_forward2')
 
@@ -84,16 +81,43 @@ def return_month_start(time, n_months, forward=True):
 	if n_months == 0: 
 		return time
 
-	time = month_operator(time, datetime.timedelta(days=(27 * n_months)))
+	time2 = month_operator(time, datetime.timedelta(days=(27 * n_months)))
 
 	one_day = datetime.timedelta(days=1)
-	date_to_return = month_operator(time, one_day) 
+	date_to_return = month_operator(time2, one_day) 
 
 	if forward == True: 
-	    while date_to_return.month == time.month: 
+	    while date_to_return.month == time2.month: 
 	        date_to_return += one_day
 	else:
-	    while date_to_return.day != 1: 
+	    while date_to_return.day != time.day: 
 	        date_to_return -= one_day
 
 	return date_to_return 
+
+def tt_split_same_months(df, year_split, month_split):
+    '''
+    Input: Pandas DataFrame, Integer, List of Integers
+    Output: Pandas DataFrame, Pandas DataFrame 
+
+    For the inputted pandas dataframe and month put in, grab all months of
+    data that are equal to the months in the month_split list, for any year. 
+    For those that are in a year prior or equal to the inputted year, put 
+    those in the training set, and for all others put them in the test set. 
+    '''
+
+    if month_split[0] >= 13: 
+        year_split += 1
+        print year_split, month_split
+        for idx, month in enumerate(month_split): 
+            month_split[idx] -= 12
+        print month_split
+
+    df.loc[:, 'date_fire'] = pd.to_datetime(df['date_fire'].copy())
+    df['year'] = [dt.year for dt in df['date_fire']]
+    df['month'] = [dt.month for dt in df['date_fire']]
+    
+    train = df.query('year <= @year_split and month in @month_split') 
+    test = df.query('year > @year_split and month in @month_split') 
+
+    return train, test
