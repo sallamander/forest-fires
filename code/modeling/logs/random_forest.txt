@@ -870,6 +870,63 @@ Scores: {'recall_score': 1.0, 'accuracy_score': 0.69276174343605446, 'precision_
 
 Validation ROC AUC: 0.889150593605
 
-Training on prior years months 2 (plus), predicting on 60 days forwar
+Training on prior years months 2 (plus), predicting on 60 days forward
 
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+
+2015-10-10 13:03:08
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.64786583107397366, 'precision_score': 1.0, 'roc_auc_score': 0.71906377286969281}
+
+Validation ROC AUC: 0.88833986467
+
+Training on prior years months 2 (plus), predicting on 30 days forward
+
+2015-10-10 13:15:18
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.65545135339348415, 'precision_score': 1.0, 'roc_auc_score': 0.7316778429703763}
+
+Validation ROC AUC: 0.899973827689
+
+Training on prior years months, predicting on 30 days forward
+
+2015-10-10 17:23:08
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 0.99986077755734226, 'accuracy_score': 0.6163533194067885, 'precision_score': 0.54813328612455248, 'roc_auc_score': 0.66260164769577723}
+
+Validation ROC AUC: 0.807522137502
+
+Training on prior month, predicting on 30 days forward
+
+2015-10-10 17:48:19
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.6043527860497504, 'precision_score': 0.53018867924528301, 'roc_auc_score': 0.64101360056126977}
+
+Validation ROC AUC: 0.862704404111
 
