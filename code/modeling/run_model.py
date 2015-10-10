@@ -125,8 +125,9 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 		for idx, param in enumerate(param_names): 
 			output_dict[param] = param_comb[idx]
 			param_dict[param] = param_comb[idx]
-		for months_forward in xrange(0, 31, 2): 
-			training_set, validation_set = tt_split_early_late(train, 2012, months_forward, months_backward=3, year=True, days_forward=60)
+		for months_forward in xrange(1, 19, 2): 
+			training_set, validation_set = tt_split_same_months(train, 2013, [months_forward, months_forward + 1], 60)
+			# training_set, validation_set = tt_split_early_late(train, 2012, months_forward, months_backward=3, year=True, days_forward=60)
 			# If there are no actual fires here, then training/testing on it is pointless and the ROC 
 			# area under the curve can't be calculated. 
 			if validation_set.fire_bool.sum() > 0 and training_set.fire_bool.sum() > 0: 
@@ -134,8 +135,11 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 				roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
 				output_dict['roc_auc'].append(roc_auc_score)
 		roc_auc_scores_list.append(output_dict)
-   
-	roc_save_filename = './model_output/roc_auc_twomonthsprior_60_' + model_name
+
+	del train['year']
+	del train['month']
+
+	roc_save_filename = './model_output/roc_auc_monthsyearprior2_60_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores_list, f)
 	best_params, best_roc_auc = return_best_params(roc_auc_scores_list) 
@@ -324,7 +328,7 @@ if __name__ == '__main__':
 	'''
 	train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=3, year=False)
 	'''
-	train2, test2 = tt_split_same_months(train, 2012, 1, test.date_fire.max(), 60)
+	train2, test2 = tt_split_same_months(train, 2012, 1, 60, test.date_fire.max())
 
 	if model_name == 'neural_net': 
 		train = normalize_df(train.drop('date_fire', axis=1))
@@ -348,7 +352,7 @@ if __name__ == '__main__':
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train.drop('date_fire', axis=1), fitted_model, scores, best_roc_auc)
 
-	filename = './model_output/' + model_name + '_preds_probs_twomonthsprior_60.csv'
+	filename = './model_output/' + model_name + '_preds_probs_monthsyearprior2_60.csv'
 	output_model_preds(filename, model_name, preds_probs, test)
 
 
