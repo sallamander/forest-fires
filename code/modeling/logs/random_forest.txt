@@ -766,10 +766,6 @@ Validation ROC AUC: 0.957317218621
 
 All prior data. 
 
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
 Validation ROC AUC: 0.956003708579
 2015-10-09 18:12:50
 ----------------------------------------------------------------------------------------------------
@@ -785,7 +781,26 @@ Validation ROC AUC: 0.957089172054
 
 Training on all prior data, predicting on all forward data
 
-2015-10-09 20:21:54
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
+
+2015-10-09 22:05:49
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.69522444458922406, 'precision_score': 1.0, 'roc_auc_score': 0.77395404554789504}
+
+Validation ROC AUC: 0.925056028826
+
+Training on all prior data, predicting on 60 days forward 
+
+
+2015-10-10 01:09:34
 ----------------------------------------------------------------------------------------------------
 Model Run: random_forest
 
@@ -795,7 +810,8 @@ Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_co
 
 Scores: {'recall_score': 1.0, 'accuracy_score': 0.67924946250570073, 'precision_score': 0.71966527196652719, 'roc_auc_score': 0.75470870019038105}
 
-Validation ROC AUC: 0.914020060275
+Validation ROC AUC: 0.918864326718
 
-Training on a year prior of data, predicting on 60 days forward 
+Training on year prior, predicting on 60 days forward 
+
 

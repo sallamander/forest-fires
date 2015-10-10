@@ -741,12 +741,6 @@ Scores: {'recall_score': 0.49606505771248688, 'accuracy_score': 0.67593980063847
 
 Validation ROC AUC: 0.953597271336
 
-
-*************************************************************************************************************
-*************************************************************************************************************
-*************************************************************************************************************
-
-
 2015-10-09 18:03:17
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
@@ -761,8 +755,26 @@ Validation ROC AUC: 0.953191712739
 
 Training on all prior data, predicting on all forward data
 
+*************************************************************************************************************
+*************************************************************************************************************
+*************************************************************************************************************
 
-2015-10-09 20:19:47
+2015-10-09 22:02:32
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 250, 'n_estimators': 250, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.692084174864812, 'precision_score': 1.0, 'roc_auc_score': 0.77162111316856241}
+
+Validation ROC AUC: 0.897490835381
+
+Training on all prior data, predicting on 60 days forward 
+
+
+2015-10-10 01:06:42
 ----------------------------------------------------------------------------------------------------
 Model Run: gradient_boosting
 
@@ -772,7 +784,9 @@ Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_co
 
 Scores: {'recall_score': 1.0, 'accuracy_score': 0.68367971854843967, 'precision_score': 1.0, 'roc_auc_score': 0.76402739129585451}
 
-Validation ROC AUC: 0.887763116707
+Validation ROC AUC: 0.893927084148
 
-Training on a year prior of data, predicting on 60 days forward 
+Training on year prior, predicting on 60 days forward 
+
+
 
