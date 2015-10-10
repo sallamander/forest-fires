@@ -95,7 +95,7 @@ def return_month_start(time, n_months, forward=True):
 
 	return date_to_return 
 
-def tt_split_same_months(df, year_split, month_split, days_back = None, exact_split_date = None):
+def tt_split_same_months(df, year_split, month_split, days_back = None, exact_split_date = None, direct_prior_days=False): 
 	'''
 	Input: Pandas DataFrame, Integer, List of Integers
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -132,11 +132,14 @@ def tt_split_same_months(df, year_split, month_split, days_back = None, exact_sp
 		del test['year']
 		del test['month']
 	else:  
-		exact_split_end = exact_split_date - datetime.timedelta(days=days_back)
-		exact_split_start = exact_split_end - datetime.timedelta(days=days_back)
-		train = df.query('date_fire >= @exact_split_start and date_fire < @exact_split_end')
-		# If we are passing in an exact date its for our hold out set, and so we don't 
-		# have a test set (we just want to parse the training set a little farther). 
+		if direct_prior_days: 
+			exact_split_end = exact_split_date - datetime.timedelta(days=days_back)
+			exact_split_start = exact_split_end - datetime.timedelta(days=days_back)
+			train = df.query('date_fire >= @exact_split_start and date_fire < @exact_split_end')
+			# If we are passing in an exact date its for our hold out set, and so we don't 
+			# have a test set (we just want to parse the training set a little farther). 
+		else: 
+			train = pd.DataFrame()
 		test = pd.DataFrame()
 		for years_back in xrange(1, 4): 
 			exact_split_end = exact_split_date - datetime.timedelta(days = years_back * 365)
