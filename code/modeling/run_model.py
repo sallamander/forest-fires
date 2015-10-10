@@ -11,7 +11,7 @@ from collections import defaultdict
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scoring import return_scores
-from data_manip.tt_splits import tt_split_all_less_n_days, tt_split_early_late
+from data_manip.tt_splits import tt_split_all_less_n_days, tt_split_early_late, tt_split_same_months
 from sklearn.grid_search import GridSearchCV
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
@@ -321,7 +321,10 @@ if __name__ == '__main__':
 
 	days_back = 60
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
+	'''
 	train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=3, year=False)
+	'''
+	train2, test2 = tt_split_same_months(train, 2012, 1, test.date_fire.max(), 60)
 
 	if model_name == 'neural_net': 
 		train = normalize_df(train.drop('date_fire', axis=1))
