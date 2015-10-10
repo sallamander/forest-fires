@@ -95,7 +95,7 @@ def return_month_start(time, n_months, forward=True):
 
 	return date_to_return 
 
-def tt_split_same_months(df, year_split, month_split, exact_split_date = None, days_back = None):
+def tt_split_same_months(df, year_split, month_split, days_back = None, exact_split_date = None):
 	'''
 	Input: Pandas DataFrame, Integer, List of Integers
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -119,18 +119,31 @@ def tt_split_same_months(df, year_split, month_split, exact_split_date = None, d
 
 		train = df.query('year <= @year_split and month in @month_split') 
 		test = df.query('year > @year_split and month in @month_split') 
+
+		if days_back: 
+			for num_year in xrange(len(test.year.unique())): 
+				date_split_end = test.date_fire.min() + datetime.timedelta(days = 365 * num_year)
+				date_split_beg = date_split_end - datetime.timedelta(days=days_back)
+				queried_df = df.query('date_fire < @date_split_end and date_fire >= @date_split_beg')
+				train = train.append(queried_df)
+
+		del train['year']
+		del train['month']
+		del test['year']
+		del test['month']
 	else:  
-		exact_split_end = exact_split_date - datetime.timedelta(days=365)
+		exact_split_end = exact_split_date - datetime.timedelta(days=days_back)
 		exact_split_start = exact_split_end - datetime.timedelta(days=days_back)
-		train = df.query('date_fire >= @exact_split_start and date_fire <= @exact_split_end')
+		train = df.query('date_fire >= @exact_split_start and date_fire < @exact_split_end')
 		# If we are passing in an exact date its for our hold out set, and so we don't 
 		# have a test set (we just want to parse the training set a little farther). 
 		test = pd.DataFrame()
-		for years_back in xrange(2, 4): 
+		for years_back in xrange(1, 4): 
 			exact_split_end = exact_split_date - datetime.timedelta(days = years_back * 365)
 			exact_split_start = exact_split_end - datetime.timedelta(days=days_back)
 			queried_df = df.query('date_fire >= @exact_split_start and date_fire <= @exact_split_end')
 			train = train.append(queried_df)
+
 
 
 	return train, test

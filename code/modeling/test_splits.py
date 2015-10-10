@@ -11,7 +11,7 @@ if __name__ == '__main__':
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
 
 	for months_forward in xrange(1, 19, 2): 
-                training_set, validation_set = tt_split_same_months(train, 2013, [months_forward, months_forward + 1])
+                training_set, validation_set = tt_split_same_months(train, 2013, [months_forward, months_forward + 1], 60)
                 '''
                 training_set, validation_set = tt_split_early_late(train, 2012, months_forward, months_backward=7, year=True, days_forward=60)
                 '''
