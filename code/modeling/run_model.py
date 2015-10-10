@@ -325,9 +325,11 @@ if __name__ == '__main__':
 
 	days_back = 30
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
-	train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=7, year=False)
+	train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=0.25)
 	# train2, test2 = tt_split_same_months(train, 2012, 1, days_back=30, exact_split_date=test.date_fire.max(), direct_prior_days=False)
 
+	import pdb
+	pdb.set_trace()
 	if model_name == 'neural_net': 
 		train = normalize_df(train.drop('date_fire', axis=1))
 		test = normalize_df(test.drop('date_fire', axis=1))
