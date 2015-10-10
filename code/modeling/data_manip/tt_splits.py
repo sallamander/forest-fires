@@ -95,29 +95,42 @@ def return_month_start(time, n_months, forward=True):
 
 	return date_to_return 
 
-def tt_split_same_months(df, year_split, month_split):
-    '''
-    Input: Pandas DataFrame, Integer, List of Integers
-    Output: Pandas DataFrame, Pandas DataFrame 
+def tt_split_same_months(df, year_split, month_split, exact_split_date = None, days_back = None):
+	'''
+	Input: Pandas DataFrame, Integer, List of Integers
+	Output: Pandas DataFrame, Pandas DataFrame 
 
-    For the inputted pandas dataframe and month put in, grab all months of
-    data that are equal to the months in the month_split list, for any year. 
-    For those that are in a year prior or equal to the inputted year, put 
-    those in the training set, and for all others put them in the test set. 
-    '''
+	For the inputted pandas dataframe and month put in, grab all months of
+	data that are equal to the months in the month_split list, for any year. 
+	For those that are in a year prior or equal to the inputted year, put 
+	those in the training set, and for all others put them in the test set. 
+	'''
 
-    if month_split[0] >= 13: 
-        year_split += 1
-        print year_split, month_split
-        for idx, month in enumerate(month_split): 
-            month_split[idx] -= 12
-        print month_split
 
-    df.loc[:, 'date_fire'] = pd.to_datetime(df['date_fire'].copy())
-    df['year'] = [dt.year for dt in df['date_fire']]
-    df['month'] = [dt.month for dt in df['date_fire']]
-    
-    train = df.query('year <= @year_split and month in @month_split') 
-    test = df.query('year > @year_split and month in @month_split') 
+	if exact_split_date is None: 
+		if month_split[0] >= 13: 
+			year_split += 1
+			for idx, month in enumerate(month_split): 
+				month_split[idx] -= 12
 
-    return train, test
+		df.loc[:, 'date_fire'] = pd.to_datetime(df['date_fire'].copy())
+		df['year'] = [dt.year for dt in df['date_fire']]
+		df['month'] = [dt.month for dt in df['date_fire']]
+
+		train = df.query('year <= @year_split and month in @month_split') 
+		test = df.query('year > @year_split and month in @month_split') 
+	else:  
+		exact_split_end = exact_split_date - datetime.timedelta(days=365)
+		exact_split_start = exact_split_end - datetime.timedelta(days=days_back)
+		train = df.query('date_fire >= @exact_split_start and date_fire <= @exact_split_end')
+		# If we are passing in an exact date its for our hold out set, and so we don't 
+		# have a test set (we just want to parse the training set a little farther). 
+		test = pd.DataFrame()
+		for years_back in xrange(2, 4): 
+			exact_split_end = exact_split_date - datetime.timedelta(days = years_back * 365)
+			exact_split_start = exact_split_end - datetime.timedelta(days=days_back)
+			queried_df = df.query('date_fire >= @exact_split_start and date_fire <= @exact_split_end')
+			train = train.append(queried_df)
+
+
+	return train, test
