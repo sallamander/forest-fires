@@ -19,7 +19,7 @@ def tt_split_all_less_n_days(df, days_back=60):
 
 	return train, test
 
-def tt_split_early_late(df, input_date_split, months_forward, months_backward=None, year=True, days_forward=None): 
+def tt_split_early_late(df, input_date_split, months_forward, months_backward=None, days_forward=None): 
 	'''
 	Input: Pandas DataFrame, Integer
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -31,21 +31,15 @@ def tt_split_early_late(df, input_date_split, months_forward, months_backward=No
 	''' 
 
 	df.loc[:, 'date_fire'] = pd.to_datetime(df['date_fire'].copy())
-	# If we want more than 12 months forward, then we want a whole nother year, so let's just adjust the 
-	# year and months_forward variables to handle that. 
-	if months_forward >= 12 and year == True: 
-		input_date_split += 1
-		months_forward -= 12
-
-	if year == True: 
-		date_split = datetime.date(input_date_split + 1, 1, 1)
-	else: 
-		date_split = input_date_split
+	date_split = input_date_split
 
 	date_split_forward = return_month_start(date_split, months_forward, forward = True)
 
 	if months_backward: 
-		date_split_backward = return_month_start(date_split_forward, months_backward, forward = False)
+		if months_backward == 12: 
+			date_split_backward = date_split_forward - datetime.timedelta(days=365)
+		else: 
+			date_split_backward = date_split_forward - datetime.timedelta(days = (30 * months_backward))
 	else: 
 		date_split_backward = df.date_fire.min()
 
