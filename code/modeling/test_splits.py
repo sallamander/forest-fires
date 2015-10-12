@@ -11,12 +11,12 @@ if __name__ == '__main__':
 	days_back = 60
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
 
-	for months_forward in xrange(0, 31, 2): 
+	for months_forward in xrange(0, 132, 2): 
                 date_split = datetime.date(2013, 1, 1)
                 '''
                 training_set, validation_set = tt_split_same_months(train, 2013, [months_forward, months_forward + 1], 60)
                 '''
-                training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=0.25, days_forward=60)
+                training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=0.5, days_forward=2, weeks_forward=months_forward)
                 
                 '''
                 print training_set.month.unique(), training_set.year.unique()

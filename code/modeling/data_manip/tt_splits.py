@@ -19,7 +19,7 @@ def tt_split_all_less_n_days(df, days_back=60):
 
 	return train, test
 
-def tt_split_early_late(df, input_date_split, months_forward, months_backward=None, days_forward=None): 
+def tt_split_early_late(df, input_date_split, months_forward, months_backward=None, days_forward=None, weeks_forward=None): 
 	'''
 	Input: Pandas DataFrame, Integer
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -33,7 +33,11 @@ def tt_split_early_late(df, input_date_split, months_forward, months_backward=No
 	df.loc[:, 'date_fire'] = pd.to_datetime(df['date_fire'].copy())
 	date_split = input_date_split
 
-	date_split_forward = return_month_start(date_split, months_forward, forward = True)
+
+	if weeks_forward is None: 
+		date_split_forward = return_month_start(date_split, months_forward, forward = True)
+	else: 
+		date_split_forward = date_split + datetime.timedelta(weeks=weeks_forward)
 
 	if months_backward: 
 		if months_backward == 12: 
@@ -44,7 +48,10 @@ def tt_split_early_late(df, input_date_split, months_forward, months_backward=No
 		date_split_backward = df.date_fire.min()
 
 	if days_forward: 
-		date_split_forward2 = date_split_forward + datetime.timedelta(days=days_forward)
+		if weeks_forward is not None: 
+			date_split_forward2 = date_split_forward + datetime.timedelta(weeks=days_forward)
+		else: 
+			date_split_forward2 = date_split_forward + datetime.timedelta(days=days_forward)
 	else: 
 		date_split_forward2 = df.date_fire.max()
 
