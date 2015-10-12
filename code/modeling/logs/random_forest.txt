@@ -1116,3 +1116,80 @@ Validation ROC AUC: 0.838412238498
 for months_forward in xrange(0, 33, 2): 
 Training on months year prior data, predicting 30 days forward
 
+2015-10-12 06:24:24
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68569563325112437, 'precision_score': 0.81578947368421051, 'roc_auc_score': 0.7678109925474077}
+
+Validation ROC AUC: 0.891826580419
+
+for months_forward in xrange(0, 132, 2):
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=None, days_forward=2, weeks_forward=months_forward)
+Training on all prior data, predicting 15 days forward
+
+2015-10-12 12:53:56
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68460757290004348, 'precision_score': 1.0, 'roc_auc_score': 0.76208724075715151}
+
+Validation ROC AUC: 0.885156151531
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=12, days_forward=2, weeks_forward=months_forward)
+Training on prior year data, predicting 15 days forward
+
+
+2015-10-12 13:21:08
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68011025678224291, 'precision_score': 1.0, 'roc_auc_score': 0.75595832189506162}
+
+Validation ROC AUC: 0.8038310112
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=1, days_forward=2, weeks_forward=months_forward)
+Training on prior month data, predicting 15 days forward
+
+2015-10-12 13:26:30
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68069055563615266, 'precision_score': 1.0, 'roc_auc_score': 0.75716589025591452}
+
+Validation ROC AUC: 0.798628545804
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=1, days_forward=2, weeks_forward=months_forward)
+Training on prior two weeks data, predicting 15 days forward
+
+2015-10-12 13:32:08
+----------------------------------------------------------------------------------------------------
+Model Run: random_forest
+
+Params: {'warm_start': False, 'oob_score': False, 'n_jobs': 5, 'verbose': 0, 'max_leaf_nodes': None, 'bootstrap': True, 'min_samples_leaf': 1, 'n_estimators': 1000, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'criterion': 'gini', 'random_state': 24, 'max_features': 'auto', 'max_depth': 15, 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.69614101262150008, 'precision_score': 1.0, 'roc_auc_score': 0.76535171482454534}
+
+Validation ROC AUC: 0.820579381759
+

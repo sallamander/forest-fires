@@ -1064,4 +1064,80 @@ Validation ROC AUC: 0.757213479771
 for months_forward in xrange(0, 33, 2): 
 Training on months year prior data, predicting 30 days forward
 
+2015-10-12 03:26:39
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.70143623966342672, 'precision_score': 0.78048780487804881, 'roc_auc_score': 0.77407178781330282}
+
+Validation ROC AUC: 0.833885636338
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=None, days_forward=2, weeks_forward=months_forward)
+Training on all prior data, predicting 15 days forward
+
+
+2015-10-12 11:44:18
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.69802698389670681, 'precision_score': 0.78260869565217395, 'roc_auc_score': 0.76409421818991974}
+
+Validation ROC AUC: 0.849199831045
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=12, days_forward=2, weeks_forward=months_forward)
+Training on prior year data, predicting 15 days forward
+
+2015-10-12 13:17:21
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.67974756999854924, 'precision_score': 0.56132075471698117, 'roc_auc_score': 0.73468952674143262}
+
+Validation ROC AUC: 0.718972371039
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=1, days_forward=2, weeks_forward=months_forward)
+Training on prior month data, predicting 15 days forward
+
+2015-10-12 13:24:02
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.65218337443783547, 'precision_score': 0.45398450833661547, 'roc_auc_score': 0.64881666511836833}
+
+Validation ROC AUC: 0.73020406288
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=1, days_forward=2, weeks_forward=months_forward)
+Training on prior two weeks data, predicting 15 days forward
+
+2015-10-12 13:30:33
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.65218337443783547, 'precision_score': 0.45935428077255691, 'roc_auc_score': 0.65231396383058993}
+
+Validation ROC AUC: 0.756337603656
 

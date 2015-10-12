@@ -1089,3 +1089,80 @@ Validation ROC AUC: 0.798376988631
 for months_forward in xrange(0, 33, 2): 
 Training on months year prior data, predicting 30 days forward
 
+2015-10-12 06:21:09
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 250, 'n_estimators': 250, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68975772522849266, 'precision_score': 1.0, 'roc_auc_score': 0.76653640084297026}
+
+Validation ROC AUC: 0.887135184406
+
+for months_forward in xrange(0, 132, 2):
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=None, days_forward=2, weeks_forward=months_forward)
+Training on all prior data, predicting 15 days forward
+
+2015-10-12 12:48:46
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 250, 'n_estimators': 250, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.69207892064413168, 'precision_score': 1.0, 'roc_auc_score': 0.77219281615064261}
+
+Validation ROC AUC: 0.888616713717
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=12, days_forward=2, weeks_forward=months_forward)
+Training on prior year data, predicting 15 days forward
+
+
+2015-10-12 13:19:48
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 250, 'n_estimators': 250, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68816190338024086, 'precision_score': 1.0, 'roc_auc_score': 0.76871087284712591}
+
+Validation ROC AUC: 0.80103959721
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=1, days_forward=2, weeks_forward=months_forward)
+Training on prior month data, predicting 15 days forward
+
+2015-10-12 13:25:17
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 250, 'n_estimators': 250, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68816190338024086, 'precision_score': 1.0, 'roc_auc_score': 0.76832523637065409}
+
+Validation ROC AUC: 0.80067471665
+
+for months_forward in xrange(0, 132, 2): 
+training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=1, days_forward=2, weeks_forward=months_forward)
+Training on prior two weeks data, predicting 15 days forward
+
+2015-10-12 13:31:11
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 250, 'n_estimators': 250, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.69969534310169734, 'precision_score': 1.0, 'roc_auc_score': 0.76849788033891842}
+
+Validation ROC AUC: 0.825245568476
+
