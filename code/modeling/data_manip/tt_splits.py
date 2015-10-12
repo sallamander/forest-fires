@@ -96,7 +96,7 @@ def return_month_start(time, n_months, forward=True):
 
 	return date_to_return 
 
-def tt_split_same_months(df, year_split, month_split, days_back = None, exact_split_date = None, direct_prior_days=False): 
+def tt_split_same_months(df, year_split, month_split, days_back = None, exact_split_date = None, direct_prior_days=False, add_test = False): 
 	'''
 	Input: Pandas DataFrame, Integer, List of Integers
 	Output: Pandas DataFrame, Pandas DataFrame 
@@ -127,12 +127,16 @@ def tt_split_same_months(df, year_split, month_split, days_back = None, exact_sp
 				date_split_beg = date_split_end - datetime.timedelta(days=days_back)
 				queried_df = df.query('date_fire < @date_split_end and date_fire >= @date_split_beg')
 				train = train.append(queried_df)
-
 		del train['year']
 		del train['month']
 		del test['year']
 		del test['month']
 	else:  
+
+		df.loc[:, 'date_fire'] = pd.to_datetime(df['date_fire'].copy())
+		df['year'] = [dt.year for dt in df['date_fire']]
+		df['month'] = [dt.month for dt in df['date_fire']]
+
 		if direct_prior_days: 
 			exact_split_end = exact_split_date - datetime.timedelta(days=days_back)
 			exact_split_start = exact_split_end - datetime.timedelta(days=days_back)
@@ -148,6 +152,12 @@ def tt_split_same_months(df, year_split, month_split, days_back = None, exact_sp
 			queried_df = df.query('date_fire >= @exact_split_start and date_fire <= @exact_split_end')
 			train = train.append(queried_df)
 
+		if add_test: 
+			test_split_date_end = exact_split_date
+			test_split_date_start = exact_split_date - datetime.timedelta(days=days_back)
+			test = df.query('date_fire>= @test_split_date_start & date_fire <= @test_split_date_end')
 
+		del train['year']
+		del train['month']
 
 	return train, test
