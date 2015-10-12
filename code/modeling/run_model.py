@@ -125,9 +125,11 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 		for idx, param in enumerate(param_names): 
 			output_dict[param] = param_comb[idx]
 			param_dict[param] = param_comb[idx]
-		for months_forward in xrange(0, 33, 1): 
-			training_set, validation_set = tt_split_same_months(train, 2013, [months_forward], days_back=None)
-			# input_date = datetime.date(2013, 1, 1)
+		for months_forward in xrange(0, 132, 2): 
+		# for months_forward in xrange(0, 33, 1): 
+      		date_split = datetime.date(2013, 1, 1)
+      		training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=0.5, days_forward=2, weeks_forward=months_forward)
+			# training_set, validation_set = tt_split_same_months(train, 2013, [months_forward], days_back=None)	
 			# training_set, validation_set = tt_split_early_late(train, input_date, months_forward, months_backward=0.5, days_forward=30)
 			# If there are no actual fires here, then training/testing on it is pointless and the ROC 
 			# area under the curve can't be calculated. 
@@ -140,7 +142,7 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 	# del train['year']
 	# del train['month']
 
-	roc_save_filename = './model_output/roc_auc_monthsprioryear_30_' + model_name
+	roc_save_filename = './model_output/roc_auc_allprioryear_15_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores_list, f)
 	best_params, best_roc_auc = return_best_params(roc_auc_scores_list) 
@@ -326,9 +328,11 @@ if __name__ == '__main__':
 
 	days_back = 30
 	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
-	# train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=0.5)
-	train2, test2 = tt_split_same_months(train, 2012, [1], days_back=30, exact_split_date=test.date_fire.max(), direct_prior_days=False)
+	train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=0.5)
+	# train2, test2 = tt_split_same_months(train, 2012, [1], days_back=30, exact_split_date=test.date_fire.max(), direct_prior_days=False)
 
+	import pdb
+	pdb.set_trace()
 	if model_name == 'neural_net': 
 		train = normalize_df(train.drop('date_fire', axis=1))
 		test = normalize_df(test.drop('date_fire', axis=1))
@@ -351,7 +355,7 @@ if __name__ == '__main__':
 	scores = return_scores(test.fire_bool, preds, preds_probs)
 	log_results(model_name, train.drop('date_fire', axis=1), fitted_model, scores, best_roc_auc)
 
-	filename = './model_output/' + model_name + '_preds_probs_monthsprioryear_30.csv'
+	filename = './model_output/' + model_name + '_preds_probs_allprior_15.csv'
 	output_model_preds(filename, model_name, preds_probs, test)
 
 
