@@ -744,8 +744,6 @@ Scores: {'recall_score': 1.0, 'accuracy_score': 0.68668968662453578, 'precision_
 Validation ROC AUC: 0.836860824125
 
 Training on all prior data, predicting on 60 days forward 
-Training on 60 days prior, predicting on 60 days forward 
-Training on prior 2 months from each previous year, predicting on 60 days forward 
 
 2015-10-10 00:49:01
 ----------------------------------------------------------------------------------------------------
@@ -879,4 +877,172 @@ Scores: {'recall_score': 1.0, 'accuracy_score': 0.65685882335511203, 'precision_
 Validation ROC AUC: 0.825424405501
 
 Training on prior six months, predicting on 30 days forward
+
+**********************************************************************************************************
+**********************************************************************************************************
+**********************************************************************************************************
+
+
+2015-10-10 19:07:11
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68668968662453578, 'precision_score': 0.93146417445482865, 'roc_auc_score': 0.76523045820315172}
+
+Validation ROC AUC: 0.861718405103
+
+for months_forward in xrange(0, 33, 2): 
+Training on all prior data, predicting 60 days forward
+
+
+2015-10-10 20:29:55
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68711968206397811, 'precision_score': 0.9044943820224719, 'roc_auc_score': 0.76117581451010985}
+
+Validation ROC AUC: 0.848806560174
+
+for months_forward in xrange(0, 33, 2): 
+Training on a year prior data, predicting 60 days forward
+
+2015-10-10 21:06:56
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.67566616717701478, 'precision_score': 0.66465413144730034, 'roc_auc_score': 0.74928580494023678}
+
+Validation ROC AUC: 0.823091497871
+
+for months_forward in xrange(0, 33, 2): 
+Training on four months prior data, predicting 60 days forward
+
+2015-10-10 21:14:12
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.67534041305622516, 'precision_score': 0.65756636164259241, 'roc_auc_score': 0.7527411343932634}
+
+Validation ROC AUC: 0.752887134534
+
+for months_forward in xrange(0, 33, 2): 
+Training on two months prior data, predicting 60 days forward
+
+2015-10-10 21:19:11
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.67303407388103464, 'precision_score': 0.65904148207813129, 'roc_auc_score': 0.75004609689584156}
+
+Validation ROC AUC: 0.685806738602
+
+for months_forward in xrange(0, 33, 2): 
+Training on one month prior data, predicting 60 days forward
+
+2015-10-10 21:30:10
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio, year, month
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.68655938497621993, 'precision_score': 0.78900255754475701, 'roc_auc_score': 0.76612411000883329}
+
+Validation ROC AUC: 0.876287859632
+
+for months_forward in xrange(0, 33, 2): 
+Training on two months prior for prior years data, predicting 60 days forward
+
+2015-10-10 21:58:22
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.6654814288042431, 'precision_score': 0.9371980676328503, 'roc_auc_score': 0.7336075090859514}
+
+Validation ROC AUC: 0.853500525577
+
+for months_forward in xrange(0, 33, 2): 
+Training on all prior data, predicting 30 days forward
+
+2015-10-11 12:13:41
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.64796953938693569, 'precision_score': 0.85542168674698793, 'roc_auc_score': 0.70850460075746002}
+
+Validation ROC AUC: 0.86829426494
+
+for months_forward in xrange(0, 33, 2): 
+Training on year prior data, predicting 30 days forward
+
+2015-10-11 23:51:57
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.6563550972635821, 'precision_score': 0.670865501828525, 'roc_auc_score': 0.72839921926973217}
+
+Validation ROC AUC: 0.770550853836
+
+for months_forward in xrange(0, 33, 2): 
+Training on two months prior data, predicting 30 days forward
+
+2015-10-12 00:03:04
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.65222158021838006, 'precision_score': 0.66344581537089342, 'roc_auc_score': 0.72302798027943516}
+
+Validation ROC AUC: 0.778033086059
+
+for months_forward in xrange(0, 33, 2): 
+Training on one months prior data, predicting 30 days forward
+
+2015-10-12 00:08:20
+----------------------------------------------------------------------------------------------------
+Model Run: logit
+
+Params: {'C': 0.1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': 24, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, month_01, month_02, month_03, month_04, month_05, month_06, month_07, month_08, month_09, month_10, month_11, month_12, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.64854734284486715, 'precision_score': 0.65646351462148123, 'roc_auc_score': 0.71618128587878593}
+
+Validation ROC AUC: 0.816566006949
 
