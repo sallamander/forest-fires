@@ -156,6 +156,8 @@ def tt_split_same_months(df, year_split, month_split, days_back = None, exact_sp
 			test_split_date_end = exact_split_date
 			test_split_date_start = exact_split_date - datetime.timedelta(days=days_back)
 			test = df.query('date_fire>= @test_split_date_start & date_fire <= @test_split_date_end')
+			del test['year']
+			del test['month']
 
 		del train['year']
 		del train['month']
