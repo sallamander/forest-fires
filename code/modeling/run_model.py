@@ -126,8 +126,8 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 			output_dict[param] = param_comb[idx]
 			param_dict[param] = param_comb[idx]
 		for months_forward in xrange(0, 78, 2): 
-            date_split = train.date_fire.max() - datetime.timedelta(weeks=months_forward)
-            training_set, validation_set = tt_split_same_months(train, 2013, [1], days_back=14, exact_split_date = date_split, direct_prior_days=False, add_test=True)
+			date_split = train.date_fire.max() - datetime.timedelta(weeks=months_forward)
+			training_set, validation_set = tt_split_same_months(train, 2013, [1], days_back=14, exact_split_date = date_split, direct_prior_days=False, add_test=True)
 			# for months_forward in xrange(0, 132, 2): 
 			# for months_forward in xrange(0, 33, 1): 
 			# date_split = datetime.date(2013, 1, 1)
@@ -136,11 +136,12 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 			# training_set, validation_set = tt_split_early_late(train, input_date, months_forward, months_backward=0.5, days_forward=30)
 			# If there are no actual fires here, then training/testing on it is pointless and the ROC 
 			# area under the curve can't be calculated. 
+			print training_set.shape, validation_set.shape
 			if validation_set.fire_bool.sum() > 0 and training_set.fire_bool.sum() > 0: 
 				model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
 				roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
 				output_dict['roc_auc'].append(roc_auc_score)
-			roc_auc_scores_list.append(output_dict)
+		roc_auc_scores_list.append(output_dict)
 
 	del train['year']
 	del train['month']
@@ -339,6 +340,7 @@ if __name__ == '__main__':
 		train = normalize_df(train.drop('date_fire', axis=1))
 		test = normalize_df(test.drop('date_fire', axis=1))
 
+
 	'''
 	keep_list = ['conf']
 	train = train[keep_list]
@@ -348,6 +350,7 @@ if __name__ == '__main__':
 	'''
 	
 	fitted_model, best_roc_auc = own_grid_search(model_name, train, test, train2)
+
 	'''
 	roc_save_filename = 'roc_auc_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
