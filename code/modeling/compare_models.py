@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.metrics import roc_auc_score
 import sys
 
-def output_csv_to_merge(model_name, all_cols=False): 
+def output_csv_to_merge(model_name, suffix, all_cols=False): 
     '''
     Input: String, Boolean
     Output: Pandas DataFrame, Numpy Array 
@@ -13,7 +13,7 @@ def output_csv_to_merge(model_name, all_cols=False):
     probabilities from that model. Otherwise, output only the predicted 
     probabilities column from that model df. 
     '''
-    filepath = '../model_output/' + model_name + '_preds_probs.csv'
+    filepath = '../model_output/days_forward_60/' + model_name + '_preds_probs_' + suffix + '.csv'
     df = pd.read_csv(filepath) 
     
     fire_bool = df.fire_bool 
@@ -30,7 +30,7 @@ def output_csv_to_merge(model_name, all_cols=False):
 
 def combine_dfs(input_df_list): 
     '''
-    Input: List of Pandas DataFrames 
+    Input: List of Pandas DataFrames, String
     Output: Pandas DataFrame
 
     For the inputted Dataframes, merge them all together. 
@@ -82,18 +82,17 @@ if __name__ == '__main__':
     else: 
         all_cols = False
 
-    model_csv_list = ['random_forest', 'gradient_boosting', 'logit']
+    model_list = {'logit': 'allprior_60', 
+                  }
     
     input_df_list = []
-    for model_name in model_csv_list:
-        input_df, fire_bool = output_csv_to_merge(model_name, all_cols=all_cols)
+    for k, v in model_list.iteritems(): 
+        input_df, fire_bool = output_csv_to_merge(model_name = k, suffix = v, all_cols=all_cols)
         if all_cols == True: 
             input_df = grab_top_n(input_df, 50)
         input_df_list.append(input_df)
-    
-    '''
+
     combined_df = combine_dfs(input_df_list) 
     averaged_df = average_model_preds(combined_df)
     roc_auc = roc_auc_score(fire_bool, averaged_df['average_col'])
-    '''
 
