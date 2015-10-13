@@ -1188,3 +1188,38 @@ training_set, validation_set = tt_split_same_months(train, 2013, [1], days_back=
 Training on prior years weeks, predicting 15 days forward
 
 
+2015-10-13 17:02:01
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 250, 'n_estimators': 250, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.67931234585811695, 'precision_score': 1.0, 'roc_auc_score': 0.74092891408382078}
+
+Validation ROC AUC: 0.801206801709
+
+for months_forward in xrange(0, 78, 2): 
+date_split = train.date_fire.max() - datetime.timedelta(weeks=months_forward)
+training_set, validation_set = tt_split_same_months(train, 2013, [1], days_back=14, exact_split_date = date_split, direct_prior_days=False, add_test=True)
+Training on prior years weeks, predicting 15 days forward, without month and year
+
+2015-10-13 17:12:35
+----------------------------------------------------------------------------------------------------
+Model Run: gradient_boosting
+
+Params: {'warm_start': False, 'loss': 'deviance', 'verbose': 0, 'subsample': 1.0, 'max_leaf_nodes': None, 'learning_rate': 0.1, 'min_samples_leaf': 250, 'n_estimators': 250, 'min_samples_split': 2, 'init': None, 'min_weight_fraction_leaf': 0.0, 'random_state': 24, 'max_features': None, 'max_depth': 3}
+
+Features: lat, long, frp, fire_bool, urban_area_bool, gmt, temp, conf, nearby_count_1, nearby_count_2, nearby_count_3, nearby_count_4, nearby_count_5, nearby_count_6, nearby_count_7, year_2012, year_2013, year_2014, year_2015, land_water_ratio
+
+Scores: {'recall_score': 1.0, 'accuracy_score': 0.66966487741186709, 'precision_score': 0.66666666666666663, 'roc_auc_score': 0.73260601581769458}
+
+Validation ROC AUC: 0.792876179122
+
+
+for months_forward in xrange(0, 78, 2): 
+date_split = train.date_fire.max() - datetime.timedelta(weeks=months_forward)
+training_set, validation_set = tt_split_same_months(train, 2013, [1], days_back=14, exact_split_date = date_split, direct_prior_days=False, add_test=True)
+Training on prior years weeks, predicting 15 days forward, without year
+
