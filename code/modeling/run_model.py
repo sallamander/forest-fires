@@ -146,7 +146,7 @@ def own_grid_search(model_name, train_data, test_data, train_data2):
 	del train['year']
 	del train['month']
 
-	roc_save_filename = './model_output/roc_auc_daysprioryear_15_' + model_name
+	roc_save_filename = './model_output/roc_auc_daysprioryear_lessm_15_' + model_name
 	with open(roc_save_filename, 'w+') as f: 
 		pickle.dump(roc_auc_scores_list, f)
 	best_params, best_roc_auc = return_best_params(roc_auc_scores_list) 
@@ -336,6 +336,27 @@ if __name__ == '__main__':
 	# train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=0.5)
 	train2, test2 = tt_split_same_months(train, 2012, [1], days_back=14, exact_split_date=test.date_fire.max(), direct_prior_days=False, add_test=True)
 
+	train_cols = train.columns
+	test_cols = test.columns
+	train2_cols = train2.columns
+	test2_cols = test2.columns
+
+	for col in train_cols: 
+		if 'month' in col : 
+			del train[col]
+
+	for col in test_cols: 
+		if 'month' in col: 
+			del test[col]
+
+	for col in train2_cols: 
+		if 'month' in col: 
+			del train2[col]
+
+	for col in test2_cols: 
+		if 'month' in col: 
+			del test2[col]
+
 	if model_name == 'neural_net': 
 		train = normalize_df(train.drop('date_fire', axis=1))
 		test = normalize_df(test.drop('date_fire', axis=1))
@@ -361,7 +382,7 @@ if __name__ == '__main__':
 	log_results(model_name, train.drop('date_fire', axis=1), fitted_model, scores, best_roc_auc)
 
 
-	filename = './model_output/' + model_name + '_preds_probs_daysprioryear_15.csv'
+	filename = './model_output/' + model_name + '_preds_probs_daysprioryear_lessm_15.csv'
 	output_model_preds(filename, model_name, preds_probs, test)
 
 
