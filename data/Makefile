@@ -1,5 +1,5 @@
-zipped_files: 
-	sh mk_zipped_files_folders.sh 
+folder_structure:
+	sh mk_folders.sh
 
 zipped_folder=zipped_files/
 unzipped_folder=unzipped_files/
@@ -215,7 +215,7 @@ detected_fires: $(zipped_folder)$(detected_fires_2012).zip \
 				$(zipped_folder)$(detected_fires_2014).zip \
 				$(zipped_folder)$(detected_fires_2015).zip
 
-data: zipped_files county_boundaries state_boundaries region_boundaries \
+data: folder_structure county_boundaries state_boundaries region_boundaries \
 			 urban_area_boundaries fire_perimeter_boundaries detected_fires 
 
 
