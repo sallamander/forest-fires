@@ -36,15 +36,20 @@ def create_shapefile_db(name, year, latin_encoding=False):
 	'''
 
 	if name == 'perimeters': 
-		filepath = '../data/unzipped_files/boundary_files/fire_perimeters/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/fire_perimeters/' \
+                             + str(year)
 	elif name == 'county': 
-		filepath = '../data/unzipped_files/boundary_files/county/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/county/' \
+                            + str(year)
 	elif name == 'urban': 
-		filepath = '../data/unzipped_files/boundary_files/urban_areas/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/urban_areas/' \
+                            + str(year)
 	elif name == 'region': 
-		filepath = '../data/unzipped_files/boundary_files/region/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/region/' \
+                            + str(year)
 	elif name == 'state': 
-		filepath = '../data/unzipped_files/boundary_files/state/' + str(year)
+		filepath = '../data/unzipped_files/boundary_files/state/' \
+                            + str(year)
 	else: 
 		raise Exception('No boundary folder name put in... Try again!')
 
@@ -64,7 +69,7 @@ def create_dt(filepath, dt_name, latin_encoding=False):
 
         # Issue a warning and abort if table already exists.
         if dt_exists(dt_name): 
-            raise Exception('This table already exists!)
+            raise Exception('This table already exists!')
 
 	# I'm using the overwrite option here because anytime this I'm creating a 
         # db I'll be fixing something and need to create the database from scratch. 
@@ -105,7 +110,7 @@ def dt_exist(dt_name):
 if __name__ == '__main__': 
     for year in xrange(2012, 2016): 
         create_fire_db(year)
-        create_shapefile_db('perimeters', year)
+        create_shapefile_db('fire_perimeters', year)
 
         # We only have the following perimter shapefiles for 2013 and 2014. 
         if year not in (2012, 2015): 
