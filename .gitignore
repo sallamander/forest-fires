@@ -14,5 +14,5 @@
 /data/zipped_files/*
 /data/jsons/*
 
-/data_setup/*.pyc
+/code/data_setup/*.pyc
 
