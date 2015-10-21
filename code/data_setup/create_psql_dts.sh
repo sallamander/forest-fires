@@ -1,5 +1,12 @@
 #!bin/bash
 
+# First create our database and add the POSTGIS extension. 
+psql << EOF 
+CREATE DATABASE forest_fires; 
+\connect forest_fires
+CREATE EXTENSION POSTGIS;
+EOF
+
 # In this file read in and create data tables in our forest_fires database
 # for all of our shapefiles. 
  
@@ -8,7 +15,7 @@
 
 fire_tbl_years=( 2012 2013 2014 2015 ) 
 boundary_tbl_years=( 2013 2014 )
-non_fire_boundaries=( county state urban region )
+non_fire_boundaries=( county state urban_areas region )
 
 for year in "${fire_tbl_years[@]}"
 do
@@ -17,7 +24,7 @@ do
         -nlt PROMOTE_TO_MULTI -nln detected_fires_$year -overwrite 
 
     ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user="$USER \
-        "../../data/unzipped_files/boundary_files/fire_perimeters"$year/ \
+        "../../data/unzipped_files/boundary_files/fire_perimeters"/$year/ \
         -nlt PROMOTE_TO_MULTI -nln fire_perimeters_$year -overwrite 
 done 
 
@@ -25,9 +32,17 @@ for year in "${boundary_tbl_years[@]}"
 do 
     for tbl_name in "${non_fire_boundaries[@]}"
     do 
-        ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user="$USER \
-            "../../data/unzipped_files/boundary_files/"${tbl_name}/$year/ \
-            -nlt PROMOTE_TO_MULTI -nln ${tbl_name}_perimeters_$year -overwrite 
+        if [ "$tbl_name" = "state" ]  
+        then 
+            ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user="$USER \
+                "../../data/unzipped_files/boundary_files/"${tbl_name}/$year/ \
+                -nlt PROMOTE_TO_MULTI -nln ${tbl_name}_perimeters_$year -overwrite 
+        else 
+            PGCLIENTENCODING=LATIN1 ogr2ogr -f "PostgreSQL" \
+                PG:"dbname=forest_fires user="$USER \
+                "../../data/unzipped_files/boundary_files/"${tbl_name}/$year/ \
+                -nlt PROMOTE_TO_MULTI -nln ${tbl_name}_perimeters_$year -overwrite 
+        fi 
     done 
 done 
 
