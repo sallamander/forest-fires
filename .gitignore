@@ -9,3 +9,10 @@
 /fires_app/static/data/*
 /code/roc*
 /code/model_output/*
+
+/data/unzipped_files/*
+/data/zipped_files/*
+/data/jsons/*
+
+/data_setup/*.pyc
+
