@@ -15,4 +15,4 @@
 /data/jsons/*
 
 /code/data_setup/*.pyc
-
+*sentinel
