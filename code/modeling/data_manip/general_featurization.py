@@ -1,16 +1,6 @@
 import pandas as pd
 import numpy as np
 
-def grab_columns(df, columns_list): 
-	'''
-	Input: Pandas DataFrame, List of Strings
-	Output: DataFrame
-
-	Return only those columns that we want from the dataframe. 
-	'''
-
-	return df[columns_list]
-
 def return_all_dummies(df, col, val_dict): 
 	'''
 	Input: Pandas DataFrame, String, Dictionary
@@ -56,24 +46,6 @@ def return_top_n(df, col, val_dict):
 
 	df = df.drop(col, axis=1)	
 	return df
-
-def combine_dfs(df_list): 
-	'''
-	Input: List of Pandas DataFrame
-	Output: Pandas DataFrame
-
-	Combine each of the pandas dataframes in the df_list into one single dataframe. Note that I'm assuming 
-	that they have the same column names. 
-	'''
-
-	output_df = df_list[0]
-
-	if len(df_list) == 1: 
-		return output_df
-	else: 
-		for df in df_list[1:]: 
-			output_df = output_df.append(df, ignore_index=True)
-		return output_df
 
 def boolean_col(df, col, val_dict): 
 	'''
