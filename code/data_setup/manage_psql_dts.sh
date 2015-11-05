@@ -7,7 +7,7 @@ do
             # First create our database and add the POSTGIS extension. We'll need
             # this for any of the options that follow.
             psql postgres -c "CREATE DATABASE forest_fires;"
-            psql postgres -d forest_fires -c "CREATE EXTENSION POSTGIS;"
+            psql -d forest_fires -c "CREATE EXTENSION POSTGIS;"
             exit 
             ;; 
         -r) 
@@ -59,7 +59,7 @@ do
 
             for year in "${tbl_years[@]}"
             do 
-                psql postgres -d forest_fires -c "COPY detected_fires_$year TO \
+                psql -d forest_fires -c "COPY detected_fires_$year TO \
                     '/Users/sallamander/galvanize/forest-fires/data/csvs/detected_fires_$year.csv' \
                     WITH CSV HEADER DELIMITER AS E',';"
             done 
@@ -185,9 +185,9 @@ do
                     " 
             fi 
 
-            psql postgres -d forest_fires -c "$query"
-            psql postgres -d forest_fires -c "DROP TABLE detected_fires_$year;"
-            psql postgres -d forest_fires -c "ALTER TABLE detected_fires_${year}2 \
+            psql -d forest_fires -c "$query"
+            psql -d forest_fires -c "DROP TABLE detected_fires_$year;"
+            psql -d forest_fires -c "ALTER TABLE detected_fires_${year}2 \
                                     RENAME to detected_fires_$year;"
             exit 
             ;;
