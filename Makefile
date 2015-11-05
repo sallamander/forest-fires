@@ -1,5 +1,5 @@
 .data_folder_structure_sentinel: 
-	sh data/mk_folders.sh
+	bash data/mk_folders.sh
 	touch .data_folder_structure_sentinel
 
 zipped_folder=data/zipped_files/
@@ -220,33 +220,33 @@ get_data: .data_folder_structure_sentinel county_boundaries state_boundaries reg
 			 urban_area_boundaries fire_perimeter_boundaries detected_fires 
 
 .data_prep_sentinel: 
-	sh code/data_setup/manage_psql_dts.sh -c
-	sh code/data_setup/manage_psql_dts.sh -r
+	bash code/data_setup/manage_psql_dts.sh -c
+	bash code/data_setup/manage_psql_dts.sh -r
 
-	sh code/data_setup/manage_psql_dts.sh -m fire 2012 
-	sh code/data_setup/manage_psql_dts.sh -m fire 2013
-	sh code/data_setup/manage_psql_dts.sh -m fire 2014 
-	sh code/data_setup/manage_psql_dts.sh -m fire 2015 
+	bash code/data_setup/manage_psql_dts.sh -m fire 2012 
+	bash code/data_setup/manage_psql_dts.sh -m fire 2013
+	bash code/data_setup/manage_psql_dts.sh -m fire 2014 
+	bash code/data_setup/manage_psql_dts.sh -m fire 2015 
 
-	sh code/data_setup/manage_psql_dts.sh -m urban_areas 2012 
-	sh code/data_setup/manage_psql_dts.sh -m urban_areas 2013 
-	sh code/data_setup/manage_psql_dts.sh -m urban_areas 2014 
-	sh code/data_setup/manage_psql_dts.sh -m urban_areas 2015
+	bash code/data_setup/manage_psql_dts.sh -m urban_areas 2012 
+	bash code/data_setup/manage_psql_dts.sh -m urban_areas 2013 
+	bash code/data_setup/manage_psql_dts.sh -m urban_areas 2014 
+	bash code/data_setup/manage_psql_dts.sh -m urban_areas 2015
 
-	sh code/data_setup/manage_psql_dts.sh -m region 2012  
-	sh code/data_setup/manage_psql_dts.sh -m region 2013
-	sh code/data_setup/manage_psql_dts.sh -m region 2014  
-	sh code/data_setup/manage_psql_dts.sh -m region 2015
+	bash code/data_setup/manage_psql_dts.sh -m region 2012  
+	bash code/data_setup/manage_psql_dts.sh -m region 2013
+	bash code/data_setup/manage_psql_dts.sh -m region 2014  
+	bash code/data_setup/manage_psql_dts.sh -m region 2015
 
-	sh code/data_setup/manage_psql_dts.sh -m county 2012   
-	sh code/data_setup/manage_psql_dts.sh -m county 2013   
-	sh code/data_setup/manage_psql_dts.sh -m county 2014   
-	sh code/data_setup/manage_psql_dts.sh -m county 2015
+	bash code/data_setup/manage_psql_dts.sh -m county 2012   
+	bash code/data_setup/manage_psql_dts.sh -m county 2013   
+	bash code/data_setup/manage_psql_dts.sh -m county 2014   
+	bash code/data_setup/manage_psql_dts.sh -m county 2015
 
-	sh code/data_setup/manage_psql_dts.sh -m state 2012    
-	sh code/data_setup/manage_psql_dts.sh -m state 2013    
-	sh code/data_setup/manage_psql_dts.sh -m state 2014    
-	sh code/data_setup/manage_psql_dts.sh -m state 2015   
+	bash code/data_setup/manage_psql_dts.sh -m state 2012    
+	bash code/data_setup/manage_psql_dts.sh -m state 2013    
+	bash code/data_setup/manage_psql_dts.sh -m state 2014    
+	bash code/data_setup/manage_psql_dts.sh -m state 2015   
 
 	touch .data_prep_sentinel
 
