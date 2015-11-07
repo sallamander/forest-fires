@@ -28,10 +28,9 @@ if __name__ == '__main__':
     # Assume that we haven't done the geography transformation unless we 
     # explicity tell it. This option is here because gen_nearby_fires_count
     # takes a long time to run; so we want the option to bypass it.
-    if len(sys.argv) == 1: 
-        geo = False
-    else: 
-        geo = True if sys.argv[1] == 'geo_done' else False
+    if len(sys.argv) >= 1: 
+        geo = True if 'geo' in sys.argv else False
+        time = True if 'time' in sys.argv else False
 
     # We'll create a dictionary that will hold all the transformations we'll 
     # peform on our data; then we can access the function we'll use to transform 
@@ -47,18 +46,9 @@ if __name__ == '__main__':
         dfs_list = [get_df(year) for year in year_list] 
         df = pd.concat(dfs_list, ignore_index=True)
         df = add_date_column(df)
-        old_times, new_times = [], []
-        for iteration in xrange(1): 
-            geo_transforms_dict_copy = geo_transforms_dict['add_nearby_fires'].copy()
-            # geo_transforms_dict_copy['quant_test'] = True
-            df_copy = df.copy()
-            start_time = time.time()
-            df_copy = gen_nearby_fires_count(df_copy, geo_transforms_dict_copy)
-            end_time = time.time()
-            old_times.append(end_time - start_time)
-    '''
         for k, v in geo_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
+    '''
     else: 
         df = pd.read_csv('geo_done.csv')
         with open('makefiles/time_transforms_dict.pkl') as f:

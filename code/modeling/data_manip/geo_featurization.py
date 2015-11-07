@@ -33,11 +33,11 @@ def gen_nearby_fires_count(df, kwargs):
     for time_measure in time_measures: 
         lat_idx, long_idx, date_idx, date_percentile_idx = grab_col_indices(multiprocessing_df, 
                         ['lat', 'long', 'date_fire', 'date_fire_percentiles'])
-        pool = multiprocessing.Pool(multiprocessing.cpu_count)
-        execute_query = partial(query_for_nearby_fires2, dt_percentiles_df_dict, 
+        pool = multiprocessing.Pool(multiprocessing.cpu_count())
+        execute_query = partial(query_for_nearby_fires, dt_percentiles_df_dict, 
                                 dist_measure, time_measure, lat_idx, long_idx, 
                                 date_idx, date_percentile_idx)
-        nearby_count_dict = pool.map(execute_query, multiprocessing_df.values[25000:27000]) 
+        nearby_count_dict = pool.map(execute_query, multiprocessing_df.values) 
         pool.close()
         df = merge_results(df, nearby_count_dict)
 
