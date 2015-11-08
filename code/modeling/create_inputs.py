@@ -41,19 +41,34 @@ if __name__ == '__main__':
                          }
      
     if geo: 
-        with open('makefiles/geo_transforms_dict.pkl') as f: 
-            geo_transforms_dict = pickle.load(f)
+        try: 
+            with open('code/makefiles/geo_transforms_dict.pkl') as f: 
+                geo_transforms_dict = pickle.load(f)
+        except FileNotFoundError: 
+            print "Make sure that you have run make_columns_dict.py in \
+                    code/makefiles in order to create the geo_transforms_dict.pkl"
+
         dfs_list = [get_df(year) for year in year_list] 
         df = pd.concat(dfs_list, ignore_index=True)
         df = add_date_column(df)
         for k, v in geo_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
-    '''
-    else: 
-        df = pd.read_csv('geo_done.csv')
-        with open('makefiles/time_transforms_dict.pkl') as f:
-            time_transforms_dict = pickle.load(f)
+        df.to_csv('code/modeling/geo_done.csv', index=False)
+
+    if time: 
+        try:
+            df = pd.read_csv('code/modeling/geo_done.csv')
+        except FileNotFoundError: 
+            print "You need to run create_inputs with the geo flag either \
+                    before or in conjuction with the time flag"
+        try: 
+            with open('code/makefiles/time_transforms_dict.pkl') as f:
+                time_transforms_dict = pickle.load(f)
+        except FileNotFoundError: 
+            print "Make sure that you have run make_columns_dict.py in \
+                    code/makefiles in order to create the time_transforms_dict.pkl"
+
         for k, v in time_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
 
-   ''' 
+

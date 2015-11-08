@@ -10,7 +10,7 @@ geo_transforms_dict = {'land_water_ratio': {'transformation': 'create_new_col',
                                 'eval_string': 'county_aland / county_awater', 
                                 'delete_columns': ['county_aland', 'county_awater']}, 
                         'add_nearby_fires': {'dist_measure': 0.1, 
-                                'time_measures' : [7], 
+                                'time_measures' : [0, 1, 2, 3, 4, 5, 6, 7], 
                                 'transformation' : 'add_nearby_fires'}
                       }
 
