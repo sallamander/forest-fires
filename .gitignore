@@ -14,5 +14,7 @@
 /data/zipped_files/*
 /data/jsons/*
 
+*.csv
+*.json
 *.pyc
 *sentinel
