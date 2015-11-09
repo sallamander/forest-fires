@@ -60,7 +60,7 @@ do
             for year in "${tbl_years[@]}"
             do 
                 psql -d forest_fires -c "COPY detected_fires_$year TO \
-                    '/Users/sallamander/galvanize/forest-fires/data/csvs/detected_fires_$year.csv' \
+                    '$PWD/data/csvs/detected_fires_$year.csv' \
                     WITH CSV HEADER DELIMITER AS E',';"
             done 
             exit 

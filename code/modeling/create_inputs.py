@@ -16,14 +16,18 @@ def get_df(year):
     readable.
     '''
 
-    filepath = '../data/csvs/detected_fires_' + str(year) + '.csv'
-    df = pd.read_csv(filepath, true_values = ['t'], false_values=['f'])
+    filepath = 'data/csvs/detected_fires_' + str(year) + '.csv'
+    df = pd.read_csv(filepath, true_values = ['t'], false_values=['f'], index_col=False)
 
     return df
 
 if __name__ == '__main__': 
-    with open('makefiles/year_list.pkl') as f: 
-        year_list = pickle.load(f)
+    try: 
+	with open('code/makefiles/year_list.pkl') as f: 
+	    year_list = pickle.load(f)
+    except IOError: 
+	print """Make sure that you have run make_year_dict.py in \
+		code/makefiles in order to create the year_list.pkl.""".replace('\t', '')
     
     # Assume that we haven't done the geography transformation unless we 
     # explicity tell it. This option is here because gen_nearby_fires_count
@@ -44,9 +48,9 @@ if __name__ == '__main__':
         try: 
             with open('code/makefiles/geo_transforms_dict.pkl') as f: 
                 geo_transforms_dict = pickle.load(f)
-        except FileNotFoundError: 
+        except IOError: 
             print "Make sure that you have run make_columns_dict.py in \
-                    code/makefiles in order to create the geo_transforms_dict.pkl"
+                    code/makefiles in order to create the geo_transforms_dict.pkl".format('\t', '')
 
         dfs_list = [get_df(year) for year in year_list] 
         df = pd.concat(dfs_list, ignore_index=True)
@@ -57,18 +61,21 @@ if __name__ == '__main__':
 
     if time: 
         try:
-            df = pd.read_csv('code/modeling/geo_done.csv')
+            df = pd.read_csv('code/modeling/geo_done.csv', parse_dates=['date_fire'], 
+				index_col=False)
         except FileNotFoundError: 
             print "You need to run create_inputs with the geo flag either \
-                    before or in conjuction with the time flag"
+                    before or in conjuction with the time flag".format('\t', '')
         try: 
             with open('code/makefiles/time_transforms_dict.pkl') as f:
                 time_transforms_dict = pickle.load(f)
-        except FileNotFoundError: 
+        except IOError: 
             print "Make sure that you have run make_columns_dict.py in \
-                    code/makefiles in order to create the time_transforms_dict.pkl"
+                    code/makefiles in order to create the time_transforms_dict.pkl".format('\t', '')
 
         for k, v in time_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
+
+        df.to_csv('code/modeling/geo_time_done.csv', index=False)
 
 
