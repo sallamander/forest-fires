@@ -142,9 +142,10 @@ def query_for_nearby_fires(dt_percentiles_df_dict, dist_measure, time_measure,
         all_nearby_count += percentile_df.query(all_nearby_query).shape[0]
         nearby_fires_count += percentile_df.query(nearby_fires_query).shape[0]
     row_dt_percentile += 2
-    percentile_df = dt_percentiles_df_dict[row_dt_percentile]
-    all_nearby_count += percentile_df.query(all_nearby_query).shape[0]
-    nearby_fires_count += percentile_df.query(nearby_fires_query).shape[0]
+    if row_dt_percentile < 101: 
+        percentile_df = dt_percentiles_df_dict[row_dt_percentile]
+        all_nearby_count += percentile_df.query(all_nearby_query).shape[0]
+        nearby_fires_count += percentile_df.query(nearby_fires_query).shape[0]
 
     all_nearby_count_label = 'all_nearby_count' + str(time_measure)	
     nearby_fires_count_label = 'all_nearby_fires' + str(time_measure)	
