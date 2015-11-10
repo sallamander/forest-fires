@@ -20,5 +20,9 @@ Currently, I have finished fitting models (Logistic, Random Forest, Gradient Boo
 
 My next step is to start including weather data into the model. At this point I have attempted to do this already, but the weather data that I have is not as robust and granular as I need. Once I find such a data set, I am hoping that including weather data will increase predictive power substantially. 
 
+### Want to follow along, add to my work, or improve on it?
+
+If you fork my repo, and then navigate to the data folder, you can run the command 'make data',  and the data file structure will be created for you with the data downloaded and placed into the file structure (this assumes you're running it from a unix terminal).
+
 
 
