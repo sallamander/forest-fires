@@ -173,22 +173,3 @@ def merge_results(df, nearby_count_dict):
 
     return df
 
-def gen_rate_nearby_fires(df, time_measure): 
-    '''
-    Input: Pandas DataFrame, Integer 
-    Output DataFrame
-
-    For the inputted time_measure, find the percentage change in the 
-    number of fires from the day before to that day. I.e. if the 
-    time_measure is 6, then find the percentage change in the 
-    number of fires from 7 days prior to 6 days prior. Since these 
-    columns are already created in the passed in  df, this will be 
-    pretty easy. 
-    '''
-
-    today_column = 'nearby_count_' + str(time_measure)
-    yesterday_column = 'nearby_count_' + str(time_measure + 1)
-    new_col_name = 'perc_change_' + str(time_measure) + '_' + str(time_measure + 1)
-    df[new_col_name] = (df[today_column] - df[yesterday_column]) / df[yesterday_column]
-
-    return df
