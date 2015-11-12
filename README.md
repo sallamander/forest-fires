@@ -24,5 +24,5 @@ My next step is to start including weather data into the model. At this point I 
 
 If you fork my repo, and then navigate to the data folder, you can run the command 'make data',  and the data file structure will be created for you with the data downloaded and placed into the file structure (this assumes you're running it from a unix terminal).
 
-
+Note that this assumes you are working from a unix terminal (or a linux with curl installed), with PostgresSQL and a version-consistent PostGIS extension installed. 
 
