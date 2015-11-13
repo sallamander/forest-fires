@@ -50,7 +50,8 @@ if __name__ == '__main__':
                 geo_transforms_dict = pickle.load(f)
         except IOError: 
             print "Make sure that you have run make_columns_dict.py in \
-                    code/makefiles in order to create the geo_transforms_dict.pkl".format('\t', '')
+                    code/makefiles in order to create the \
+                    geo_transforms_dict.pkl".format('\t', '')
 
         dfs_list = [get_df(year) for year in year_list] 
         df = pd.concat(dfs_list, ignore_index=True)
