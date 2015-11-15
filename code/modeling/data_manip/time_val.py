@@ -82,6 +82,17 @@ class StratifiedTimeFold(BaseTimeFold):
     def __init__(self, dates, step_size, init_split_point=None): 
         super(SequentialTimeFold, self).__init__(dates, step_size, 
                 init_split_point)
+        self.years = self._set_years_list() 
+
+    def _set_years_list(self): 
+        ''' 
+        Create a list of years to cycle 
+        through for the iteration process. 
+        '''
+        year_max = self.dates.max().year
+        year_min = self.dates.min().year
+        year_list = xrange(year_min, year_max + 1)
+        return year_list
 
     def __iter__(self): 
         return self
@@ -93,13 +104,36 @@ class StratifiedTimeFold(BaseTimeFold):
         if self.test_indices.shape[0] != 0: 
             split_point = self.split_point
             self.split_point += self.step_size
-            test_indices = np.where(self.dates >= self.split_point)[0]
-            train_indices = np.where(self.dates < self.split_point)[0]
+            for year in self.years_list:
+                date_range = _get_date_range(year)
+                test_indices = np.where(self.dates >= self.split_point)[0]
+                train_indices = np.where(self.dates < self.split_point)[0]
             self.test_indices = test_indices 
             
             return train_indices, test_indices
         else: 
             raise StopIteration()
+
+    def _get_date_range(year): 
+        '''
+        Input: Integer
+        Output: Pandas DateRange
+
+        Output a date range based off of the current split
+        point plus step size, but for the inputted year. The 
+        output will be a date range that starts at the current 
+        split point (with the year replaced by the inputted year), 
+        and extends by the step size. 
+        '''
+
+        start_date_range = datetime.datetime(year, 
+                split_point.month, split_point.day, 
+                split_point.hour, split_point.min, 
+                split_point.second)
+        end_date_range = start_date_range + self.step_size
+        date_range = pd.date_range(start_date_range, end_date_range)
+
+        return date_range
 
 def get_df(year): 
     '''
