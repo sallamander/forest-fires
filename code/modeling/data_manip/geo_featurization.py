@@ -3,7 +3,7 @@ import numpy as np
 import multiprocessing
 import time
 from itertools import izip
-from datetime import timedelta
+from datetime import timedelta, datetime
 from functools import partial 
 
 def gen_nearby_fires_count(df, kwargs):
@@ -112,7 +112,6 @@ def query_for_nearby_fires(dt_percentiles_df_dict, dist_measure, time_measure,
     long_min, long_max = lng - dist_measure, lng + dist_measure
     row_dt_percentile = row[date_percentile_idx]
 
-    # Note we're not doing day_max here because in real time we wouldn't have forward dates. 
     if time_measure == 0: 
         hour, minute, second = date.hour, date.minute, date.second
         date_min = date - timedelta(hours=hour)
@@ -120,6 +119,8 @@ def query_for_nearby_fires(dt_percentiles_df_dict, dist_measure, time_measure,
         date_min = date_min - timedelta(seconds = second)
     else: 
         date_min  = date - timedelta(days=time_measure)
+
+    date_max = datetime(date.year, date.month, date.day, 0, 0, 0)
         
     percentile_df = dt_percentiles_df_dict[row_dt_percentile]
     percentile_date_min = percentile_df['date_fire'].min()
@@ -127,9 +128,11 @@ def query_for_nearby_fires(dt_percentiles_df_dict, dist_measure, time_measure,
     all_nearby_count = 0
     dt_percentile = row_dt_percentile
 
-
     all_nearby_query = '''lat >= @lat_min and lat <= @lat_max and long >= @long_min and long <= @long_max and date_fire >= @date_min and date_fire <= @date'''
-    nearby_fires_query = all_nearby_query + " and fire_bool == True" 
+    # In real time we won't know which rows are actually fires (fire_bool == True)
+    # on the day of; we have to wait until after business hours when the 
+    # fire perimter boundaries are posted. 
+    nearby_fires_query = '''lat >= @lat_min and lat <= @lat_max and long >= @long_min and long <= @long_max and date_fire >= @date_min and date_fire < @date_max and fire_bool == True'''
     all_nearby_count += percentile_df.query(all_nearby_query).shape[0]
     nearby_fires_count += percentile_df.query(nearby_fires_query).shape[0]
     
