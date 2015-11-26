@@ -16,9 +16,9 @@ Using data science and machine learning, we can build a model that takes in the 
 
 ## Current Status / Next steps
 
-Currently, I have finished fitting models (Logistic, Random Forest, Gradient Boosting, Neural Network) using the detected fires data set, along with geographical features. I found that the Gradient Boosting model gave me the highest ROC area under the curve (~0.76).  
+This project has been "terminated," so to speak. I had a conversation with somebody at Forest Services, who pointed me towards what should be a much more useful data set. Hopefully that data set will allow me to move closer to the goal I set out with at the start of this project. 
 
-My next step is to start including weather data into the model. At this point I have attempted to do this already, but the weather data that I have is not as robust and granular as I need. Once I find such a data set, I am hoping that including weather data will increase predictive power substantially. 
+Before diving in with this other data set, I'm going to spend a little bit more time cleaning this repo and getting it to a good stopping point. That's where I'm currently at. 
 
 ### Want to follow along, add to my work, or improve on it?
 
