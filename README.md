@@ -18,7 +18,8 @@ Using data science and machine learning, we can build a model that takes in the 
 
 This project has been "terminated," so to speak. I had a conversation with somebody at Forest Services, who pointed me towards what should be a much more useful data set. Hopefully that data set will allow me to move closer to the goal I set out with at the start of this project. 
 
-Before diving in with this other data set, I'm going to spend a little bit more time cleaning (see branch 'refactorville') this repo and getting it to a good stopping point. That's where I'm currently at. 
+Before diving in with this other data set, I'm going to spend a little bit more time cleaning (see branch 'refactorville') this repo and getting it to a good stopping point. That's where I'm currently at. If/when 
+I get started with that new data set, I will most likely move this project over to a new repo. 
 
 
 
