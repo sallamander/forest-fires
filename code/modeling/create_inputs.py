@@ -58,12 +58,12 @@ if __name__ == '__main__':
         df = add_date_column(df)
         for k, v in geo_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
-        df.to_csv('code/modeling/geo_done.csv', index=False)
+        df.to_csv('code/modeling/model_input/geo_done.csv', index=False)
 
     if time: 
         try:
-            df = pd.read_csv('code/modeling/geo_done.csv', parse_dates=['date_fire'], 
-				index_col=False)
+            df = pd.read_csv('code/modeling/model_input/geo_done.csv', 
+                    parse_dates=['date_fire'], index_col=False)
         except FileNotFoundError: 
             print "You need to run create_inputs with the geo flag either \
                     before or in conjuction with the time flag".format('\t', '')
@@ -72,11 +72,12 @@ if __name__ == '__main__':
                 time_transforms_dict = pickle.load(f)
         except IOError: 
             print "Make sure that you have run make_columns_dict.py in \
-                    code/makefiles in order to create the time_transforms_dict.pkl".format('\t', '')
+                    code/makefiles in order to create the \
+                    time_transforms_dict.pkl".format('\t', '')
 
         for k, v in time_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
 
-        df.to_csv('code/modeling/geo_time_done.csv', index=False)
+        df.to_csv('code/modeling/model_input/geo_time_done.csv', index=False)
 
 
