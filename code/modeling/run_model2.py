@@ -3,12 +3,18 @@ import pickle
 import pandas as pd
 import numpy as np
 import keras
+import time
+from scoring import return_scores
 from datetime import timedelta, datetime
 from data_manip.time_val import SequentialTimeFold, StratifiedTimeFold
+from data_manip.general_featurization import normalize_df
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.grid_search import GridSearchCV
 from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation
+from keras.optimizers import SGD, RMSprop
+from keras.utils import np_utils
 
 def get_train_test(df, date_col, days_back): 
     '''
@@ -28,20 +34,20 @@ def get_train_test(df, date_col, days_back):
 
     return train, test
 
-def get_model(model_name, train_data): 
+def prep_data(df): 
     '''
-    Input: String, Pandas DataFrame
-    Output: Instantiated Model
+    Input: Pandas DataFrame 
+    Output: Pandas DataFrame
+
+    Fill in N/A's and inf. values, and make sure to drop the 'date_fire'
+    column. 
     '''
-    random_seed=24
-    if model_name == 'logit': 
-        return LogisticRegression(random_state=random_seed)
-    elif model_name == 'random_forest': 
-        return RandomForestClassifier(random_state=random_seed, n_jobs=2)
-    elif model_name == 'gradient_boosting': 
-        return GradientBoostingClassifier(random_state=random_seed)
-    elif model_name == 'neural_net': 
-        return get_neural_net(train_data)
+
+    df.fillna(-999, inplace=True)
+    df.replace(np.inf, -999, inplace=True)
+    df.drop('date_fire', inplace=True, axis=1)
+
+    return df
 
 def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator): 
     '''
@@ -63,7 +69,54 @@ def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator):
     target, features = get_target_features(train_data)
     grid_search.fit(features, target)
 
-    return grid_search.best_estimator_
+    return grid_search.best_estimator_, grid_search.grid_scores_[0][1]
+
+def get_model(model_name, train_data): 
+    '''
+    Input: String, Pandas DataFrame
+    Output: Instantiated Model
+    '''
+    random_seed=24
+    if model_name == 'logit': 
+        return LogisticRegression(random_state=random_seed)
+    elif model_name == 'random_forest': 
+        return RandomForestClassifier(random_state=random_seed, n_jobs=2)
+    elif model_name == 'gradient_boosting': 
+        return GradientBoostingClassifier(random_state=random_seed)
+    elif model_name == 'neural_net': 
+        return get_neural_net(train_data)
+
+def get_neural_net(train_data): 
+    '''
+    Input: Integer, Pandas DataFrame
+    Output: Instantiated Neural Network model
+
+    Instantiate the neural net model and output it to train with. 
+    '''
+
+    np.random.seed(24)
+    hlayer_1_nodes = 250
+    hlayer_2_nodes = 115
+    hlayer_3_nodes = 100
+    hlayer_4_nodes = 100
+    model = Sequential()
+    
+    input_dim = train_data.shape[1] - 1 
+    model.add(Dense(hlayer_1_nodes, input_dim=input_dim, init='uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.35))
+    model.add(Dense(hlayer_2_nodes, init='uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.35))
+    model.add(Dense(hlayer_3_nodes, init='uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.35))
+    model.add(Dense(2, init='uniform'))
+    model.add(Activation('softmax'))
+
+    model.compile(loss='categorical_crossentropy', optimizer='RMSprop')
+
+    return model
 
 def get_grid_params(model_name): 
     '''
@@ -74,7 +127,7 @@ def get_grid_params(model_name):
         return {'penalty': ['l2'], 'C': [0.1]}
     elif model_name == 'random_forest': 
         return {'n_estimators': [10], 
-                'max_depth': [15]}
+                'max_depth': [5]}
     elif model_name == 'gradient_boosting': 
         return {'n_estimators': [250], 
                 'learning_rate': [0.1], 
@@ -93,6 +146,63 @@ def get_target_features(df):
     features = df.drop('fire_bool', axis=1)
     return target, features
 
+def fit_neural_net(model, train_data, test_data):  
+    '''
+    Input: Instantiated Neural Network, Pandas DataFrame, Pandas DataFrame
+    Output: Fitted model 
+    '''
+
+    np.random.seed(24)
+    train_target, train_features = get_target_features(train_data)
+    test_target, test_features = get_target_features(test_data)
+    train_target = np_utils.to_categorical(train_target, 2) 
+    test_target = np_utils.to_categorical(test_target, 2) 
+    train_features, test_features = train_features.values, test_features.values
+    model.fit(train_features, train_target, batch_size=100, 
+            nb_epoch=10, verbose=1)
+    return model
+
+def predict_with_model(test_data, model): 
+    '''
+    Input: Pandas DataFrame, Fitted Model
+    Output: Numpy Array of Predictions
+
+    Using the fitted model, make predictions with the test data and return those predictions. 
+    '''
+
+    if isinstance(model, keras.models.Sequential): 
+        target, features = get_target_features(test_data)
+        predictions = model.predict(features.values)[:, 1] > 0.50 
+        predicted_probs = model.predict_proba(features.values)
+    else: 
+        target, features = get_target_features(test_data)
+        predictions = model.predict(features)
+        predicted_probs = model.predict_proba(features)
+
+    return predictions, predicted_probs
+
+def log_results(model_name, train, fitted_model, scores, best_roc_auc): 
+    '''
+    Input: String, Pandas DataFrame,  Dictionary, Numpy Array, Float  
+    Output: .txt file. 
+
+    Log the results of this run to a .txt file, saving the column names (so I know what features I used), 
+    the model name (so I know what model I ran), the parameters for that model, 
+    and the scores associated with it (so I know how well it did). 
+    '''
+
+    st = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+    filename = 'code/modeling/model_output/logs/' + model_name + '.txt'
+    with open(filename, 'a+') as f:
+        f.write(st + '\n')
+        f.write('-' * 100 + '\n')
+        f.write('Model Run: ' + model_name + '\n' * 2)
+        f.write('Params: ' + str(fitted_model.get_params()) + '\n' * 2)
+        f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
+        f.write('Scores: ' + str(scores) + '\n' * 2)
+        f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
+
+
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
     # random forest, etc.), and sys.argv[2] will hold our input dataframe 
@@ -105,6 +215,11 @@ if __name__ == '__main__':
 
     input_df = base_input_df[keep_columns]
     train, test = get_train_test(input_df, 'date_fire', 14) 
+
+    if model_name == 'neural_net': 
+        train = normalize_df(train)
+        test = normalize_df(test)
+
     
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
@@ -113,8 +228,12 @@ if __name__ == '__main__':
     init_split_point = datetime(2013, 1, 1, 0, 0, 0)
     cv_fold_generator = SequentialTimeFold(train_dates, date_step_size, init_split_point)
     
-    train.fillna(-999, inplace=True)
-    train.replace(np.inf, -999, inplace=True)
-    train.drop('date_fire', inplace=True, axis=1)
-    sklearn_grid_search(model_name, train, test, cv_fold_generator) 
+    train = prep_data(train)
+    test = prep_data(test)
+    best_fit_model, mean_metric_score = \
+            sklearn_grid_search(model_name, train, test, cv_fold_generator) 
+    preds, preds_probs = predict_with_model(test, best_fit_model)
+    scores = return_scores(test.fire_bool, preds, preds_probs)
+    log_results(model_name, train, best_fit_model, scores, mean_metric_score)
+
 
