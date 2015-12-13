@@ -1,8 +1,9 @@
-folder_structure:
-	sh mk_folders.sh
+.data_folder_structure_sentinel: 
+	bash data/mk_folders.sh
+	touch .data_folder_structure_sentinel
 
-zipped_folder=zipped_files/
-unzipped_folder=unzipped_files/
+zipped_folder=data/zipped_files/
+unzipped_folder=data/unzipped_files/
 
 county_2013=boundary_files/county/2013
 county_2014=boundary_files/county/2014
@@ -200,7 +201,7 @@ $(zipped_folder)$(detected_fires_2014).zip:
 	rm $(unzipped_folder)$(detected_fires_2014)/*.zip
 
 $(zipped_folder)$(detected_fires_2015).zip: 
-	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2015_264_conus_shapefile.zip \
+	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2015_299_conus_shapefile.zip \
 		-o $(zipped_folder)$(detected_fires_2015).zip
 
 	cp $(zipped_folder)$(detected_fires_2015).zip $(unzipped_folder)$(detected_fires_2015)/
@@ -215,7 +216,49 @@ detected_fires: $(zipped_folder)$(detected_fires_2012).zip \
 				$(zipped_folder)$(detected_fires_2014).zip \
 				$(zipped_folder)$(detected_fires_2015).zip
 
-data: folder_structure county_boundaries state_boundaries region_boundaries \
+get_data: .data_folder_structure_sentinel county_boundaries state_boundaries region_boundaries \
 			 urban_area_boundaries fire_perimeter_boundaries detected_fires 
 
+.data_prep_sentinel: 
+	bash code/data_setup/manage_psql_dts.sh -c
+	bash code/data_setup/manage_psql_dts.sh -r
+
+	bash code/data_setup/manage_psql_dts.sh -m fire 2012 
+	bash code/data_setup/manage_psql_dts.sh -m fire 2013
+	bash code/data_setup/manage_psql_dts.sh -m fire 2014 
+	bash code/data_setup/manage_psql_dts.sh -m fire 2015 
+
+	bash code/data_setup/manage_psql_dts.sh -m urban_areas 2012 
+	bash code/data_setup/manage_psql_dts.sh -m urban_areas 2013 
+	bash code/data_setup/manage_psql_dts.sh -m urban_areas 2014 
+	bash code/data_setup/manage_psql_dts.sh -m urban_areas 2015
+
+	bash code/data_setup/manage_psql_dts.sh -m region 2012  
+	bash code/data_setup/manage_psql_dts.sh -m region 2013
+	bash code/data_setup/manage_psql_dts.sh -m region 2014  
+	bash code/data_setup/manage_psql_dts.sh -m region 2015
+
+	bash code/data_setup/manage_psql_dts.sh -m county 2012   
+	bash code/data_setup/manage_psql_dts.sh -m county 2013   
+	bash code/data_setup/manage_psql_dts.sh -m county 2014   
+	bash code/data_setup/manage_psql_dts.sh -m county 2015
+
+	bash code/data_setup/manage_psql_dts.sh -m state 2012    
+	bash code/data_setup/manage_psql_dts.sh -m state 2013    
+	bash code/data_setup/manage_psql_dts.sh -m state 2014    
+	bash code/data_setup/manage_psql_dts.sh -m state 2015   
+
+	touch .data_prep_sentinel
+
+prep_data: .data_prep_sentinel
+
+data: get_data prep_data
+
+.features_sentinel: code/makefiles/time_transforms_dict.pkl \
+	code/makefiles/time_transforms_dict.pkl code/makefiles/year_list.pkl \
+
+	python code/feature_engineering/create_inputs.py geo
+	touch .features_sentinel
+
+features: .features_sentinel
 
