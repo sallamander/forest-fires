@@ -66,18 +66,4 @@ def add_date_col(df, col_name):
 
 	return df
 
-def normalize_df(input_df): 
-    '''
-    Input: Pandas DataFrame
-    Output: Pandas DataFrame
-    '''
-
-    input_df2 = input_df.copy()
-    for col in input_df.columns: 
-        if col not in ('fire_bool', 'date_fire'): 
-            input_df2[col] = (input_df[col] - input_df[col].mean()) \
-                    / input_df[col].std()
-
-    return input_df
-
 	

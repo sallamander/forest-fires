@@ -2,9 +2,9 @@ import pandas as pd
 import sys
 import pickle
 import time
-from data_manip.general_featurization import return_all_dummies, create_new_col
-from data_manip.time_featurization import add_date_column
-from data_manip.geo_featurization import gen_nearby_fires_count
+from general_featurization import return_all_dummies, create_new_col
+from time_featurization import add_date_column
+from geo_featurization import gen_nearby_fires_count
 
 def get_df(year): 
     '''
@@ -58,7 +58,7 @@ if __name__ == '__main__':
         df = add_date_column(df)
         for k, v in geo_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
-        df.to_csv('code/modeling/model_input/geo_done.csv', index=False)
+        df.to_csv('code/modeling/model_input/geo_done_test.csv', index=False)
 
     if time: 
         try:
