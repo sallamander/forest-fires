@@ -1,233 +1,163 @@
 import sys
 import pickle
-import time
-import datetime
-import keras
-import numpy as np
-import os
 import pandas as pd
-import itertools
-from collections import defaultdict
+import numpy as np
+import keras
+import time
+from scoring import return_scores
+from datetime import timedelta, datetime
+from time_val import SequentialTimeFold, StratifiedTimeFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from scoring import return_scores
-from data_manip.tt_splits import tt_split_all_less_n_days, tt_split_early_late, tt_split_same_months
 from sklearn.grid_search import GridSearchCV
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import SGD, RMSprop
 from keras.utils import np_utils
 
+def get_train_test(df, date_col, days_back): 
+    '''
+    Input: Pandas DataFrame, String, Integer
+    Output: Pandas DataFrame, Pandas DataFrame
+
+    For the inputted DataFrame, take the max date (from the date_col), go 
+    back days_back, and then split into train and test at that point. 
+    All rows with a date prior to that split point are train and all rows 
+    with a date after that split point are test. 
+    '''
+
+    max_date = df[date_col].max()
+    split_point = max_date - timedelta(days=days_back)
+    test_mask = df[date_col] >= split_point
+    train, test = df.ix[~test_mask, :], df.ix[test_mask, :]
+
+    return train, test
+
+def normalize_df(input_df): 
+    '''
+    Input: Pandas DataFrame
+    Output: Pandas DataFrame
+    '''
+
+    input_df2 = input_df.copy()
+    for col in input_df.columns: 
+        if col not in ('fire_bool', 'date_fire'): 
+            input_df2[col] = (input_df[col] - input_df[col].mean()) \
+                / input_df[col].std()
+
+    return input_df2
+
+def prep_data(df): 
+    '''
+    Input: Pandas DataFrame 
+    Output: Pandas DataFrame
+
+    Fill in N/A's and inf. values, and make sure to drop the 'date_fire'
+    column. 
+    '''
+
+    df.fillna(-999, inplace=True)
+    df.replace(np.inf, -999, inplace=True)
+    df.drop('date_fire', inplace=True, axis=1)
+
+    return df
+
+def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator): 
+    '''
+    Input: String, Pandas DataFrame, Pandas DataFrame
+    Output: Best fit model from grid search parameters. 
+
+    For the given model name, grab a model and the relevant grid parameters, 
+    perform a grid search with those grid parameters, and return the best 
+    model. 
+    '''
+
+    model = get_model(model_name, train_data)
+    if isinstance(model, keras.models.Sequential): 
+        model = fit_neural_net(model, train_data, test_data)
+        return model
+    grid_parameters = get_grid_params(model_name)
+    grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, 
+            scoring='roc_auc', cv=cv_fold_generator)
+    target, features = get_target_features(train_data)
+    grid_search.fit(features, target)
+
+    return grid_search.best_estimator_, grid_search.grid_scores_[0][1]
 
 def get_model(model_name, train_data): 
-	'''
-	Input: String, Pandas DataFrame
-	Output: Instantiated Model
-	'''
-	random_seed=24
-	if model_name == 'logit': 
-		return LogisticRegression(random_state=random_seed)
-	elif model_name == 'random_forest': 
-		return RandomForestClassifier(random_state=random_seed, n_jobs=5)
-	elif model_name == 'gradient_boosting': 
-		return GradientBoostingClassifier(random_state=random_seed)
-	elif model_name == 'neural_net': 
-		return get_neural_net(train_data)
+    '''
+    Input: String, Pandas DataFrame
+    Output: Instantiated Model
+    '''
+    random_seed=24
+    if model_name == 'logit': 
+        return LogisticRegression(random_state=random_seed)
+    elif model_name == 'random_forest': 
+        return RandomForestClassifier(random_state=random_seed, n_jobs=2)
+    elif model_name == 'gradient_boosting': 
+        return GradientBoostingClassifier(random_state=random_seed)
+    elif model_name == 'neural_net': 
+        return get_neural_net(train_data)
 
-def fit_model(train_data, model_to_fit):
-	'''
-	Input: Pandas DataFrame, Instantiated Model
-	Output: Fitted model
+def get_neural_net(train_data): 
+    '''
+    Input: Integer, Pandas DataFrame
+    Output: Instantiated Neural Network model
 
-	Using the fire column as the target and the remaining columns as the features, fit 
-	the inputted model. 
-	'''
+    Instantiate the neural net model and output it to train with. 
+    '''
 
-	target, features = get_target_features(train_data)
+    np.random.seed(24)
+    hlayer_1_nodes = 250
+    hlayer_2_nodes = 115
+    hlayer_3_nodes = 100
+    hlayer_4_nodes = 100
+    model = Sequential()
+    
+    input_dim = train_data.shape[1] - 1 
+    model.add(Dense(hlayer_1_nodes, input_dim=input_dim, init='uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.35))
+    model.add(Dense(hlayer_2_nodes, init='uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.35))
+    model.add(Dense(hlayer_3_nodes, init='uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.35))
+    model.add(Dense(2, init='uniform'))
+    model.add(Activation('softmax'))
 
-	model_to_fit.fit(features, target)
-	return model_to_fit
+    model.compile(loss='categorical_crossentropy', optimizer='RMSprop')
 
-def predict_with_model(test_data, model): 
-	'''
-	Input: Pandas DataFrame, Fitted Model
-	Output: Numpy Array of Predictions
+    return model
 
-	Using the fitted model, make predictions with the test data and return those predictions. 
-	'''
+def get_grid_params(model_name): 
+    '''
+    Input: String
+    Output: Dictionary
+    '''
+    if model_name == 'logit': 
+        return {'penalty': ['l2'], 'C': [0.1]}
+    elif model_name == 'random_forest': 
+        return {'n_estimators': [10], 
+                'max_depth': [5]}
+    elif model_name == 'gradient_boosting': 
+        return {'n_estimators': [250], 
+                'learning_rate': [0.1], 
+                'min_samples_leaf': [250]}
 
-	if isinstance(model, keras.models.Sequential): 
-		target, features = get_target_features(test_data)
-		predictions, predicted_probs = model.predict(features.values)[:, 1] > 0.50, model.predict_proba(features.values)
-	else: 
-		target, features = get_target_features(test_data.drop('date_fire', axis=1))
-		predictions, predicted_probs = model.predict(features), model.predict_proba(features)
+def get_target_features(df): 
+    '''
+    Input: Pandas DataFrame
+    Output: Numpy Array, Numpy Array
 
-	return predictions, predicted_probs
+    For the given dataframe, grab the target and features (fire bool versus 
+    all else) and return them. 
+    '''
 
-def log_results(model_name, train, fitted_model, scores, best_roc_auc): 
-	'''
-	Input: String, Pandas DataFrame,  Dictionary, Numpy Array, Float  
-	Output: .txt file. 
-
-	Log the results of this run to a .txt file, saving the column names (so I know what features I used), 
-	the model name (so I know what model I ran), the parameters for that model, 
-	and the scores associated with it (so I know how well it did). 
-	'''
-
-	st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-	filename = './modeling/logs/' + model_name + '.txt'
-	with open(filename, 'a+') as f:
-		f.write(st + '\n')
-		f.write('-' * 100 + '\n')
-		f.write('Model Run: ' + model_name + '\n' * 2)
-		f.write('Params: ' + str(fitted_model.get_params()) + '\n' * 2)
-		f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
-		f.write('Scores: ' + str(scores) + '\n' * 2)
-		f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
-
-def sklearn_grid_search(model_name, train_data, test_data): 
-	'''
-	Input: String, Pandas DataFrame, Pandas DataFrame
-	Output: Best fit model from grid search parameters. 
-
-	For the given model name, grab a model and the relevant grid parameters, perform a grid search 
-	with those grid parameters, and return the best model. 
-	'''
-
-	model = get_model(model_name, train_data)
-	if isinstance(model, keras.models.Sequential): 
-		model = fit_neural_net(model, train_data, test_data)
-		return model
-	grid_parameters = get_grid_params(model_name)
-	grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, scoring='roc_auc', cv=10)
-	target, features = get_target_features(train_data)
-	grid_search.fit(features, target)
-
-	return grid_search.best_estimator_
-
-def own_grid_search(model_name, train_data, test_data, train_data2): 
-	'''
-	Input: String, Pandas DataFrame, Pandas DataFrame
-	Output: Best fit model from grid search of parameters. 
-	'''
-	model = get_model(model_name, train_data)
-	if isinstance(model, keras.models.Sequential): 
-	    model =  fit_neural_net(model, train_data, test_data)
-	    return model
-	roc_auc_scores_list = []  
-	grid_parameters = get_grid_params(model_name)
-	param_names, param_combs = prepare_grid_params(grid_parameters)  
-	for idx, param_comb in enumerate(param_combs): 
-		output_dict = defaultdict(list)
-		param_dict = {}
-		output_dict['model'] = idx
-		for idx, param in enumerate(param_names): 
-			output_dict[param] = param_comb[idx]
-			param_dict[param] = param_comb[idx]
-		for months_forward in xrange(0, 78, 2): 
-			date_split = train.date_fire.max() - datetime.timedelta(weeks=months_forward)
-			training_set, validation_set = tt_split_same_months(train, 2013, [1], days_back=14, exact_split_date = date_split, direct_prior_days=False, add_test=True)
-			# for months_forward in xrange(0, 132, 2): 
-			# for months_forward in xrange(0, 33, 1): 
-			# date_split = datetime.date(2013, 1, 1)
-			# training_set, validation_set = tt_split_early_late(train, date_split, months_forward, months_backward=0.5, days_forward=2, weeks_forward=months_forward)
-			# training_set, validation_set = tt_split_same_months(train, 2013, [months_forward], days_back=None)	
-			# training_set, validation_set = tt_split_early_late(train, input_date, months_forward, months_backward=0.5, days_forward=30)
-			# If there are no actual fires here, then training/testing on it is pointless and the ROC 
-			# area under the curve can't be calculated. 
-			print training_set.shape, validation_set.shape
-			if validation_set.fire_bool.sum() > 0 and training_set.fire_bool.sum() > 0: 
-				model = fit_model(model, param_dict, training_set.drop('date_fire', axis=1))
-				roc_auc_score = predict_score_model(model, validation_set.drop('date_fire', axis=1))
-				output_dict['roc_auc'].append(roc_auc_score)
-		roc_auc_scores_list.append(output_dict)
-
-	del train['year']
-	del train['month']
-
-	roc_save_filename = './model_output/roc_auc_daysprioryear_lessm_15_' + model_name
-	with open(roc_save_filename, 'w+') as f: 
-		pickle.dump(roc_auc_scores_list, f)
-	best_params, best_roc_auc = return_best_params(roc_auc_scores_list) 
-	model = fit_model(model, best_params, train_data2.drop('date_fire', axis=1))
-
-	return model, best_roc_auc
-
-def prepare_grid_params(grid_parameters): 
-	'''
-	Input: Dictionary (of grid parameters)
-	Output: List, List
-
-	For the given grid of parameters inputted, output a list that holds the names of each parameter, 
-	and another list that holds all of the possible combinations of those parameters (its these we will
-	cycle through). 
-	'''
-	param_names, param_values = [], []
-	key_val_pairs = grid_parameters.items()
-
-	for key_val_pair in key_val_pairs: 
-		param_names.append(key_val_pair[0])
-		param_values.append(key_val_pair[1])
-	
-	param_combs =list(itertools.product(*param_values))
-
-	return param_names, param_combs
-
-def fit_model(model, param_dict, training_set): 
-	'''
-	Input: Instantiated Model, dictionary, Pandas DataFrame
-	Output: Fitted Model
-
-	Set the parameters for the instantiated model using the param_dict dictionary, and train it 
-	using the training data in the pandas dataframe. 
-	'''
-
-	target, features = get_target_features(training_set)
-	model.set_params(**param_dict)
-	model.fit(features, target)
-
-	return model
-
-def predict_score_model(model, validation_set): 
-	'''
-	Input: Instantiated and fitted model, Pandas DataFrame
-	Output: Floating point number	
-
-	Obtain predicted probabilities for the test data set, and then an roc_auc score for how good 
-	those probabilities were. 
-	'''
-
-	target, features = get_target_features(validation_set)
-	preds, preds_probs = model.predict(features), model.predict_proba(features)
-	scores = return_scores(target, preds, preds_probs)
-
-	return scores['roc_auc_score']
-
-def return_best_params(roc_auc_scores_list):
-	'''
-	Input: List of Dictionaries 
-	Output: Dictionary, Float
-
-	For the inputted dictionaries, cycle through them and pick the parameters that gave the highest set of 
-	mean auc_scores accross the folds of CV. Each dictionary contains a list of roc_auc scores, a model number, 
-	and the parameters for that model. We want to find the one with the highest mean roc_auc scores, and then 
-	return a dictionary of only the parameters for that model. 
-	'''
-	max_mean_roc_auc = 0
-	final_params_list = {}
-
-	for roc_auc_dict in roc_auc_scores_list: 
-	    mean_roc_auc = np.mean(roc_auc_dict['roc_auc'])
-	    if mean_roc_auc > max_mean_roc_auc: 
-	        max_mean_roc_auc = mean_roc_auc
-	        del roc_auc_dict['model']
-	        del roc_auc_dict['roc_auc']
-	        final_params_list = roc_auc_dict
-
-
-	return final_params_list, mean_roc_auc
-
+    target = df.fire_bool
+    features = df.drop('fire_bool', axis=1)
+    return target, features
 
 def fit_neural_net(model, train_data, test_data):  
     '''
@@ -238,152 +168,85 @@ def fit_neural_net(model, train_data, test_data):
     np.random.seed(24)
     train_target, train_features = get_target_features(train_data)
     test_target, test_features = get_target_features(test_data)
-    train_target, test_target = np_utils.to_categorical(train_target, 2), np_utils.to_categorical(test_target, 2) 
+    train_target = np_utils.to_categorical(train_target, 2) 
+    test_target = np_utils.to_categorical(test_target, 2) 
     train_features, test_features = train_features.values, test_features.values
-    model.fit(train_features, train_target, batch_size=100, nb_epoch=10, validation_data=(test_features, test_target))
+    model.fit(train_features, train_target, batch_size=100, 
+            nb_epoch=10, verbose=1)
     return model
 
-def get_neural_net(train_data): 
-	'''
-	Input: Integer, Pandas DataFrame
-	Output: Instantiated Neural Network model
+def predict_with_model(test_data, model): 
+    '''
+    Input: Pandas DataFrame, Fitted Model
+    Output: Numpy Array of Predictions
 
-	Instantiate the neural net model and output it to train with. 
-	'''
-	np.random.seed(24)
-	hlayer_1_nodes = 250
-	hlayer_2_nodes = 115
-	hlayer_3_nodes = 100
-	hlayer_4_nodes = 100
-	model = Sequential()
+    Using the fitted model, make predictions with the test data and return those predictions. 
+    '''
 
-	model.add(Dense(train_data.shape[1] - 1, hlayer_1_nodes, init='uniform'))
-	model.add(Activation('relu'))
-	model.add(Dropout(0.35))
-	model.add(Dense(hlayer_1_nodes, hlayer_2_nodes, init='uniform'))
-	model.add(Activation('relu'))
-	model.add(Dropout(0.35))
-	model.add(Dense(hlayer_2_nodes, hlayer_3_nodes, init='uniform'))
-	model.add(Activation('relu'))
-	model.add(Dropout(0.35))
-	model.add(Dense(hlayer_3_nodes, 2, init='uniform'))
-	model.add(Activation('softmax'))
+    if isinstance(model, keras.models.Sequential): 
+        target, features = get_target_features(test_data)
+        predictions = model.predict(features.values)[:, 1] > 0.50 
+        predicted_probs = model.predict_proba(features.values)
+    else: 
+        target, features = get_target_features(test_data)
+        predictions = model.predict(features)
+        predicted_probs = model.predict_proba(features)
 
-	model.compile(loss='categorical_crossentropy', optimizer='RMSprop')
+    return predictions, predicted_probs
 
-	return model
+def log_results(model_name, train, fitted_model, scores, best_roc_auc): 
+    '''
+    Input: String, Pandas DataFrame,  Dictionary, Numpy Array, Float  
+    Output: .txt file. 
 
-def get_grid_params(model_name): 
-	'''
-	Input: String
-	Output: Dictionary
-	'''
-	if model_name == 'logit': 
-		return {'penalty': ['l2'], 'C': [0.1]}
-	elif model_name == 'random_forest': 
-		return {'n_estimators': [1000], 
-				'max_depth': [15]}
-	elif model_name == 'gradient_boosting': 
-		return {'n_estimators': [250], 
-		'learning_rate': [0.1], 
-		'min_samples_leaf': [250]}
+    Log the results of this run to a .txt file, saving the column names (so I know what features I used), 
+    the model name (so I know what model I ran), the parameters for that model, 
+    and the scores associated with it (so I know how well it did). 
+    '''
 
-def get_target_features(df): 
-	'''
-	Input: Pandas DataFrame
-	Output: Numpy Array, Numpy Array	
+    st = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+    filename = 'code/modeling/model_output/logs/' + model_name + '.txt'
+    with open(filename, 'a+') as f:
+        f.write(st + '\n')
+        f.write('-' * 100 + '\n')
+        f.write('Model Run: ' + model_name + '\n' * 2)
+        f.write('Params: ' + str(fitted_model.get_params()) + '\n' * 2)
+        f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
+        f.write('Scores: ' + str(scores) + '\n' * 2)
+        f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
 
-	For the given dataframe, grab the target and features (fire bool versus all else) and return them. 
-	'''
-
-	target = df.fire_bool
-	features = df.drop('fire_bool', axis=1)
-	return target, features
-
-def output_model_preds(filename, model_name, preds_probs, test_df): 
-	'''
-	Input: String, Instantiated Model, Predicted Probability, Boolean 
-	Output: CSV
-	'''
-
-	test_df[model_name] = preds_probs[:, 1]
-	test_df.to_csv(filename, index=False)
-
-def normalize_df(input_df): 
-	'''
-	Input: Pandas DataFrame
-	Output: Pandas DataFrame
-	'''
-
-	input_df2 = input_df.copy()
-	for col in input_df.columns: 
-		if col != 'fire_bool': 
-			input_df2[col] = (input_df[col] - input_df[col].mean()) / input_df[col].std()
-
-	return input_df
 
 if __name__ == '__main__': 
-	# sys.argv[1] will hold the name of the model we want to run (logit, random forest, etc.), 
-	# and sys.argv[2] will hold our input dataframe (data will all the features and target). 
-	model_name = sys.argv[1]
+    # sys.argv[1] will hold the name of the model we want to run (logit, 
+    # random forest, etc.), and sys.argv[2] will hold our input dataframe 
+    # (data will all the features and target). 
+    model_name = sys.argv[1]
 
-	with open(sys.argv[2]) as f: 
-		input_df = pickle.load(f)
+    base_input_df = pd.read_csv(sys.argv[2], parse_dates=['date_fire'])
+    with open('code/makefiles/columns_list.pkl') as f: 
+        keep_columns = pickle.load(f)
 
+    input_df = base_input_df[keep_columns]
+    train, test = get_train_test(input_df, 'date_fire', 14) 
 
-	days_back = 14
-	train, test = tt_split_all_less_n_days(input_df, days_back=days_back)
-	# train2, test2 = tt_split_early_late(train, train.date_fire.max(), months_forward = 0, months_backward=0.5)
-	train2, test2 = tt_split_same_months(train, 2012, [1], days_back=14, exact_split_date=test.date_fire.max(), direct_prior_days=False, add_test=True)
+    if model_name == 'neural_net': 
+        train = normalize_df(train)
+        test = normalize_df(test)
 
-	train_cols = train.columns
-	test_cols = test.columns
-	train2_cols = train2.columns
-	test2_cols = test2.columns
-
-	for col in train_cols: 
-		if 'month' in col : 
-			del train[col]
-
-	for col in test_cols: 
-		if 'month' in col: 
-			del test[col]
-
-	for col in train2_cols: 
-		if 'month' in col: 
-			del train2[col]
-
-	for col in test2_cols: 
-		if 'month' in col: 
-			del test2[col]
-
-	if model_name == 'neural_net': 
-		train = normalize_df(train.drop('date_fire', axis=1))
-		test = normalize_df(test.drop('date_fire', axis=1))
-
-
-	'''
-	keep_list = ['conf']
-	train = train[keep_list]
-	test = test[keep_list]
-	train = train.drop(keep_list, axis=1)
-	test = test.drop(keep_list, axis=1)
-	'''
-	
-	fitted_model, best_roc_auc = own_grid_search(model_name, train, test, train2)
-
-	'''
-	roc_save_filename = 'roc_auc_' + model_name
-	with open(roc_save_filename, 'w+') as f: 
-		pickle.dump(roc_auc_scores, f)
-	'''
-	preds, preds_probs = predict_with_model(test, fitted_model)
-	scores = return_scores(test.fire_bool, preds, preds_probs)
-	log_results(model_name, train.drop('date_fire', axis=1), fitted_model, scores, best_roc_auc)
-
-
-	filename = './model_output/' + model_name + '_preds_probs_daysprioryear_lessm_15.csv'
-	output_model_preds(filename, model_name, preds_probs, test)
-
+    
+    # We need to reset the index so the time folds produced work correctly.
+    train.reset_index(drop=True, inplace=True)
+    train_dates = train['date_fire']
+    date_step_size = timedelta(days=14)
+    init_split_point = datetime(2013, 1, 1, 0, 0, 0)
+    cv_fold_generator = SequentialTimeFold(train_dates, date_step_size, init_split_point)
+    
+    train = prep_data(train)
+    test = prep_data(test)
+    best_fit_model, mean_metric_score = \
+            sklearn_grid_search(model_name, train, test, cv_fold_generator) 
+    preds, preds_probs = predict_with_model(test, best_fit_model)
+    scores = return_scores(test.fire_bool, preds, preds_probs)
+    log_results(model_name, train, best_fit_model, scores, mean_metric_score)
 
 
