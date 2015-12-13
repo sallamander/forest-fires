@@ -13,6 +13,7 @@ class BaseTimeFold(object):
     def __init__(self, dates, step_size, init_split_point=None): 
         ''' Inputs: NumpyArray, Datetime timedelta, Datetime datetime ''' 
         
+        self.n_folds = 0
         self.dates = pd.Series(dates)
         self.step_size = step_size
         self.test_indices = np.array((3, 4))
@@ -35,6 +36,8 @@ class BaseTimeFold(object):
         self.init_split_point = datetime(exact_init_split_point.year, 
                         exact_init_split_point.month, exact_init_split_point.day, 
                         0, 0, 0)
+    def __len__(self): 
+        return self.n_folds
         
 
 class SequentialTimeFold(BaseTimeFold):
@@ -62,12 +65,14 @@ class SequentialTimeFold(BaseTimeFold):
     def next(self):
         ''' Generates integer indices corresponding to train/test sets. '''
         split_point = self.split_point
+        print split_point, self.n_folds
         test_indices = np.where(self.dates >= self.split_point)[0]
         train_indices = np.where(self.dates < self.split_point)[0]
         self.test_indices = test_indices 
         self.split_point += self.step_size
         
         if self.test_indices.shape[0] != 0: 
+            self.n_folds += 1
             return train_indices, test_indices
         else: 
             raise StopIteration()
@@ -109,6 +114,7 @@ class StratifiedTimeFold(BaseTimeFold):
         test_indices, train_indices = np.array([]), np.array([])
         
         if self.test_indices.shape[0] != 0: 
+            self.n_folds += 1
             for year in self.years_list:
                 train_idx_temp, test_idx_temp = self._grab_indices(year)
                 train_indices = np.concatenate((train_idx_temp, train_indices))
