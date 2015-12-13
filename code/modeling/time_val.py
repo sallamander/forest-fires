@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from datetime import timedelta, datetime
-from time_featurization import add_date_column
 
 class BaseTimeFold(object):
     ''' 
@@ -38,7 +37,6 @@ class BaseTimeFold(object):
                         0, 0, 0)
     def __len__(self): 
         return self.n_folds
-        
 
 class SequentialTimeFold(BaseTimeFold):
     ''' 
@@ -65,7 +63,6 @@ class SequentialTimeFold(BaseTimeFold):
     def next(self):
         ''' Generates integer indices corresponding to train/test sets. '''
         split_point = self.split_point
-        print split_point, self.n_folds
         test_indices = np.where(self.dates >= self.split_point)[0]
         train_indices = np.where(self.dates < self.split_point)[0]
         self.test_indices = test_indices 
