@@ -3,5 +3,8 @@
 *.json
 *.pyc
 *sentinel
-data/*
+data/csvs*
+data/jsons*
+data/unzipped_files
+data/zipped_files
 .*
