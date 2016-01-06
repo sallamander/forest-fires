@@ -152,7 +152,7 @@ $(zipped_folder)$(fire_perimeters_2014).zip:
 	rm $(unzipped_folder)$(fire_perimeters_2014)/*.zip
 
 $(zipped_folder)$(fire_perimeters_2015).zip: 
-	curl http://rmgsc.cr.usgs.gov/outgoing/GeoMAC/current_year_fire_data/current_year_all_states/perimeters_dd83.zip \
+	curl http://rmgsc.cr.usgs.gov/outgoing/GeoMAC/historic_fire_data/2015_perimeters_dd83.zip \
 		-o $(zipped_folder)$(fire_perimeters_2015).zip
 
 	cp $(zipped_folder)$(fire_perimeters_2015).zip $(unzipped_folder)$(fire_perimeters_2015)/
@@ -201,7 +201,7 @@ $(zipped_folder)$(detected_fires_2014).zip:
 	rm $(unzipped_folder)$(detected_fires_2014)/*.zip
 
 $(zipped_folder)$(detected_fires_2015).zip: 
-	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2015_299_conus_shapefile.zip \
+	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2015_365_conus_shapefile.zip \
 		-o $(zipped_folder)$(detected_fires_2015).zip
 
 	cp $(zipped_folder)$(detected_fires_2015).zip $(unzipped_folder)$(detected_fires_2015)/
