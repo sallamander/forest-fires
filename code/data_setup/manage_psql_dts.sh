@@ -57,6 +57,12 @@ do
 
             tbl_years=( 2012 2013 2014 2015 )
 
+            if [ ! -d $PWD/data/csvs ]
+            then 
+                mkdir $PWD/data/csvs
+                chmod 777 $PWD/data/csvs
+            fi
+
             for year in "${tbl_years[@]}"
             do 
                 psql -d forest_fires -c "COPY detected_fires_$year TO \
