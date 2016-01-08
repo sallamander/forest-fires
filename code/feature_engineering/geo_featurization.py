@@ -26,9 +26,11 @@ def gen_nearby_fires_count(df, kwargs):
     if time_measures is None or dist_measure is None: 
         raise RuntimeError('Inappropriate arguments passed to gen_nearby_fires_count')
 
+    # Only keeping the columns I need will keep the df lightweight. 
+    keep_cols = ['lat', 'long', 'date_fire', 'fire_bool']
+    multiprocessing_df = df[keep_cols] 
     multiprocessing_df, dt_percentiles_df_dict = \
-            prep_multiprocessing(df)
-    
+            prep_multiprocessing(multiprocessing_df)
     col_lst = ['lat', 'long', 'date_fire', 'date_fire_percentiles']
     lat_idx, long_idx, date_idx, date_pctile_idx = \
             grab_col_indices(multiprocessing_df, col_lst)
@@ -38,7 +40,8 @@ def gen_nearby_fires_count(df, kwargs):
         execute_query = partial(query_for_nearby_fires, dt_percentiles_df_dict, 
                                 dist_measure, time_measure, lat_idx, long_idx, 
                                 date_idx, date_pctile_idx)
-        nearby_count_dict = pool.map(execute_query, multiprocessing_df.values[0:10]) 
+        nearby_count_dict = pool.map(execute_query, 
+                                    multiprocessing_df.values) 
         pool.close()
         df = merge_results(df, nearby_count_dict)
 
