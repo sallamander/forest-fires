@@ -248,6 +248,8 @@ get_data: .data_folder_structure_sentinel county_boundaries state_boundaries reg
 	bash code/data_setup/manage_psql_dts.sh -m state 2014    
 	bash code/data_setup/manage_psql_dts.sh -m state 2015   
 
+	bash code/data_setup/manage_psql_dts.sh -o 
+
 	touch .data_prep_sentinel
 
 prep_data: .data_prep_sentinel
