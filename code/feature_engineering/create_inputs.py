@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # takes a long time to run; so we want the option to bypass it.
     if len(sys.argv) >= 1: 
         geo = True if 'geo' in sys.argv else False
-        time = True if 'time' in sys.argv else False
+        time_bool = True if 'time' in sys.argv else False
 
     # We'll create a dictionary that will hold all the transformations we'll 
     # peform on our data; then we can access the function we'll use to transform 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
             df = featurization_dict[v['transformation']](df, v)
         df.to_csv('code/modeling/model_input/geo_done_test.csv', index=False)
 
-    if time: 
+    if time_bool: 
         try:
             df = pd.read_csv('code/modeling/model_input/geo_done.csv', 
                     parse_dates=['date_fire'], index_col=False)
