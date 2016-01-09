@@ -259,7 +259,7 @@ data: get_data prep_data
 .features_sentinel: code/makefiles/time_transforms_dict.pkl \
 	code/makefiles/time_transforms_dict.pkl code/makefiles/year_list.pkl \
 
-	python code/feature_engineering/create_inputs.py geo
+	python code/feature_engineering/create_inputs.py geo time
 	touch .features_sentinel
 
 features: .features_sentinel
