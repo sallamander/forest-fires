@@ -258,7 +258,11 @@ data: get_data prep_data
 
 .features_sentinel: code/makefiles/time_transforms_dict.pkl \
 	code/makefiles/time_transforms_dict.pkl code/makefiles/year_list.pkl \
-
+	
+	if [ ! -d code/modeling/model_input ]; then \
+		mkdir code/modeling/model_input; \
+		chmod 777 code/modeling/model_input; \
+	fi 
 	python code/feature_engineering/create_inputs.py geo time
 	touch .features_sentinel
 

@@ -58,7 +58,7 @@ if __name__ == '__main__':
         df = add_date_column(df)
         for k, v in geo_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
-        df.to_csv('code/modeling/model_input/geo_done_test.csv', index=False)
+        df.to_csv('code/modeling/model_input/geo_done.csv', index=False)
 
     if time_bool: 
         try:
