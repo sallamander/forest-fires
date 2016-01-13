@@ -41,7 +41,8 @@ def gen_nearby_fires_count(df, kwargs):
                                 dist_measure, time_measure, lat_idx, long_idx, 
                                 date_idx, date_pctile_idx)
         nearby_count_dict = pool.map(execute_query, 
-                                    multiprocessing_df.values) 
+                                    multiprocessing_df.values, chunksize = 
+                                    multiprocessing_df.shape[0] / multiprocessing.cpu_count()) 
         pool.close()
         df = merge_results(df, nearby_count_dict)
 
