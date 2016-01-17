@@ -50,12 +50,22 @@ a couple of more data sets that I'm not currently using.
 
 ### Want to follow along, add to my work, or improve on it?
 
-If you fork my repo, from the main folder you can run the command 'make data',
+If you fork my repo, from the main folder you can run the command `make data`,
 and the data file structure will be created for you with the data downloaded and 
 placed into the file structure. 
 
 Note that this assumes you are working from a unix terminal (or a linux with 
 curl installed), with PostgresSQL and a version-consistent PostGIS extension 
-installed. When running the 'make data' command, you'll have to have a
+installed. When running the `make data` command, you'll have to have a
 PostgresSQL server running in the background. 
 
+After this, you can run the command `make features`, which will create for you 
+a .csv that holds the data ready to run through models (from this point you can 
+read it into a Pandas DataFrame to run through models). After this command, 
+the model inputs will be in a file named `geo_time_done.csv`, stored in the 
+`code/modeling/model_input` folder. Note that this `make features` command will take 
+some time. For me, even on a 40 core machine on AWS, it took ~2 1/2 hours. 
+
+### Get in touch 
+
+Feel free to email me anytime at sean.sall@galvanize.com. 
