@@ -137,14 +137,14 @@ def get_grid_params(model_name):
     Output: Dictionary
     '''
     if model_name == 'logit': 
-        return {'penalty': ['l2'], 'C': [0.1]}
+        return {'penalty': ['l2'], 'C': [0.05, 0.1, 0.15]}
     elif model_name == 'random_forest': 
-        return {'n_estimators': [10], 
-                'max_depth': [5]}
+        return {'n_estimators': [800, 1000, 1200], 
+                'max_depth': [10, 15, 20]}
     elif model_name == 'gradient_boosting': 
         return {'n_estimators': [250], 
-                'learning_rate': [0.1], 
-                'min_samples_leaf': [250]}
+                'learning_rate': [0.01, 0.05, 0.1], 
+                'min_samples_leaf': [200, 250, 300]}
 
 def get_target_features(df): 
     '''
