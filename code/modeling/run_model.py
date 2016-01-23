@@ -15,7 +15,7 @@ from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import SGD, RMSprop
 from keras.utils import np_utils
 
-def get_train_test(df, date_col, days_back, test_date): 
+def get_train_test(df, date_col, test_date): 
     '''
     Input: Pandas DataFrame, String, Integer
     Output: Pandas DataFrame, Pandas DataFrame
@@ -30,11 +30,9 @@ def get_train_test(df, date_col, days_back, test_date):
     # want to make sure to only grab that day (and not days that are greater
     # than it, which will be present in training). 
     max_test_date = test_date + timedelta(days=1)
-    min_test_date = test_date - timedelta(days=days_back)
     test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
         df[date_col] < max_test_date))[0]
-    train_mask = np.where(np.logical_and(df[date_col] < test_date, 
-        df[date_col] >= min_test_date))[0]
+    train_mask = np.where(df[date_col] < test_date)[0]
     train, test = df.ix[train_mask, :], df.ix[test_mask, :]
 
     return train, test
@@ -245,19 +243,18 @@ if __name__ == '__main__':
         test_set_timestamp = input_df['date_fire'].max()
         test_set_date = datetime(test_set_timestamp.year, 
                 test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
-    train, test = get_train_test(input_df, 'date_fire', 14, test_set_date)
+    train, test = get_train_test(input_df, 'date_fire', test_set_date)
 
     if model_name == 'neural_net': 
         train = normalize_df(train)
         test = normalize_df(test)
 
-    
+        
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
-    train_dates = train['date_fire']
-    date_step_size = timedelta(days=14)
-    init_split_point = datetime(2013, 1, 1, 0, 0, 0)
-    cv_fold_generator = SequentialTimeFold(train_dates, date_step_size, init_split_point)
+    date_step_size = timedelta(days=1)
+    cv_fold_generator = SequentialTimeFold(train, date_step_size, 20, 
+            test_set_date)
     
     train = prep_data(train)
     test = prep_data(test)
@@ -270,5 +267,3 @@ if __name__ == '__main__':
     scores = return_scores(test.fire_bool, preds, preds_probs)
     log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
             run_time)
-
-
