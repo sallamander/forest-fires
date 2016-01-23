@@ -194,7 +194,7 @@ def predict_with_model(test_data, model):
 
     return predictions, predicted_probs
 
-def log_results(model_name, train, fitted_model, scores, best_roc_auc): 
+def log_results(model_name, train, fitted_model, scores, best_roc_auc, run_time): 
     '''
     Input: String, Pandas DataFrame,  Dictionary, Numpy Array, Float  
     Output: .txt file. 
@@ -214,6 +214,7 @@ def log_results(model_name, train, fitted_model, scores, best_roc_auc):
         f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
         f.write('Scores: ' + str(scores) + '\n' * 2)
         f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
+        f.write('Run time: ' + str(run_time) + '\n' * 2)
 
 
 if __name__ == '__main__': 
@@ -243,10 +244,14 @@ if __name__ == '__main__':
     
     train = prep_data(train)
     test = prep_data(test)
+    start = time.time()
     best_fit_model, mean_metric_score = \
             sklearn_grid_search(model_name, train, test, cv_fold_generator) 
+    end = time.time()
+    run_time = end - start
     preds, preds_probs = predict_with_model(test, best_fit_model)
     scores = return_scores(test.fire_bool, preds, preds_probs)
-    log_results(model_name, train, best_fit_model, scores, mean_metric_score)
+    log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
+            run_time)
 
 
