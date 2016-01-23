@@ -3,6 +3,7 @@
 *.json
 *.pyc
 *sentinel
+.ipynb*
 data/csvs*
 data/jsons*
 data/unzipped_files
