@@ -15,7 +15,7 @@ from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import SGD, RMSprop
 from keras.utils import np_utils
 
-def get_train_test(df, date_col, days_back): 
+def get_train_test(df, date_col, days_back, test_date): 
     '''
     Input: Pandas DataFrame, String, Integer
     Output: Pandas DataFrame, Pandas DataFrame
@@ -25,11 +25,17 @@ def get_train_test(df, date_col, days_back):
     All rows with a date prior to that split point are train and all rows 
     with a date after that split point are test. 
     '''
-
-    max_date = df[date_col].max()
-    split_point = max_date - timedelta(days=days_back)
-    test_mask = df[date_col] >= split_point
-    train, test = df.ix[~test_mask, :], df.ix[test_mask, :]
+    
+    # In the case that we are putting in a test_date for training, we 
+    # want to make sure to only grab that day (and not days that are greater
+    # than it, which will be present in training). 
+    max_test_date = test_date + timedelta(days=1)
+    min_test_date = test_date - timedelta(days=days_back)
+    test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
+        df[date_col] < max_test_date))[0]
+    train_mask = np.where(np.logical_and(df[date_col] < test_date, 
+        df[date_col] >= min_test_date))[0]
+    train, test = df.ix[train_mask, :], df.ix[test_mask, :]
 
     return train, test
 
@@ -228,7 +234,18 @@ if __name__ == '__main__':
         keep_columns = pickle.load(f)
 
     input_df = base_input_df[keep_columns]
-    train, test = get_train_test(input_df, 'date_fire', 14) 
+    if len(sys.argv) == 4: 
+        # If this is 4, I'm expecting that a date was passed in that we want
+        # to use for the day of our test set (i.e. the days fires that we are 
+        # predicting). Otherwise, we'll use the most recent date in our df. 
+        date_parts = sys.argv[4].split('-')
+        test_set_date = datetime(date_parts[0], date_parts[1], date_parts[2],
+                0, 0, 0)
+    else: 
+        test_set_timestamp = input_df['date_fire'].max()
+        test_set_date = datetime(test_set_timestamp.year, 
+                test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
+    train, test = get_train_test(input_df, 'date_fire', 14, test_set_date)
 
     if model_name == 'neural_net': 
         train = normalize_df(train)
