@@ -268,3 +268,14 @@ data: get_data prep_data
 
 features: .features_sentinel
 
+models: .models_sentinel
+	if [ ! -d code/modeling/model_output ]; then \
+			mkdir -p code/modeling/model_output/logs; \
+			chmod 777 code/modeling/model_output/logs; \
+	fi 
+
+	bash code/modeling/run_models.sh
+
+.models_sentinel: 
+	touch .models_sentinel
+
