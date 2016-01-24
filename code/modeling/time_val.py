@@ -9,7 +9,8 @@ class BaseTimeFold(object):
     Setup and prep for the class.
     '''
 
-    def __init__(self, df, step_size, max_folds, test_set_date): 
+    def __init__(self, df, step_size, max_folds, test_set_date, 
+            resample_train_fire_pct, resample_method):
         ''' Inputs: Pandas DataFrame, Datetime timedelta, Integer''' 
         
         self.n_folds = 0
@@ -18,9 +19,54 @@ class BaseTimeFold(object):
         self.all_dates = df['date_fire'] 
         self.step_size = step_size
         self.test_date = test_set_date - timedelta(days=1)
+        self.resample_method = resample_method
+        self.resample_train_fire_pct = resample_train_fire_pct
 
     def __len__(self): 
         return self.n_folds
+
+    def _check_resample(self, train_indices): 
+        '''Input: Numpy Array
+
+        Check the percent of the obs. in the training set that will be
+        actual fires. If it is smaller than the resample_train_fire_pct, 
+        then resample as noted by the resample_method attribute. 
+        '''
+        training_perc_fire = self.df.ix[train_indices, 'fire_bool'].mean()
+        
+        if training_perc_fire > self.resample_train_fire_pct: 
+            return train_indices
+        else: 
+            train_indices = self._resample(train_indices)
+            return train_indices
+
+    def _resample(self, train_indices): 
+        '''Input: Numpy Array 
+
+        Conduct resampling as noted by the resample_method attribute. 
+        "simple upsample" will just be duplicating a # of random positive 
+        cases; "downsample"  will be taking all positive cases and a random 
+        number of equal negative cases. 
+        '''
+
+        if self.resample_method == 'simple upsample': 
+            fire_indices = np.where(self.df['fire_bool'] == True)[0]
+            positive_indices = np.intersect1d(fire_indices, train_indices)
+            # Get a random sample from the positive indices, equal in size. 
+            resampled_indices = np.random.choice(positive_indices, 
+                    positive_indices.shape[0])
+            train_indices = np.concatenate((train_indices, resampled_indices), 
+                    axis=0)
+            return train_indices
+        if self.resample_method == 'downsample': 
+            fire_indices = np.where(self.df['fire_bool'] == True)[0]
+            positive_indices = np.intersect1d(fire_indices, train_indices)
+            negative_indices = np.setdiff1d(train_indices, fire_indices)
+            resampled_indices = np.random.choice(negative_indices, 
+                    positive_indices.shape[0], replace=False)
+            train_indices = np.concatenate((positive_indices, resampled_indices),
+                    axis=0)
+            return train_indices
 
 class SequentialTimeFold(BaseTimeFold):
     ''' 
@@ -78,12 +124,13 @@ class StratifiedTimeFold(BaseTimeFold):
     '''
 
     def __init__(self, df, step_size, max_folds, test_set_date, days_back, 
-            cutoff_train_fire_perc=0.05): 
+            cutoff_train_fire_pct=0.05, resample_train_fire_pct=0.20,
+            resample_method='downsample'):
         super(StratifiedTimeFold, self).__init__(df, step_size, max_folds, 
-                test_set_date)
+                test_set_date, resample_train_fire_pct, resample_method)
         self.years_list = self._set_years_list() 
         self.days_back = days_back
-        self.cutoff_train_fire_perc = cutoff_train_fire_perc
+        self.cutoff_train_fire_pct = cutoff_train_fire_pct
 
     def _set_years_list(self): 
         ''' 
@@ -115,11 +162,15 @@ class StratifiedTimeFold(BaseTimeFold):
                 train_idx_temp = self._grab_indices(year)
                 train_indices = np.concatenate((train_idx_temp, train_indices))
             training_perc_fire = self.df.ix[train_indices, 'fire_bool'].mean()
-            if training_perc_fire < self.cutoff_train_fire_perc:  
+            if training_perc_fire < self.cutoff_train_fire_pct:  
                 train_indices = np.where(self.all_dates < self.test_date)[0]
-                training_perc_fire = self.df.ix[train_indices, 'fire_bool'].mean()
             self.test_date -= self.step_size
-            
+        
+        training_perc_fire = self.df.ix[train_indices, 'fire_bool'].mean()
+        print training_perc_fire
+        train_indices = self._check_resample(train_indices)
+        training_perc_fire = self.df.ix[train_indices, 'fire_bool'].mean()
+        print training_perc_fire
         if self.n_folds <= self.max_folds: 
             self.n_folds += 1
             return train_indices, test_indices
