@@ -14,6 +14,7 @@ class BaseTimeFold(object):
         
         self.n_folds = 0
         self.max_folds = max_folds
+        self.df = df
         self.all_dates = df['date_fire'] 
         self.step_size = step_size
         self.test_date = test_set_date - timedelta(days=1)
@@ -45,7 +46,11 @@ class SequentialTimeFold(BaseTimeFold):
 
     def next(self):
         ''' Generates integer indices corresponding to train/test sets. '''
+        # Initialize a array with shape 0 so that we can issue the check 
+        # every time to make sure that we don't return back a test_indices
+        # array with no actual indices. 
         test_indices = np.zeros((0))
+
         while test_indices.shape[0] == 0: 
             test_date = self.test_date
             test_date_plus = test_date + timedelta(days=1)
@@ -72,17 +77,19 @@ class StratifiedTimeFold(BaseTimeFold):
     Folds are created in a stratified manner.  
     '''
 
-    def __init__(self, test_dates, step_size): 
-        super(StratifiedTimeFold, self).__init__(test_dates, step_size)
+    def __init__(self, df, step_size, max_folds, test_set_date, days_back): 
+        super(StratifiedTimeFold, self).__init__(df, step_size, max_folds, 
+                test_set_date)
         self.years_list = self._set_years_list() 
+        self.days_back = days_back
 
     def _set_years_list(self): 
         ''' 
         Create a list of years to cycle 
         through for the iteration process. 
         '''
-        year_max = self.dates.max().year
-        year_min = self.dates.min().year
+        year_max = self.all_dates.max().year
+        year_min = self.all_dates.min().year
         year_list = xrange(year_min, year_max + 1)
         return year_list
 
@@ -92,18 +99,23 @@ class StratifiedTimeFold(BaseTimeFold):
     def next(self):
 
         ''' Generates integer indices corresponding to train/test sets. '''
-        idx = np.arange(self.dates.shape[0])
-        test_indices, train_indices = np.array([]), np.array([])
+        test_indices, train_indices = np.zeros((0)), np.array([])
         
-        if self.test_indices.shape[0] != 0: 
-            self.n_folds += 1
+        while test_indices.shape[0] == 0: 
+            test_date = self.test_date
+            test_date_plus = test_date + self.step_size 
+            test_indices = np.where(np.logical_and(self.all_dates >= test_date, 
+                self.all_dates < test_date_plus))[0]
+           
+            # Now grab all the fires that will be used for training. We'll 
+            # have to cycle back through the years to grab these. 
             for year in self.years_list:
-                train_idx_temp, test_idx_temp = self._grab_indices(year)
+                train_idx_temp = self._grab_indices(year)
                 train_indices = np.concatenate((train_idx_temp, train_indices))
-                test_indices = np.concatenate((test_idx_temp, test_indices))
-            self.split_point += self.step_size
-            self.test_indices = test_indices 
+            self.test_date -= self.step_size
             
+        if self.n_folds <= self.max_folds: 
+            self.n_folds += 1
             return train_indices, test_indices
         else: 
             raise StopIteration()
@@ -116,17 +128,12 @@ class StratifiedTimeFold(BaseTimeFold):
         Grab the train and test indices. 
         '''
 
-        split_point = self.split_point
         date_range = self._get_date_range(year)
 
-        test_indices = np.where((self.dates >= date_range.min()) 
-                & (self.dates < date_range.max()) 
-                & (self.dates >= split_point))[0]
-        train_indices = np.where((self.dates >= date_range.min()) 
-                & (self.dates < date_range.max()) 
-                & (self.dates < split_point))[0]
+        train_indices = np.where((self.all_dates >= date_range.min()) 
+                & (self.all_dates < date_range.max()))[0]
 
-        return train_indices, test_indices
+        return train_indices
 
 
     def _get_date_range(self, year): 
@@ -134,19 +141,20 @@ class StratifiedTimeFold(BaseTimeFold):
         Input: Integer
         Output: Pandas DateRange
 
-        Output a date range based off of the current split
-        point plus step size, but for the inputted year. The 
-        output will be a date range that starts at the current 
-        split point (with the year replaced by the inputted year), 
-        and extends by the step size. 
+        Output a date range based off of the current test_date 
+        but for the inputted year. The output will be a date range 
+        that starts at the test_date (with the year replaced by the 
+        inputted year), and goes back by the days_back argument. 
         '''
-
-        start_date_range = datetime(year, 
-                self.split_point.month, self.split_point.day, 
-                self.split_point.hour, self.split_point.minute, 
-                self.split_point.second)
-        end_date_range = start_date_range + self.step_size
-        date_range = pd.date_range(start_date_range, end_date_range)
+    
+        if year == self.test_date.year: 
+            start_date_range = datetime(year, self.test_date.month, 
+                    self.test_date.day, 0, 0, 0)
+        else: 
+            start_date_range = datetime(year, self.test_date.month, 
+                    self.test_date.day + 1, 0, 0, 0)
+        end_date_range = start_date_range - timedelta(days=self.days_back)
+        date_range = pd.date_range(end_date_range, start_date_range)
 
         return date_range
 

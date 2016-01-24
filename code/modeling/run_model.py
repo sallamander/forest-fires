@@ -253,9 +253,14 @@ if __name__ == '__main__':
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
     date_step_size = timedelta(days=1)
+    '''
     cv_fold_generator = SequentialTimeFold(train, date_step_size, 20, 
             test_set_date)
+    '''
+    cv_fold_generator = StratifiedTimeFold(train, date_step_size, 20, 
+            test_set_date, 14)
     
+    '''
     train = prep_data(train)
     test = prep_data(test)
     start = time.time()
@@ -267,3 +272,4 @@ if __name__ == '__main__':
     scores = return_scores(test.fire_bool, preds, preds_probs)
     log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
             run_time)
+    '''
