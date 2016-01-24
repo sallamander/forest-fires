@@ -77,11 +77,13 @@ class StratifiedTimeFold(BaseTimeFold):
     Folds are created in a stratified manner.  
     '''
 
-    def __init__(self, df, step_size, max_folds, test_set_date, days_back): 
+    def __init__(self, df, step_size, max_folds, test_set_date, days_back, 
+            cutoff_train_fire_perc=0.05): 
         super(StratifiedTimeFold, self).__init__(df, step_size, max_folds, 
                 test_set_date)
         self.years_list = self._set_years_list() 
         self.days_back = days_back
+        self.cutoff_train_fire_perc = cutoff_train_fire_perc
 
     def _set_years_list(self): 
         ''' 
@@ -106,12 +108,16 @@ class StratifiedTimeFold(BaseTimeFold):
             test_date_plus = test_date + self.step_size 
             test_indices = np.where(np.logical_and(self.all_dates >= test_date, 
                 self.all_dates < test_date_plus))[0]
-           
+          
             # Now grab all the fires that will be used for training. We'll 
             # have to cycle back through the years to grab these. 
             for year in self.years_list:
                 train_idx_temp = self._grab_indices(year)
                 train_indices = np.concatenate((train_idx_temp, train_indices))
+            training_perc_fire = self.df.ix[train_indices, 'fire_bool'].mean()
+            if training_perc_fire < self.cutoff_train_fire_perc:  
+                train_indices = np.where(self.all_dates < self.test_date)[0]
+                training_perc_fire = self.df.ix[train_indices, 'fire_bool'].mean()
             self.test_date -= self.step_size
             
         if self.n_folds <= self.max_folds: 
@@ -148,11 +154,10 @@ class StratifiedTimeFold(BaseTimeFold):
         '''
     
         if year == self.test_date.year: 
-            start_date_range = datetime(year, self.test_date.month, 
-                    self.test_date.day, 0, 0, 0)
+            start_date_range = self.test_date
         else: 
             start_date_range = datetime(year, self.test_date.month, 
-                    self.test_date.day + 1, 0, 0, 0)
+                    self.test_date.day + 1, 0, 0, 0) 
         end_date_range = start_date_range - timedelta(days=self.days_back)
         date_range = pd.date_range(end_date_range, start_date_range)
 
