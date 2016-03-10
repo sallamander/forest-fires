@@ -4,6 +4,7 @@
 *.pyc
 *sentinel
 .ipynb*
+*.ipynb_checkpoints
 data/csvs*
 data/jsons*
 data/unzipped_files
