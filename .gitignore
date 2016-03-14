@@ -10,3 +10,4 @@ data/csvs*
 data/jsons*
 data/unzipped_files
 data/zipped_files
+code/eda-viz/in_proj/data/
