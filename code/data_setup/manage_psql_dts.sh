@@ -20,12 +20,16 @@ do
             fire_tbl_years=( 2012 2013 2014 2015 ) 
             boundary_tbl_years=( 2013 2014 )
             non_fire_boundaries=( county state urban_areas region )
+            data_sources=( MODIS VIIRS )
 
             for year in "${fire_tbl_years[@]}"
             do
-                ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user="$USER \
-                    "data/unzipped_files/detected_fires/MODIS/"$year/ \
-                    -nlt PROMOTE_TO_MULTI -nln detected_fires_$year -overwrite 
+                for data_source in  "${data_sources[@]}"
+                do 
+                    ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user="$USER \
+                        "data/unzipped_files/detected_fires/${data_source}/"$year/ \
+                        -nlt PROMOTE_TO_MULTI -nln detected_fires_${data_source}_$year -overwrite 
+                done 
 
                 ogr2ogr -f "PostgreSQL" PG:"dbname=forest_fires user="$USER \
                     "data/unzipped_files/boundary_files/fire_perimeters"/$year/ \
