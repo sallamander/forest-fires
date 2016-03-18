@@ -60,6 +60,7 @@ do
             # fires data tables in my forest fires database. 
 
             tbl_years=( 2012 2013 2014 2015 )
+            data_sources=( MODIS VIIRS )
 
             if [ ! -d $PWD/data/csvs ]
             then 
@@ -69,9 +70,12 @@ do
 
             for year in "${tbl_years[@]}"
             do 
-                psql -d forest_fires -c "COPY detected_fires_$year TO \
-                    '$PWD/data/csvs/detected_fires_$year.csv' \
-                    WITH CSV HEADER DELIMITER AS E',';"
+                for data_source in "${data_sources[@]}"
+                do 
+                    psql -d forest_fires -c "COPY detected_fires_${data_source}_$year TO \
+                        '$PWD/data/csvs/detected_fires_${data_source}_$year.csv' \
+                        WITH CSV HEADER DELIMITER AS E',';"
+                done 
             done 
             exit 
             ;; 
@@ -89,8 +93,12 @@ do
             To figure this out, we will take advantage of the POSTGIS extension, 
             which will allow us to join two tables, asking whether or not the geography 
             from one table (lat/long coordinates) fall within another geography 
-            (a perimeter boundary). This file will perform all our merging. 
+            (a perimeter boundary). This file will perform all our merging. We will 
+            do this for both our MODIS and VIIRS tables (for now - this may become
+            a variable to pass in if/when the time comes). 
             '
+            # Data sources we'll loop over below. 
+            data_sources=( MODIS VIIRS )
 
             # These two varaibles must be passed into the program, and will 
             # determine what tables end up getting merged. 
@@ -121,84 +129,89 @@ do
             fi
 
             echo $boundary_tbl
-                
-            if $label
-            then
-                land=${boundary_type}_aland
-                water=${boundary_type}_awater 
-                name=${boundary_type}_name
-                lsad=${boundary_type}_lsad
+            
+            for data_source in "${data_sources[@]}"
+            do 
+                if $label
+                then
+                    land=${boundary_type}_aland
+                    water=${boundary_type}_awater 
+                    name=${boundary_type}_name
+                    lsad=${boundary_type}_lsad
 
-                columns_to_add="$land, $water, $name, $lsad"
-                polys_keep_columns="polys.aland as $land, polys.awater as $water, \
-                                    polys.name as $name, polys.lsad as $lsad"
+                    columns_to_add="$land, $water, $name, $lsad"
+                    polys_keep_columns="polys.aland as $land, polys.awater as $water, \
+                                        polys.name as $name, polys.lsad as $lsad"
 
-                if [ "$boundary_type" = "region" ] 
-                then 
-                    polys_keep_columns="${polys_keep_columns} , polys.regionce as region_code"
-                    columns_to_add="${columns_to_add}, region_code"
-                else 
-                    polys_keep_columns="${polys_keep_columns}, polys.${boundary_type}fp as \
-                                        ${boundary_type}_fips"
-                    columns_to_add="${columns_to_add}, ${boundary_type}_fips"
-                fi
-                
-                query="CREATE TABLE detected_fires_${year}2 AS \
-                        (WITH \
-                            distinct_to_merge AS \
-                                (SELECT DISTINCT ON (lat, long) * \
-                                FROM detected_fires_$year), \
-                            merged AS \
-                                (SELECT DISTINCT points.lat, points.long, ${polys_keep_columns} \
-                                FROM distinct_to_merge as points \
-                                INNER JOIN ${boundary_tbl} as polys \
-                                    ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry)) \
-                                    \
-                        SELECT df.*, ${columns_to_add} \
-                        FROM detected_fires_$year df \
-                        LEFT JOIN merged \
-                            ON df.lat = merged.lat \
-                            AND df.long = merged.long); \
-                    "
-            else 
-                on_query_part="ST_WITHIN(points.wkb_geometry, polys.wkb_geometry)"
-                select_distinct_on="(lat, long)"
-                bool_col_name=${boundary_type}_bool
-
-                # If we are looking at the fire perimeters, then we'll be merging on date
-                # and geometry. 
-                if [ "$boundary_type" = "fire" ]
-                then 
-                    on_query_part="${on_query_part} AND points.date = polys.date_"
-                    select_distinct_on="(lat, long, date)"
-                fi 
-
-                query="CREATE TABLE detected_fires_${year}2 AS \
-                        (WITH \
-                            distinct_to_merge AS \
-                                (SELECT DISTINCT ON ${select_distinct_on} * \
-                                FROM detected_fires_$year), \
-                        merged AS \
-                            (SELECT DISTINCT points.lat, points.long, points.date \
-                            FROM distinct_to_merge as points \
-                            INNER JOIN ${boundary_tbl} as polys \
-                                ON ${on_query_part}) \
-                                \
-                        SELECT df.*, \
-                            CASE WHEN merged.lat IS NOT NULL THEN TRUE \
-                                WHEN merged.lat IS NULL THEN FALSE END AS ${bool_col_name} \
-                            FROM detected_fires_$year df \
+                    if [ "$boundary_type" = "region" ] 
+                    then 
+                        polys_keep_columns="${polys_keep_columns} , polys.regionce as region_code"
+                        columns_to_add="${columns_to_add}, region_code"
+                    else 
+                        polys_keep_columns="${polys_keep_columns}, polys.${boundary_type}fp as \
+                                            ${boundary_type}_fips"
+                        columns_to_add="${columns_to_add}, ${boundary_type}_fips"
+                    fi
+                    
+                    query="CREATE TABLE detected_fires_${data_source}_${year}2 AS \
+                            (WITH \
+                                distinct_to_merge AS \
+                                    (SELECT DISTINCT ON (lat, long) * \
+                                    FROM detected_fires_${data_source}_$year), \
+                                merged AS \
+                                    (SELECT DISTINCT points.lat, points.long, ${polys_keep_columns} \
+                                    FROM distinct_to_merge as points \
+                                    INNER JOIN ${boundary_tbl} as polys \
+                                        ON ST_WITHIN(points.wkb_geometry, polys.wkb_geometry)) \
+                                        \
+                            SELECT df.*, ${columns_to_add} \
+                            FROM detected_fires_${data_source}_$year df \
                             LEFT JOIN merged \
                                 ON df.lat = merged.lat \
-                                AND df.long = merged.long \
-                                AND df.date = merged.date); 
-                    " 
-            fi 
+                                AND df.long = merged.long); \
+                        "
+                else 
+                    on_query_part="ST_WITHIN(points.wkb_geometry, polys.wkb_geometry)"
+                    select_distinct_on="(lat, long)"
+                    bool_col_name=${boundary_type}_bool
 
-            psql -d forest_fires -c "$query"
-            psql -d forest_fires -c "DROP TABLE detected_fires_$year;"
-            psql -d forest_fires -c "ALTER TABLE detected_fires_${year}2 \
-                                    RENAME to detected_fires_$year;"
+                    # If we are looking at the fire perimeters, then we'll be merging on date
+                    # and geometry. 
+                    if [ "$boundary_type" = "fire" ]
+                    then 
+                        on_query_part="${on_query_part} AND points.date = polys.date_"
+                        select_distinct_on="(lat, long, date)"
+                    fi 
+
+                    query="CREATE TABLE detected_fires_${data_source}_${year}2 AS \
+                            (WITH \
+                                distinct_to_merge AS \
+                                    (SELECT DISTINCT ON ${select_distinct_on} * \
+                                    FROM detected_fires_${data_source}_$year), \
+                            merged AS \
+                                (SELECT DISTINCT points.lat, points.long, points.date \
+                                FROM distinct_to_merge as points \
+                                INNER JOIN ${boundary_tbl} as polys \
+                                    ON ${on_query_part}) \
+                                    \
+                            SELECT df.*, \
+                                CASE WHEN merged.lat IS NOT NULL THEN TRUE \
+                                    WHEN merged.lat IS NULL THEN FALSE END AS ${bool_col_name} \
+                                FROM detected_fires_${data_source}_$year df \
+                                LEFT JOIN merged \
+                                    ON df.lat = merged.lat \
+                                    AND df.long = merged.long \
+                                    AND df.date = merged.date); 
+                        " 
+                fi 
+
+                psql -d forest_fires -c "$query"
+                psql -d forest_fires -c "DROP TABLE \
+                    detected_fires_${data_source}_$year;"
+                psql -d forest_fires -c "ALTER TABLE \
+                    detected_fires_${data_source}_${year}2 \
+                    RENAME to detected_fires_${data_source}_$year;"
+            done 
             exit 
             ;;
     esac
