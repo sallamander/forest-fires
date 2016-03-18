@@ -27,6 +27,16 @@ detected_fires_MODIS_2013=detected_fires/MODIS/2013
 detected_fires_MODIS_2014=detected_fires/MODIS/2014
 detected_fires_MODIS_2015=detected_fires/MODIS/2015
 
+detected_fires_VIIRS_2012=detected_fires/VIIRS/2012
+detected_fires_VIIRS_2013=detected_fires/VIIRS/2013
+detected_fires_VIIRS_2014=detected_fires/VIIRS/2014
+detected_fires_VIIRS_2015=detected_fires/VIIRS/2015
+
+
+########################
+# COUNTY BOUNDARY DATA #
+########################
+
 $(zipped_folder)$(county_2013).zip: 
 	curl http://www2.census.gov/geo/tiger/GENZ2013/cb_2013_us_county_500k.zip \
 		-o $(zipped_folder)$(county_2013).zip
@@ -48,6 +58,10 @@ $(zipped_folder)$(county_2014).zip:
 	rm $(unzipped_folder)$(county_2014)/*.zip
 
 county_boundaries: $(zipped_folder)$(county_2013).zip $(zipped_folder)$(county_2014).zip
+
+#######################
+# STATE BOUNDARY DATA #
+#######################
 
 $(zipped_folder)$(state_2013).zip:
 	curl http://www2.census.gov/geo/tiger/GENZ2013/cb_2013_us_state_500k.zip \
@@ -71,6 +85,10 @@ $(zipped_folder)$(state_2014).zip:
 
 state_boundaries: $(zipped_folder)$(state_2013).zip $(zipped_folder)$(state_2014).zip 
 
+########################
+# REGION BOUNDARY DATA #
+########################
+
 $(zipped_folder)$(region_2013).zip:
 	curl http://www2.census.gov/geo/tiger/GENZ2013/cb_2013_us_region_500k.zip \
 		-o $(zipped_folder)$(region_2013).zip
@@ -92,6 +110,10 @@ $(zipped_folder)$(region_2014).zip:
 	rm $(unzipped_folder)$(region_2014)/*.zip
 
 region_boundaries: $(zipped_folder)$(region_2013).zip $(zipped_folder)$(region_2014).zip
+
+#############################
+# URBAN AREAS BOUNDARY DATA #
+#############################
 
 $(zipped_folder)$(urban_areas_2013).zip:
 	curl http://www2.census.gov/geo/tiger/GENZ2013/cb_2013_us_ua10_500k.zip \
@@ -117,6 +139,10 @@ $(zipped_folder)$(urban_areas_2014).zip:
 
 urban_area_boundaries: $(zipped_folder)$(urban_areas_2013).zip \
 						$(zipped_folder)$(urban_areas_2014).zip
+
+#################################
+# FIRE PERIMETERS BOUNDARY DATA #
+#################################
 
 $(zipped_folder)$(fire_perimeters_2012).zip: 
 	curl http://rmgsc.cr.usgs.gov/outgoing/GeoMAC/historic_fire_data/2012_perimeters_dd83.zip \
@@ -167,6 +193,14 @@ fire_perimeter_boundaries: $(zipped_folder)$(fire_perimeters_2012).zip \
 							$(zipped_folder)$(fire_perimeters_2014).zip \
 							$(zipped_folder)$(fire_perimeters_2015).zip
 
+#######################
+# DETECTED FIRES DATA #
+#######################
+
+#########
+# MODIS #
+#########
+
 $(zipped_folder)$(detected_fires_MODIS_2012).zip: 
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2012_366_conus_shapefile.zip \
 		-o $(zipped_folder)$(detected_fires_MODIS_2012).zip
@@ -216,8 +250,63 @@ detected_fires_MODIS: $(zipped_folder)$(detected_fires_MODIS_2012).zip \
 				$(zipped_folder)$(detected_fires_MODIS_2014).zip \
 				$(zipped_folder)$(detected_fires_MODIS_2015).zip
 
+#########
+# VIIRS #
+#########
+
+$(zipped_folder)$(detected_fires_VIIRS_2012).zip: 
+	curl http://activefiremaps.fs.fed.us/data_viirs/fireptdata/viirs_fire_2012_366_conus_shapefile.zip \
+		-o $(zipped_folder)$(detected_fires_VIIRS_2012).zip
+
+	cp $(zipped_folder)$(detected_fires_VIIRS_2012).zip $(unzipped_folder)$(detected_fires_VIIRS_2012)/
+
+	unzip $(unzipped_folder)$(detected_fires_VIIRS_2012)/2012.zip \
+		-d $(unzipped_folder)$(detected_fires_VIIRS_2012)/
+
+	rm $(unzipped_folder)$(detected_fires_VIIRS_2012)/*.zip
+
+$(zipped_folder)$(detected_fires_VIIRS_2013).zip: 
+	curl http://activefiremaps.fs.fed.us/data_viirs/fireptdata/viirs_fire_2013_365_conus_shapefile.zip \
+		-o $(zipped_folder)$(detected_fires_VIIRS_2013).zip
+
+	cp $(zipped_folder)$(detected_fires_VIIRS_2013).zip $(unzipped_folder)$(detected_fires_VIIRS_2013)/
+
+	unzip $(unzipped_folder)$(detected_fires_VIIRS_2013)/2013.zip \
+		-d $(unzipped_folder)$(detected_fires_VIIRS_2013)/
+
+	rm $(unzipped_folder)$(detected_fires_VIIRS_2013)/*.zip
+
+$(zipped_folder)$(detected_fires_VIIRS_2014).zip: 
+	curl http://activefiremaps.fs.fed.us/data_viirs/fireptdata/viirs-af_fire_2014_365_conus_shapefile.zip \
+		-o $(zipped_folder)$(detected_fires_VIIRS_2014).zip
+
+	cp $(zipped_folder)$(detected_fires_VIIRS_2014).zip $(unzipped_folder)$(detected_fires_VIIRS_2014)/
+
+	unzip $(unzipped_folder)$(detected_fires_VIIRS_2014)/2014.zip \
+		-d $(unzipped_folder)$(detected_fires_VIIRS_2014)/
+
+	rm $(unzipped_folder)$(detected_fires_VIIRS_2014)/*.zip
+
+$(zipped_folder)$(detected_fires_VIIRS_2015).zip: 
+	curl http://activefiremaps.fs.fed.us/data_viirs/fireptdata/viirs-af_fire_2015_365_conus_shapefile.zip \
+		-o $(zipped_folder)$(detected_fires_VIIRS_2015).zip
+
+	cp $(zipped_folder)$(detected_fires_VIIRS_2015).zip $(unzipped_folder)$(detected_fires_VIIRS_2015)/
+
+	unzip $(unzipped_folder)$(detected_fires_VIIRS_2015)/2015.zip \
+		-d $(unzipped_folder)$(detected_fires_VIIRS_2015)/
+
+	rm $(unzipped_folder)$(detected_fires_VIIRS_2015)/*.zip
+
+detected_fires_VIIRS: $(zipped_folder)$(detected_fires_VIIRS_2012).zip \
+				$(zipped_folder)$(detected_fires_VIIRS_2013).zip \
+				$(zipped_folder)$(detected_fires_VIIRS_2014).zip \
+				$(zipped_folder)$(detected_fires_VIIRS_2015).zip
+
+
 get_data: .data_folder_structure_sentinel county_boundaries state_boundaries region_boundaries \
-			 urban_area_boundaries fire_perimeter_boundaries detected_fires_MODIS
+			 urban_area_boundaries fire_perimeter_boundaries detected_fires_MODIS \
+			 detected_fires_VIIRS
 
 .data_prep_sentinel: 
 	bash code/data_setup/manage_psql_dts.sh -c
