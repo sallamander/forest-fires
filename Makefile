@@ -22,10 +22,10 @@ fire_perimeters_2013=boundary_files/fire_perimeters/2013
 fire_perimeters_2014=boundary_files/fire_perimeters/2014
 fire_perimeters_2015=boundary_files/fire_perimeters/2015
 
-detected_fires_2012=detected_fires/MODIS/2012
-detected_fires_2013=detected_fires/MODIS/2013
-detected_fires_2014=detected_fires/MODIS/2014
-detected_fires_2015=detected_fires/MODIS/2015
+detected_fires_MODIS_2012=detected_fires/MODIS/2012
+detected_fires_MODIS_2013=detected_fires/MODIS/2013
+detected_fires_MODIS_2014=detected_fires/MODIS/2014
+detected_fires_MODIS_2015=detected_fires/MODIS/2015
 
 $(zipped_folder)$(county_2013).zip: 
 	curl http://www2.census.gov/geo/tiger/GENZ2013/cb_2013_us_county_500k.zip \
@@ -167,57 +167,57 @@ fire_perimeter_boundaries: $(zipped_folder)$(fire_perimeters_2012).zip \
 							$(zipped_folder)$(fire_perimeters_2014).zip \
 							$(zipped_folder)$(fire_perimeters_2015).zip
 
-$(zipped_folder)$(detected_fires_2012).zip: 
+$(zipped_folder)$(detected_fires_MODIS_2012).zip: 
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2012_366_conus_shapefile.zip \
-		-o $(zipped_folder)$(detected_fires_2012).zip
+		-o $(zipped_folder)$(detected_fires_MODIS_2012).zip
 
-	cp $(zipped_folder)$(detected_fires_2012).zip $(unzipped_folder)$(detected_fires_2012)/
+	cp $(zipped_folder)$(detected_fires_MODIS_2012).zip $(unzipped_folder)$(detected_fires_2012)/
 
-	unzip $(unzipped_folder)$(detected_fires_2012)/2012.zip \
-		-d $(unzipped_folder)$(detected_fires_2012)/
+	unzip $(unzipped_folder)$(detected_fires_MODIS_2012)/2012.zip \
+		-d $(unzipped_folder)$(detected_fires_MODIS_2012)/
 
-	rm $(unzipped_folder)$(detected_fires_2012)/*.zip
+	rm $(unzipped_folder)$(detected_fires_MODIS_2012)/*.zip
 
-$(zipped_folder)$(detected_fires_2013).zip: 
+$(zipped_folder)$(detected_fires_MODIS_2013).zip: 
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2013_365_conus_shapefile.zip \
-		-o $(zipped_folder)$(detected_fires_2013).zip
+		-o $(zipped_folder)$(detected_fires_MODIS_2013).zip
 
-	cp $(zipped_folder)$(detected_fires_2013).zip $(unzipped_folder)$(detected_fires_2013)/
+	cp $(zipped_folder)$(detected_fires_MODIS_2013).zip $(unzipped_folder)$(detected_fires_2013)/
 
-	unzip $(unzipped_folder)$(detected_fires_2013)/2013.zip \
-		-d $(unzipped_folder)$(detected_fires_2013)/
+	unzip $(unzipped_folder)$(detected_fires_MODIS_2013)/2013.zip \
+		-d $(unzipped_folder)$(detected_fires_MODIS_2013)/
 
-	rm $(unzipped_folder)$(detected_fires_2013)/*.zip
+	rm $(unzipped_folder)$(detected_fires_MODIS_2013)/*.zip
 
-$(zipped_folder)$(detected_fires_2014).zip: 
+$(zipped_folder)$(detected_fires_MODIS_2014).zip: 
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2014_365_conus_shapefile.zip \
-		-o $(zipped_folder)$(detected_fires_2014).zip
+		-o $(zipped_folder)$(detected_fires_MODIS_2014).zip
 
-	cp $(zipped_folder)$(detected_fires_2014).zip $(unzipped_folder)$(detected_fires_2014)/
+	cp $(zipped_folder)$(detected_fires_MODIS_2014).zip $(unzipped_folder)$(detected_fires_2014)/
 
-	unzip $(unzipped_folder)$(detected_fires_2014)/2014.zip \
-		-d $(unzipped_folder)$(detected_fires_2014)/
+	unzip $(unzipped_folder)$(detected_fires_MODIS_2014)/2014.zip \
+		-d $(unzipped_folder)$(detected_fires_MODIS_2014)/
 
-	rm $(unzipped_folder)$(detected_fires_2014)/*.zip
+	rm $(unzipped_folder)$(detected_fires_MODIS_2014)/*.zip
 
-$(zipped_folder)$(detected_fires_2015).zip: 
+$(zipped_folder)$(detected_fires_MODIS_2015).zip: 
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2015_365_conus_shapefile.zip \
-		-o $(zipped_folder)$(detected_fires_2015).zip
+		-o $(zipped_folder)$(detected_fires_MODIS_2015).zip
 
-	cp $(zipped_folder)$(detected_fires_2015).zip $(unzipped_folder)$(detected_fires_2015)/
+	cp $(zipped_folder)$(detected_fires_MODIS_2015).zip $(unzipped_folder)$(detected_fires_2015)/
 
-	unzip $(unzipped_folder)$(detected_fires_2015)/2015.zip \
-		-d $(unzipped_folder)$(detected_fires_2015)/
+	unzip $(unzipped_folder)$(detected_fires_MODIS_2015)/2015.zip \
+		-d $(unzipped_folder)$(detected_fires_MODIS_2015)/
 
-	rm $(unzipped_folder)$(detected_fires_2015)/*.zip
+	rm $(unzipped_folder)$(detected_fires_MODIS_2015)/*.zip
 
-detected_fires: $(zipped_folder)$(detected_fires_2012).zip \
-				$(zipped_folder)$(detected_fires_2013).zip \
-				$(zipped_folder)$(detected_fires_2014).zip \
-				$(zipped_folder)$(detected_fires_2015).zip
+detected_fires_MODIS: $(zipped_folder)$(detected_fires_MODIS_2012).zip \
+				$(zipped_folder)$(detected_fires_MODIS_2013).zip \
+				$(zipped_folder)$(detected_fires_MODIS_2014).zip \
+				$(zipped_folder)$(detected_fires_MODIS_2015).zip
 
 get_data: .data_folder_structure_sentinel county_boundaries state_boundaries region_boundaries \
-			 urban_area_boundaries fire_perimeter_boundaries detected_fires 
+			 urban_area_boundaries fire_perimeter_boundaries detected_fires_MODIS
 
 .data_prep_sentinel: 
 	bash code/data_setup/manage_psql_dts.sh -c
