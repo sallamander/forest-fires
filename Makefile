@@ -171,7 +171,7 @@ $(zipped_folder)$(detected_fires_MODIS_2012).zip:
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2012_366_conus_shapefile.zip \
 		-o $(zipped_folder)$(detected_fires_MODIS_2012).zip
 
-	cp $(zipped_folder)$(detected_fires_MODIS_2012).zip $(unzipped_folder)$(detected_fires_2012)/
+	cp $(zipped_folder)$(detected_fires_MODIS_2012).zip $(unzipped_folder)$(detected_fires_MODIS_2012)/
 
 	unzip $(unzipped_folder)$(detected_fires_MODIS_2012)/2012.zip \
 		-d $(unzipped_folder)$(detected_fires_MODIS_2012)/
@@ -182,7 +182,7 @@ $(zipped_folder)$(detected_fires_MODIS_2013).zip:
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2013_365_conus_shapefile.zip \
 		-o $(zipped_folder)$(detected_fires_MODIS_2013).zip
 
-	cp $(zipped_folder)$(detected_fires_MODIS_2013).zip $(unzipped_folder)$(detected_fires_2013)/
+	cp $(zipped_folder)$(detected_fires_MODIS_2013).zip $(unzipped_folder)$(detected_fires_MODIS_2013)/
 
 	unzip $(unzipped_folder)$(detected_fires_MODIS_2013)/2013.zip \
 		-d $(unzipped_folder)$(detected_fires_MODIS_2013)/
@@ -193,7 +193,7 @@ $(zipped_folder)$(detected_fires_MODIS_2014).zip:
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2014_365_conus_shapefile.zip \
 		-o $(zipped_folder)$(detected_fires_MODIS_2014).zip
 
-	cp $(zipped_folder)$(detected_fires_MODIS_2014).zip $(unzipped_folder)$(detected_fires_2014)/
+	cp $(zipped_folder)$(detected_fires_MODIS_2014).zip $(unzipped_folder)$(detected_fires_MODIS_2014)/
 
 	unzip $(unzipped_folder)$(detected_fires_MODIS_2014)/2014.zip \
 		-d $(unzipped_folder)$(detected_fires_MODIS_2014)/
@@ -204,7 +204,7 @@ $(zipped_folder)$(detected_fires_MODIS_2015).zip:
 	curl http://activefiremaps.fs.fed.us/data/fireptdata/modis_fire_2015_365_conus_shapefile.zip \
 		-o $(zipped_folder)$(detected_fires_MODIS_2015).zip
 
-	cp $(zipped_folder)$(detected_fires_MODIS_2015).zip $(unzipped_folder)$(detected_fires_2015)/
+	cp $(zipped_folder)$(detected_fires_MODIS_2015).zip $(unzipped_folder)$(detected_fires_MODIS_2015)/
 
 	unzip $(unzipped_folder)$(detected_fires_MODIS_2015)/2015.zip \
 		-d $(unzipped_folder)$(detected_fires_MODIS_2015)/

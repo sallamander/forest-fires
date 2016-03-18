@@ -5,6 +5,7 @@
 *sentinel
 .ipynb*
 *.ipynb_checkpoints
+*code/eda-viz/.ipynb_checkpoints
 *code/eda-viz/in_proj/dsfuncs
 data/csvs*
 data/jsons*
