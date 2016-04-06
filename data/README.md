@@ -1,6 +1,6 @@
 ## The Data
 
-The data used for this project is all publicly available. At this point, I am using three subgroups of data: 
+The data used for this project is all publicly available. At this point, I am only pulling data from the following three sources: 
 
 1.) [Fire detection data](http://firemapper.sc.egov.usda.gov/gisdata.php)  
 2.) [State, County, Region, and Urban Area shapfiles](https://www.census.gov/geo/maps-data/data/tiger-cart-boundary.html)  
@@ -12,6 +12,5 @@ The data used for this project is all publicly available. At this point, I am us
 
 2.) The state, county, region, and urban area shapefiles contain the boundaries for each of those respective geographic types. As of right now, the census has these files for 1990, 2000, 2010, 2013, and 2014. I'm currently looking at only 2012-2015 data, and will be using the 2014 geographic boundary shapefiles for 2015, and 2013 geographic boundary shapefiles for 2012. 
       
-3.) Each state is required to report forest fire perimeter boundaries each day, which is what the fire perimeter boundary files contain. They also contain other information relating to those fires, such as fire name, the date, the number of acres burned thus far, etc. At this point, I am simply using these fire perimeter boundaries to determine if the latitude/longitude coordinates of a detected fire (from data source (1)) fall within a fire perimeter. If they do, 
-then I know this detected fire is a forest fire, and otherwise it is not. 
+3.) A sizeable number of states report forest fire perimeter boundaries each day, which is what the fire perimeter boundary files contain. They also contain other information relating to those fires, such as the fire name, date, number of acres burned thus far, etc. At this point, I am simply using these fire perimeter boundaries to determine if the latitude/longitude coordinates of a detected fire (from data source (1)) fall within a fire perimeter. If they do, then I know this detected fire is a forest fire. If they don't, I can't be certain it's not a forest-fire. This is because there are varying levels of both participation and accuracy in the submitting of forest-fire perimeter boundaries (this is discussed/shown in more detail in the `code/eda-viz/in_proj` folder, accessible from the main folder of this repository).  
 
