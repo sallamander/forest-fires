@@ -1,20 +1,33 @@
+"""A module used to drive the feature engineering/data processing process. 
+
+This module drives the feature engineering/data processing process 
+by calling other functions from other modules. It's only function is 
+one that is simply used to load in all the data before performing
+feature engineering/data processing. 
+"""
+
 import pandas as pd
 import sys
 import pickle
-import time
 from general_featurization import return_all_dummies, create_new_col
 from time_featurization import add_date_column
 from geo_featurization import gen_nearby_fires_count
 
 def get_df(year): 
-    '''
-    Input: Integer
-    Output: Pandas Dataframe 
+    """Read a year of data into a Dataframe and return it. 
 
-    For the given year, read in the detected fires csv to a pandas dataframe, 
-    and output it. This function was written just to make the code a little more 
-    readable.
-    '''
+    For the given year, read in the detected fires csv to 
+    a pandas dataframe, and output it. This function was 
+    written just to make the code a little more readable.
+
+    Args: 
+    ----
+        year: int
+    
+    Return: 
+    ------
+        df: Pandas Dataframe
+    """
 
     filepath = 'data/csvs/detected_fires_' + str(year) + '.csv'
     df = pd.read_csv(filepath, true_values = ['t'], false_values=['f'], index_col=False)
