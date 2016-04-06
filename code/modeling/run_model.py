@@ -15,7 +15,7 @@ from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import SGD, RMSprop
 from keras.utils import np_utils
 
-def get_train_test(df, date_col, days_back): 
+def get_train_test(df, date_col, test_date): 
     '''
     Input: Pandas DataFrame, String, Integer
     Output: Pandas DataFrame, Pandas DataFrame
@@ -25,11 +25,15 @@ def get_train_test(df, date_col, days_back):
     All rows with a date prior to that split point are train and all rows 
     with a date after that split point are test. 
     '''
-
-    max_date = df[date_col].max()
-    split_point = max_date - timedelta(days=days_back)
-    test_mask = df[date_col] >= split_point
-    train, test = df.ix[~test_mask, :], df.ix[test_mask, :]
+    
+    # In the case that we are putting in a test_date for training, we 
+    # want to make sure to only grab that day (and not days that are greater
+    # than it, which will be present in training). 
+    max_test_date = test_date + timedelta(days=1)
+    test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
+        df[date_col] < max_test_date))[0]
+    train_mask = np.where(df[date_col] < test_date)[0]
+    train, test = df.ix[train_mask, :], df.ix[test_mask, :]
 
     return train, test
 
@@ -216,7 +220,6 @@ def log_results(model_name, train, fitted_model, scores, best_roc_auc, run_time)
         f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
         f.write('Run time: ' + str(run_time) + '\n' * 2)
 
-
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
     # random forest, etc.), and sys.argv[2] will hold our input dataframe 
@@ -228,20 +231,35 @@ if __name__ == '__main__':
         keep_columns = pickle.load(f)
 
     input_df = base_input_df[keep_columns]
-    train, test = get_train_test(input_df, 'date_fire', 14) 
+    if len(sys.argv) == 4: 
+        # If this is 4, I'm expecting that a date was passed in that we want
+        # to use for the day of our test set (i.e. the days fires that we are 
+        # predicting). Otherwise, we'll use the most recent date in our df. 
+        date_parts = sys.argv[4].split('-')
+        test_set_date = datetime(date_parts[0], date_parts[1], date_parts[2],
+                0, 0, 0)
+    else: 
+        test_set_timestamp = input_df['date_fire'].max()
+        test_set_date = datetime(test_set_timestamp.year, 
+                test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
+    train, test = get_train_test(input_df, 'date_fire', test_set_date)
 
     if model_name == 'neural_net': 
         train = normalize_df(train)
         test = normalize_df(test)
 
-    
+        
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
-    train_dates = train['date_fire']
-    date_step_size = timedelta(days=14)
-    init_split_point = datetime(2013, 1, 1, 0, 0, 0)
-    cv_fold_generator = SequentialTimeFold(train_dates, date_step_size, init_split_point)
+    date_step_size = timedelta(days=1)
+    '''
+    cv_fold_generator = SequentialTimeFold(train, date_step_size, 20, 
+            test_set_date)
+    '''
+    cv_fold_generator = StratifiedTimeFold(train, date_step_size, 20, 
+            test_set_date, 14)
     
+    '''
     train = prep_data(train)
     test = prep_data(test)
     start = time.time()
@@ -253,5 +271,4 @@ if __name__ == '__main__':
     scores = return_scores(test.fire_bool, preds, preds_probs)
     log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
             run_time)
-
-
+    '''
