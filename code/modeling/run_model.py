@@ -220,7 +220,6 @@ def log_results(model_name, train, fitted_model, scores, best_roc_auc, run_time)
         f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
         f.write('Run time: ' + str(run_time) + '\n' * 2)
 
-
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
     # random forest, etc.), and sys.argv[2] will hold our input dataframe 

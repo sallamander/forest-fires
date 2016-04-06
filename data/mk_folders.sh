@@ -1,7 +1,11 @@
 #!/bin/bash
 
 in_boundary_files=( county fire_perimeters region state urban_areas )
+<<<<<<< HEAD
 in_detected_fires=( MODIS )
+=======
+in_detected_fires=( MODIS VIIRS )
+>>>>>>> master
 fire_tbl_years=( 2012 2013 2014 2015 ) 
 boundary_tbl_years=( 2013 2014 )
 
