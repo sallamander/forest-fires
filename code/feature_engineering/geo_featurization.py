@@ -87,9 +87,9 @@ def gen_nearby_fires_count(df, kwargs):
                                 dist_measure, time_measure, lat_idx, long_idx, 
                                 date_idx, date_pctile_idx)
         nearby_count_dicts = pool.map(execute_query, 
-                                    multiprocessing_df.values) 
+                multiprocessing_df.values) 
         pool.close()
-        df = merge_results(df, nearby_count_dict)
+        df = _merge_results(df, nearby_count_dicts)
 
     return df
 
@@ -132,8 +132,8 @@ def _prep_multiprocessing(df):
 
     multiprocessing_df = df.drop_duplicates(['lat', 'long', 'date_fire'])
     multiprocessing_df = multiprocessing_df.reset_index(drop=True)
-    multiprocessing_df, dt_percentiles_df_dict =     
-        _handle_date_percentiles(multiprocessing_df)
+    multiprocessing_df, dt_percentiles_df_dict = \
+            _handle_date_percentiles(multiprocessing_df)
 
     return multiprocessing_df, dt_percentiles_df_dict 
 
@@ -242,7 +242,7 @@ def _setup_pctiles_df_dct(df, n_quantiles, new_col_name):
 
     return dt_percentiles_df_dict
 
-def grab_col_indices(df, col_list):
+def _grab_col_indices(df, col_list):
     """Output a tuple of the column indices for the inputted column names. 
 
     This is a helper function called from `gen_nearby_fires_count`. It 
@@ -331,18 +331,17 @@ def query_for_nearby_fires(dt_percentiles_df_dict, dist_measure, time_measure,
     nearby_fires_query = '''lat >= @lat_min and lat <= @lat_max and long >= @long_min and long <= @long_max and date_fire >= @date_min and date_fire < @date_max and fire_bool == True'''
     all_nearby_count += percentile_df.query(all_nearby_query).shape[0]
     nearby_fires_count += percentile_df.query(nearby_fires_query).shape[0]
+   
+    # If we're doing 1-7 days, we're going to query the date percentile that 
+    # the given row is in, as well as the above and below. If we're going 
+    # more days back, it'll be years back, and we'll want to add in all 
+    # percentiles below (not just the one directly below). 
+    min_dt_percentile = 1 if time_measure > 7 else \
+        max(row_dt_percentile - 1, 1)
+    max_dt_percentile = min(100, row_dt_percentile + 1) 
     
-    # We're going to query the date percentile of the dataframe that the given row
-    # is in, along with the one below and one above (this will ensure we don't 
-    # miss any data points). 
-    row_dt_percentile -=1
-    if row_dt_percentile > 0: 
-        percentile_df = dt_percentiles_df_dict[row_dt_percentile]
-        all_nearby_count += percentile_df.query(all_nearby_query).shape[0]
-        nearby_fires_count += percentile_df.query(nearby_fires_query).shape[0]
-    row_dt_percentile += 2
-    if row_dt_percentile < 101: 
-        percentile_df = dt_percentiles_df_dict[row_dt_percentile]
+    for pctile in range(min_dt_percentile, max_dt_percentile + 1): 
+        percentile_df = dt_percentiles_df_dict[pctile]
         all_nearby_count += percentile_df.query(all_nearby_query).shape[0]
         nearby_fires_count += percentile_df.query(nearby_fires_query).shape[0]
 
@@ -437,7 +436,7 @@ def _merge_results(df, nearby_count_dicts):
         df: Pandas DataFrame
     """
 
-    nearby_fires_df = pd.DataFrame(nearby_count_dict)
+    nearby_fires_df = pd.DataFrame(nearby_count_dicts)
     nearby_fires_df = nearby_fires_df.drop_duplicates()
     df = pd.merge(df, nearby_fires_df, how='inner', on=['lat', 'long', 'date_fire'])
 

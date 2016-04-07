@@ -29,7 +29,7 @@ def get_df(year):
         df: Pandas Dataframe
     """
 
-    filepath = 'data/csvs/detected_fires_' + str(year) + '.csv'
+    filepath = 'data/csvs/detected_fires_MODIS_' + str(year) + '.csv'
     df = pd.read_csv(filepath, true_values = ['t'], false_values=['f'], index_col=False)
 
     return df
