@@ -1,0 +1,12 @@
+.navbar {
+    margin: 2.5em 1.75em 0.75em 1.25em;
+    border-bottom: 1px solid rgb(210, 210, 210); 
+}
+
+.center {
+    text-align: center; 
+}
+
+.lead {
+    margin: 1em 0 0 0; 
+}

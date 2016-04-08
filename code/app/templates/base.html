@@ -1,0 +1,28 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Early Detection{% endblock %}
+
+{% block head %}
+{{ super() }}
+    <link rel="stylesheet" type="text/css" 
+        href="{{ url_for('static', filename='css/app.css') }}">
+{% endblock %}
+
+{% block navbar %}
+    <div class="row"> 
+        <div class="container col-md-3"></div>
+        <div class="container col-md-6">
+            <nav class="navbar">
+                <h1 class="text-muted center">An Early Detection 
+                    <br> Model for Forest-Fires</h1>
+            </nav>
+        </div>
+        <div class="container col-md-3"></div>
+    </div>
+{% endblock %}
+
+{% block content %}
+        {% block page_content %}{% endblock %}
+{% endblock %}
+
+

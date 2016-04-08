@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <div class="container col-md-2"></div>
+    <div class="container col-md-8 lead">
+        <p class="center"> Hundreds of forest fires burned over 9 million acres of land in 2015, causing millions of dollars in property damage and immeasureable loss and pain to those families effected. Currently, satellite imagery of detected fires is not used in real-time to aid in forest fire protection. What if we <em>could</em> use that satellite imagery to aid in forest fire protection?</p>
+        <p class="center"> It turns out that each day, there are hundreds of satellite images from NASA's AQUA and TERRA satellites that are run through the University of Maryland (UMD) active fire product. The output of this active fire product is a data set that holds hundreds of 'detected fires' at given latitude/longitude coordinates. Currently, this detected fires data set is not used in real-time for forest fire prevention. A major reason could be that we have no way to tease out which of the detected fires are actually forest fires. </p>
+        <p class="center"> To identify which observations are forest fires, though, we can filter the detected fires dataset through forest-fire perimeter boundaries that states submit at the end of each day. Then, we can use this filtered data set to build a model that will do this for us, in real-time. That's the aim of this project. </p> 
+    </div>
+    <div class="container col-md-2"></div>
+{% endblock %}
