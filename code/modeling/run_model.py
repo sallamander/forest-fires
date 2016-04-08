@@ -14,6 +14,7 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import SGD, RMSprop
 from keras.utils import np_utils
+from preprocessing import normalize_df, prep_data, get_target_features
 
 def get_train_test(df, date_col, test_date): 
     '''
@@ -36,35 +37,6 @@ def get_train_test(df, date_col, test_date):
     train, test = df.ix[train_mask, :], df.ix[test_mask, :]
 
     return train, test
-
-def normalize_df(input_df): 
-    '''
-    Input: Pandas DataFrame
-    Output: Pandas DataFrame
-    '''
-
-    input_df2 = input_df.copy()
-    for col in input_df.columns: 
-        if col not in ('fire_bool', 'date_fire'): 
-            input_df2[col] = (input_df[col] - input_df[col].mean()) \
-                / input_df[col].std()
-
-    return input_df2
-
-def prep_data(df): 
-    '''
-    Input: Pandas DataFrame 
-    Output: Pandas DataFrame
-
-    Fill in N/A's and inf. values, and make sure to drop the 'date_fire'
-    column. 
-    '''
-
-    df.fillna(-999, inplace=True)
-    df.replace(np.inf, -999, inplace=True)
-    df.drop('date_fire', inplace=True, axis=1)
-
-    return df
 
 def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator): 
     '''
@@ -149,19 +121,6 @@ def get_grid_params(model_name):
         return {'n_estimators': [250], 
                 'learning_rate': [0.01, 0.05, 0.1], 
                 'min_samples_leaf': [200, 250, 300]}
-
-def get_target_features(df): 
-    '''
-    Input: Pandas DataFrame
-    Output: Numpy Array, Numpy Array
-
-    For the given dataframe, grab the target and features (fire bool versus 
-    all else) and return them. 
-    '''
-
-    target = df.fire_bool
-    features = df.drop('fire_bool', axis=1)
-    return target, features
 
 def fit_neural_net(model, train_data, test_data):  
     '''
