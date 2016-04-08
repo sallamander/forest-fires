@@ -7,14 +7,13 @@ import time
 from scoring import return_scores
 from datetime import timedelta, datetime
 from time_val import SequentialTimeFold, StratifiedTimeFold
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.grid_search import GridSearchCV
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import SGD, RMSprop
 from keras.utils import np_utils
 from preprocessing import normalize_df, prep_data, get_target_features
+from supervised_models import get_model 
 
 def get_train_test(df, date_col, test_date): 
     '''
@@ -59,21 +58,6 @@ def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator):
     grid_search.fit(features, target)
 
     return grid_search.best_estimator_, grid_search.grid_scores_[0][1]
-
-def get_model(model_name, train_data): 
-    '''
-    Input: String, Pandas DataFrame
-    Output: Instantiated Model
-    '''
-    random_seed=24
-    if model_name == 'logit': 
-        return LogisticRegression(random_state=random_seed)
-    elif model_name == 'random_forest': 
-        return RandomForestClassifier(random_state=random_seed, n_jobs=2)
-    elif model_name == 'gradient_boosting': 
-        return GradientBoostingClassifier(random_state=random_seed)
-    elif model_name == 'neural_net': 
-        return get_neural_net(train_data)
 
 def get_neural_net(train_data): 
     '''
