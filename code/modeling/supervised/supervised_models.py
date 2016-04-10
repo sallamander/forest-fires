@@ -6,14 +6,14 @@ sole focus is on supervised models, and it runs the gammit
 of them. 
 """
 
+import numpy as np
 import multiprocessing
 import os
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, 
-    GradientBoostingClassifier 
+    GradientBoostingClassifier, ExtraTreesClassifier 
 
-
-def get_model(model_name, train_data, rand_seed=None): 
+def get_model(model_name, kwargs): 
     """Return an instance of the supervised model to be learned. 
 
     Args: 
@@ -22,11 +22,13 @@ def get_model(model_name, train_data, rand_seed=None):
             Used to determine the model to instantiate. The use 
             of a string allows it to be passed from a command line
             argument (e.g. from `run_model.py`).  
-        train_data: Pandas DataFrame
-            Used in the case that the size of the input data needs 
-            to be known (e.g. fitting a Neural Network). 
-        rand_seed (optional): int
-            Number used to set the random seed. 
+        kwargs (optional): dct
+            A dictionary of optional keyword arguments. The only one 
+            that will be potentially used within this function is a
+            `rand_seed` keyword argument, which will allow for the passing
+            of a number to use as the `random_seed` on the models. 
+            Otherwise, the expected arguments will be passed through to other
+            functions to dictate how to construct the models. 
 
     Return: 
     ------
@@ -38,15 +40,19 @@ def get_model(model_name, train_data, rand_seed=None):
     n_usable_cores = multiprocessing.cpu_count() \
         if os.environ['USER'] != 'sallamander' else 2
 
+    rand_seed = kwargs.get('rand_seed', 24)
+
     if model_name == 'logit': 
-         model = LogisticRegression(random_state=rand_seed)
+        model = LogisticRegression(random_state=rand_seed)
     elif model_name == 'random_forest': 
-         model = RandomForestClassifier(random_state=rand_seed, 
+        model = RandomForestClassifier(random_state=rand_seed, 
                  n_jobs=n_usable_cores)
     elif model_name == 'gradient_boosting': 
-         model = GradientBoostingClassifier(random_state=rand_seed)
+        model = GradientBoostingClassifier(random_state=rand_seed)
     elif model_name == 'neural_net': 
-         model = get_neural_net(train_data)
+        model = KerasNet(train_data, kwargs)
+    elif model_name == 'extra_trees': 
+        model = ExtraTreesClassifier(random_state=rand_seed)
     else: 
         raise Exception("Invalid model name! Try again...") 
 
