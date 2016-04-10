@@ -3,18 +3,20 @@
 This module exists to help separate out the pieces of the 
 modeling process that occur in the `run_model.py` file. Its
 sole focus is on supervised models, and it runs the gammit 
-of them. 
+of them. For any model that isn't simply instantiated with 
+only it's constructor (e.g. it requires an additional function, 
+object, etc. to be built up), it is stored in another module
+and imported. 
 """
 
-import numpy as np
 import multiprocessing
 import os
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, \
-    GradientBoostingClassifier 
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
+from sklearn.ensemble import GradientBoostingClassifier  
 from keras_net import KerasNet
 
-def get_model(model_name, kwargs): 
+def get_model(model_name, **kwargs): 
     """Return an instance of the supervised model to be learned. 
 
     Args: 
