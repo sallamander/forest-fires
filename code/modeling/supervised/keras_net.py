@@ -9,8 +9,8 @@ it'll be built out in the future.
 
 import numpy as np
 from keras.models import Sequential 
-from keras.layers.core import Dense, Dropout, Activation
-from keras.optimizers import SGD, RMSprop
+from keras.layers.core import Dense, Dropout
+from keras.optimizers import RMSprop
 
 class KerasNet(object): 
     """A wrapper around a neural network built with Keras. 
@@ -114,5 +114,40 @@ class KerasNet(object):
 
         return model 
         
+    def fit(self, X_train, y_train, **kwargs): 
+        """Compile and fit the model. 
+
+        Args: 
+        ----
+            X_train: np.ndarray
+            y_train: np.ndarray
+            **kwargs: dct
+                Optional arguments to pass to the `compile` and 
+                `fit` steps of the model. Potential (and somewhat
+                expected) arguments are the following: 
+
+                loss: str
+                optimizer: str
+                X_test: np.ndarray
+                y_test: np.ndarray
+                nb_epoch: int
+                batch_size: int
+        """
+
+        loss = kwargs.pop('loss', 'categorical_crossentropy')
+        optimizer = kwargs.pop('optimizer', 'rmsprop')
+
+        self.model.compile(loss=loss, optimizer=optimizer)
+
+        nb_epoch = kwargs.pop('nb_epoch', 10)
+        batch_size = kwargs.pop('batch_size', 256)
+        X_test = kwargs.pop('X_test', None)
+        y_test = kwargs.pop('y_test', None)
+
+        if X_test and y_test: 
+            validation_data = (X_test, y_test)
+
+        model.fit(X_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, 
+                validation_data=validation_data, verbose=1)
         
 

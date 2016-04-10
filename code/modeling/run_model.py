@@ -59,38 +59,6 @@ def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator):
 
     return grid_search.best_estimator_, grid_search.grid_scores_[0][1]
 
-def get_neural_net(train_data): 
-    '''
-    Input: Integer, Pandas DataFrame
-    Output: Instantiated Neural Network model
-
-    Instantiate the neural net model and output it to train with. 
-    '''
-
-    np.random.seed(24)
-    hlayer_1_nodes = 250
-    hlayer_2_nodes = 115
-    hlayer_3_nodes = 100
-    hlayer_4_nodes = 100
-    model = Sequential()
-    
-    input_dim = train_data.shape[1] - 1 
-    model.add(Dense(hlayer_1_nodes, input_dim=input_dim, init='uniform'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.35))
-    model.add(Dense(hlayer_2_nodes, init='uniform'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.35))
-    model.add(Dense(hlayer_3_nodes, init='uniform'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.35))
-    model.add(Dense(2, init='uniform'))
-    model.add(Activation('softmax'))
-
-    model.compile(loss='categorical_crossentropy', optimizer='RMSprop')
-
-    return model
-
 def get_grid_params(model_name): 
     '''
     Input: String
@@ -105,22 +73,6 @@ def get_grid_params(model_name):
         return {'n_estimators': [250], 
                 'learning_rate': [0.01, 0.05, 0.1], 
                 'min_samples_leaf': [200, 250, 300]}
-
-def fit_neural_net(model, train_data, test_data):  
-    '''
-    Input: Instantiated Neural Network, Pandas DataFrame, Pandas DataFrame
-    Output: Fitted model 
-    '''
-
-    np.random.seed(24)
-    train_target, train_features = get_target_features(train_data)
-    test_target, test_features = get_target_features(test_data)
-    train_target = np_utils.to_categorical(train_target, 2) 
-    test_target = np_utils.to_categorical(test_target, 2) 
-    train_features, test_features = train_features.values, test_features.values
-    model.fit(train_features, train_target, batch_size=100, 
-            nb_epoch=10, verbose=1)
-    return model
 
 def predict_with_model(test_data, model): 
     '''
