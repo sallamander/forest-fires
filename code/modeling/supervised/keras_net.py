@@ -11,6 +11,7 @@ import numpy as np
 from keras.models import Sequential 
 from keras.layers.core import Dense, Dropout
 from keras.optimizers import RMSprop
+from keras.callbacks import EarlyStopping
 
 class KerasNet(object): 
     """A wrapper around a neural network built with Keras. 
@@ -132,10 +133,14 @@ class KerasNet(object):
                 y_test: np.ndarray
                 nb_epoch: int
                 batch_size: int
+                early_stopping: int
+                    Holds the "patience" to pass on to the EarlyStopping
+                    object from Keras.callbacks. 
         """
 
         loss = kwargs.pop('loss', 'categorical_crossentropy')
         optimizer = kwargs.pop('optimizer', 'rmsprop')
+        early_stopping = kwargs.pop('early_stopping', False)
 
         self.model.compile(loss=loss, optimizer=optimizer)
 
@@ -147,7 +152,11 @@ class KerasNet(object):
         if X_test and y_test: 
             validation_data = (X_test, y_test)
 
+        if early_stopping: 
+            early_stopper = EarlyStopping(monitor='val_loss', 
+                    patience=early_stopping, verbose=1)
         model.fit(X_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, 
-                validation_data=validation_data, verbose=1)
+                validation_data=validation_data, verbose=1, 
+                callbacks=early_stopper)
         
 

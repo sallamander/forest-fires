@@ -8,10 +8,6 @@ from scoring import return_scores
 from datetime import timedelta, datetime
 from time_val import SequentialTimeFold, StratifiedTimeFold
 from sklearn.grid_search import GridSearchCV
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation
-from keras.optimizers import SGD, RMSprop
-from keras.utils import np_utils
 from preprocessing import normalize_df, prep_data, get_target_features
 from supervised_models import get_model 
 

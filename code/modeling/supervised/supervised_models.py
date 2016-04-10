@@ -10,8 +10,9 @@ import numpy as np
 import multiprocessing
 import os
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, 
-    GradientBoostingClassifier, ExtraTreesClassifier 
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, \
+    GradientBoostingClassifier 
+from keras_net import KerasNet
 
 def get_model(model_name, kwargs): 
     """Return an instance of the supervised model to be learned. 
@@ -47,12 +48,12 @@ def get_model(model_name, kwargs):
     elif model_name == 'random_forest': 
         model = RandomForestClassifier(random_state=rand_seed, 
                  n_jobs=n_usable_cores)
+    elif model_name == 'extra_trees': 
+        model = ExtraTreesClassifier(random_state=rand_seed)
     elif model_name == 'gradient_boosting': 
         model = GradientBoostingClassifier(random_state=rand_seed)
     elif model_name == 'neural_net': 
-        model = KerasNet(train_data, kwargs)
-    elif model_name == 'extra_trees': 
-        model = ExtraTreesClassifier(random_state=rand_seed)
+        model = KerasNet(kwargs)
     else: 
         raise Exception("Invalid model name! Try again...") 
 
