@@ -12,23 +12,37 @@ from preprocessing import normalize_df, prep_data, get_target_features
 from supervised_models import get_model 
 
 def get_train_test(df, date_col, test_date): 
-    '''
-    Input: Pandas DataFrame, String, Integer
-    Output: Pandas DataFrame, Pandas DataFrame
+    """Return a train/test split based off the inputted test_date
 
-    For the inputted DataFrame, take the max date (from the date_col), go 
-    back days_back, and then split into train and test at that point. 
-    All rows with a date prior to that split point are train and all rows 
-    with a date after that split point are test. 
-    '''
-    
+    For the inputted DataFrame, break it into a train/test split, 
+    where the train is all those rows prior to the test_date, and 
+    the test is all the rows that fall on that day. 
+
+    Args: 
+    ----
+        df: Pandas DataFrame
+        date_col: str
+            Holds the name of the date column in the `df` that 
+            the train/test split will be made on. 
+        test_date: datime.datime
+
+    Return: 
+    ------
+        train: Pandas DataFrame
+        test: Pandas DataFrame
+    """
+
     # In the case that we are putting in a test_date for training, we 
     # want to make sure to only grab that day (and not days that are greater
     # than it, which will be present in training). 
     max_test_date = test_date + timedelta(days=1)
+
+    # We're only going to go back 14 days to perform CV over. 
+    min_train_date = test_date - timedelta(days=14)
     test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
         df[date_col] < max_test_date))[0]
-    train_mask = np.where(df[date_col] < test_date)[0]
+    train_mask = np.where(np.logical_and(df[date_col] < test_date, 
+        df[date_col] >= min_train_date))
     train, test = df.ix[train_mask, :], df.ix[test_mask, :]
 
     return train, test
@@ -128,14 +142,9 @@ if __name__ == '__main__':
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
     date_step_size = timedelta(days=1)
-    '''
     cv_fold_generator = SequentialTimeFold(train, date_step_size, 20, 
             test_set_date)
-    '''
-    cv_fold_generator = StratifiedTimeFold(train, date_step_size, 20, 
-            test_set_date, 14)
     
-    '''
     train = prep_data(train)
     test = prep_data(test)
     start = time.time()
@@ -147,4 +156,3 @@ if __name__ == '__main__':
     scores = return_scores(test.fire_bool, preds, preds_probs)
     log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
             run_time)
-    '''
