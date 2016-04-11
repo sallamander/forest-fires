@@ -136,7 +136,9 @@ if __name__ == '__main__':
                 test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
     train, test = get_train_test(input_df, 'date_fire', test_set_date)
 
-    if model_name == 'neural_net': 
+    # sklearn logit uses regularization by default, so it'd be best 
+    # to scale the variables in that case as well. 
+    if model_name == 'neural_net' or model_name == 'logit': 
         train = normalize_df(train)
         test = normalize_df(test)
 
