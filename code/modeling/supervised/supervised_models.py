@@ -14,6 +14,7 @@ import os
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from sklearn.ensemble import GradientBoostingClassifier  
+from xgboost.sklearn import XGBClassifier
 from keras_net import KerasNet
 
 def get_model(model_name, **kwargs): 
@@ -56,6 +57,8 @@ def get_model(model_name, **kwargs):
         model = GradientBoostingClassifier(random_state=rand_seed)
     elif model_name == 'neural_net': 
         model = KerasNet(kwargs)
+    elif model_name == 'xgboost': 
+        model = XGBClassifier(seed=rand_seed)
     else: 
         raise Exception("Invalid model name! Try again...") 
 
