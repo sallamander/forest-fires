@@ -8,7 +8,8 @@ from scoring import return_scores
 from datetime import timedelta, datetime
 from time_val import SequentialTimeFold, StratifiedTimeFold
 from sklearn.grid_search import GridSearchCV
-from preprocessing import normalize_df, prep_data, get_target_features
+from preprocessing import normalize_df, prep_data, \
+        get_target_features, alter_nearby_fires_cols 
 from supervised_models import get_model 
 
 def get_train_test(df, date_col, test_date): 
@@ -121,6 +122,7 @@ if __name__ == '__main__':
         keep_columns = pickle.load(f)
 
     input_df = base_input_df[keep_columns]
+    input_df = alter_nearby_fires_cols(input_df)
     if len(sys.argv) == 4: 
         # If this is 4, I'm expecting that a date was passed in that we want
         # to use for the day of our test set (i.e. the days fires that we are 
