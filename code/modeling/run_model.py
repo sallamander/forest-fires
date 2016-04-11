@@ -55,21 +55,6 @@ def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator):
 
     return grid_search.best_estimator_, grid_search.grid_scores_[0][1]
 
-def get_grid_params(model_name): 
-    '''
-    Input: String
-    Output: Dictionary
-    '''
-    if model_name == 'logit': 
-        return {'penalty': ['l2'], 'C': [0.05, 0.1, 0.15]}
-    elif model_name == 'random_forest': 
-        return {'n_estimators': [800, 1000, 1200], 
-                'max_depth': [10, 15, 20]}
-    elif model_name == 'gradient_boosting': 
-        return {'n_estimators': [250], 
-                'learning_rate': [0.01, 0.05, 0.1], 
-                'min_samples_leaf': [200, 250, 300]}
-
 def predict_with_model(test_data, model): 
     '''
     Input: Pandas DataFrame, Fitted Model
