@@ -49,8 +49,31 @@ def get_train_test(df, date_col, test_date):
     return train, test
 
 def get_model_args(model_name): 
-    """Return the dictionary holding the kwargs passed to get_model."""
-    pass
+    """Return the dictionary holding the kwargs passed to get_model.
+
+    For the time being, this really just holds the args controlling the 
+    fitting of the KerasNet (`supervised.keras_net.py`). 
+
+    Args: 
+    ----
+        model_name: str
+
+    Return: 
+    ------
+        model_kwargs: dct 
+            Holds what kwargs to pass when instantiating the 
+            inputted model type. 
+    """
+
+    model_kwargs = {}
+    # This will be used as the random seed for all models. 
+    model_kwargs['rand_seed'] = 24
+
+    if model_kwargs == 'neural_net': 
+        layer_1 = {'num': 1, 'nodes': 128, 'activation': 'relu'}
+        model_kwargs['layer_1'] = layer_1
+
+    return model_kwargs 
 
 def predict_with_model(test_data, model): 
     '''
