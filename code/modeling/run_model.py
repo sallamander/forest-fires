@@ -6,7 +6,8 @@ from scoring import return_score
 from datetime import timedelta, datetime
 from time_val import SequentialTimeFold, StratifiedTimeFold
 from sklearn.grid_search import GridSearchCV
-from preprocessing import normalize_df, prep_data, alter_nearby_fires_cols 
+from preprocessing import normalize_df, prep_data, alter_nearby_fires_cols, 
+    get_target_features
 from supervised_models import get_model 
 from grid_search import sklearn_grid_search, get_grid_params 
 
@@ -168,11 +169,18 @@ if __name__ == '__main__':
     model = get_model(model_name, model_kwargs)
     grid_parameters = get_grid_params(model_name)
 
-    early_stopping_tolerance = 5 if model_name in {'xgboost' or 'gboosting'} \
-            else None
-    best_fit_model, best_score = \
-            sklearn_grid_search(model, grid_parameters, train, 
-            test, cv_fold_generator, early_stopping_tolerance, model_name) 
+    early_stopping_tolerance = 5 if model_name in {'xgboost','gboosting', 
+                'neural_net'} else None
+    if model_name != 'neural_net': 
+        best_fit_model, best_score = \
+                sklearn_grid_search(model, grid_parameters, train, 
+                test, cv_fold_generator, early_stopping_tolerance, model_name) 
+    else: 
+        train_target, train_features = get_target_features(train)
+        test_target, test_features = get_target_features(test)
+        model.fit(train_features, train_target, 
+                early_stopping=early_stopping_tolerance, X_test=test_features, 
+                y_test=test_target))
 
     preds_probs = predict_with_model(test, best_fit_model)
     score = return_score(test.fire_bool, preds_probs)
