@@ -76,23 +76,26 @@ def get_model_args(model_name):
     return model_kwargs 
 
 def predict_with_model(test_data, model): 
-    '''
-    Input: Pandas DataFrame, Fitted Model
-    Output: Numpy Array of Predictions
+    """Make predictions on test data with the inputted model. 
 
-    Using the fitted model, make predictions with the test data and return those predictions. 
-    '''
+    Return the predicted probabilities for the `test_data`, using
+    the inputted `model`. 
 
-    if isinstance(model, keras.models.Sequential): 
-        target, features = get_target_features(test_data)
-        predictions = model.predict(features.values)[:, 1] > 0.50 
-        predicted_probs = model.predict_proba(features.values)
-    else: 
-        target, features = get_target_features(test_data)
-        predictions = model.predict(features)
-        predicted_probs = model.predict_proba(features)
+    Args: 
+    ----
+        test_data: pandas DataFrame
+        model: varied 
+            Holds a fitted, trained model to make predictions with.
 
-    return predictions, predicted_probs
+    Returns: 
+    -------
+        predicted_probs: np.ndarray
+    """
+
+    target, features = get_target_features(test_data)
+    predicted_probs = model.predict_proba(features)
+
+    return predicted_probs
 
 def log_results(model_name, train, fitted_model, scores, best_roc_auc, run_time): 
     '''
@@ -166,7 +169,7 @@ if __name__ == '__main__':
             sklearn_grid_search(model, grid_parameters, train, 
             test, cv_fold_generator, early_stopping_tolerance, model_name) 
 
-    preds, preds_probs = predict_with_model(test, best_fit_model)
+    preds_probs = predict_with_model(test, best_fit_model)
     scores = return_scores(test.fire_bool, preds, preds_probs)
     log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
             run_time)
