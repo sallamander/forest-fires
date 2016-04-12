@@ -5,6 +5,7 @@ files from tables in postgreSQL.
 """
 
 import os
+import pandas as pd
 import psycopg2
 import json 
 
@@ -24,12 +25,11 @@ def output_json(year, geo_type):
 
 
     conn = psycopg2.connect(dbname='forest_fires', user=os.environ['USER'])
-    cursor = conn.cursor()
             
     query = get_json_query(year, geo_type)
     query_df = pd.read_sql(query, conn)
 
-    list_to_export = [add_geo_properties(row, geo_type) for row \
+    list_to_export = [add_geo_properties(row[1]) for row \
             in query_df.iterrows()]
     return list_to_export
 
@@ -70,8 +70,14 @@ def add_geo_properties(row):
 
     Args: 
     ----
-        row: tuple
+        row: pandas Series 
             Each row is returned from the result of a `.iterrows()` call on 
             the pandas DataFrame. 
     """
-    pass
+
+    properties_dict = {}
+    properties_dict['name'] = row['name']
+
+    geo_json = {"type": "Feature", "geometry": json.loads(row['geometry']),  "properties": properties_dict} 
+    
+    return geo_json
