@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% block scripts %}
+{{ super() }}
+    <script src="{{ url_for('static', 
+            filename='scripts/topojson.v1.min.js') }}"></script>
+    <script charset="utf-8" src="{{ url_for('static', filename='scripts/d3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/homepage.js') }}"></script>
+{% endblock %}
+
 {% block page_content %}
     <div class="row">
         <div class="container col-md-1"></div>
@@ -9,8 +17,3 @@
     </div>
 {% endblock %}
 
-{% block scripts %}
-{{ super() }}
-    <script src="{{ url_for('static', filename='scripts/d3.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/homepage.js') }}"></script>
-{% endblock %}
