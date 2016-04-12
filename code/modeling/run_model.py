@@ -2,9 +2,7 @@ import sys
 import pickle
 import pandas as pd
 import numpy as np
-import keras
-import time
-from scoring import return_scores
+from scoring import return_score
 from datetime import timedelta, datetime
 from time_val import SequentialTimeFold, StratifiedTimeFold
 from sklearn.grid_search import GridSearchCV
@@ -170,6 +168,6 @@ if __name__ == '__main__':
             test, cv_fold_generator, early_stopping_tolerance, model_name) 
 
     preds_probs = predict_with_model(test, best_fit_model)
-    scores = return_scores(test.fire_bool, preds, preds_probs)
+    score = return_score(test.fire_bool, preds_probs)
     log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
             run_time)

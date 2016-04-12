@@ -1,8 +1,7 @@
 import numpy as np
 from sklearn.metrics import auc, precision_recall_curve, make_scorer, 
-    accuracy_score, precision_score, roc_auc_score
 
-def return_eval_metric(name): 
+def return_scorer(name): 
     """Return an eval_metric based off of an inputted string. 
 
     For now this simply builds a metric that gives the AUC of the
@@ -22,33 +21,22 @@ def return_eval_metric(name):
 
     return callable_metric
 
-def return_scores(y_true, y_pred, y_pred_probs): 
-	'''
-	Input: Numpy Array, Numpy Array
-	Output: Float, Float, Float, Float
+def return_score(y_true, y_pred_probs, name='auc_precision_recall'): 
+    """Return the score from the inputted ground truth and predicted probabilities. 
 
-	For the given set of true and predicted y_values (i.e. if it's a forest fire or not), 
-	return the accuracy_score, precision_score, roc_auc_score, and recall_score. 
-	'''
-	score_metrics = [accuracy_score, precision_score, roc_auc_score, recall_score]
-	score_dictionary = {}
+    Args: 
+    ----
+        y_true: np.ndarray
+        y_pred_probs: np.ndarray
+        name: str
+            Holds the name used to determine what score to use. 
 
-	for score_metric in score_metrics: 
-		if score_metric.func_name == 'roc_auc_score': 
-			score_dictionary[score_metric.func_name] = score_metric(y_true, y_pred_probs[:, 1])
-		else: 
-			scores = np.array([score_metric(y_true, return_y_preds(y_pred_probs, threshold)) for threshold in xrange(0, 101)])
-			score_dictionary[score_metric.func_name] = scores.max()
+    Return: 
+    ------
+        score: float 
+    """
 
-	return score_dictionary
+    scorer = return_scorer(name)
+    score = scorer(y_true, y_pred_probs)
+    return score
 
-def return_y_preds(y_pred_probs, threshold): 
-	'''
-	Input: Numpy Array, Integer
-	Output: Numpy Array
-
-	For the inputted array of predicted probabilities, return a numpy array that is 1's or 0's, 
-	where 1's are those predicted probabilities that are above the threshold.
-	'''
-
-	return y_pred_probs[:, 1] > (threshold / 100.0)
