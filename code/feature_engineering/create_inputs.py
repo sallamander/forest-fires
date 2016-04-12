@@ -69,6 +69,9 @@ if __name__ == '__main__':
         dfs_list = [get_df(year) for year in year_list] 
         df = pd.concat(dfs_list, ignore_index=True)
         df = add_date_column(df)
+        # Drop all observations that are in Canada (denoted by having a missing
+        # value for any of the state/county info.)
+        df.dropna(axis=0, subset=['state_name'], inplace=True)
         for k, v in geo_transforms_dict.iteritems(): 
             df = featurization_dict[v['transformation']](df, v)
         df.to_csv('code/modeling/model_input/geo_done.csv', index=False)
