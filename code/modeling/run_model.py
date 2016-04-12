@@ -8,9 +8,9 @@ from scoring import return_scores
 from datetime import timedelta, datetime
 from time_val import SequentialTimeFold, StratifiedTimeFold
 from sklearn.grid_search import GridSearchCV
-from preprocessing import normalize_df, prep_data, \
-        get_target_features, alter_nearby_fires_cols 
+from preprocessing import normalize_df, prep_data, alter_nearby_fires_cols 
 from supervised_models import get_model 
+from grid_search import sklearn_grid_search, get_grid_params 
 
 def get_train_test(df, date_col, test_date): 
     """Return a train/test split based off the inputted test_date
@@ -48,27 +48,9 @@ def get_train_test(df, date_col, test_date):
 
     return train, test
 
-def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator): 
-    '''
-    Input: String, Pandas DataFrame, Pandas DataFrame
-    Output: Best fit model from grid search parameters. 
-
-    For the given model name, grab a model and the relevant grid parameters, 
-    perform a grid search with those grid parameters, and return the best 
-    model. 
-    '''
-
-    model = get_model(model_name, train_data)
-    if isinstance(model, keras.models.Sequential): 
-        model = fit_neural_net(model, train_data, test_data)
-        return model
-    grid_parameters = get_grid_params(model_name)
-    grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, 
-            scoring='roc_auc', cv=cv_fold_generator)
-    target, features = get_target_features(train_data)
-    grid_search.fit(features, target)
-
-    return grid_search.best_estimator_, grid_search.grid_scores_[0][1]
+def get_model_args(model_name): 
+    """Return the dictionary holding the kwargs passed to get_model."""
+    pass
 
 def predict_with_model(test_data, model): 
     '''
@@ -149,13 +131,18 @@ if __name__ == '__main__':
     cv_fold_generator = SequentialTimeFold(train, date_step_size, 20, 
             test_set_date)
     
-    train = prep_data(train)
-    test = prep_data(test)
-    start = time.time()
+    train, test = prep_data(train), prep_data(test)
+    
+    model_kwargs = get_model_args(model_name)
+    model = get_model(model_name, model_kwargs)
+    grid_parameters = get_grid_params(model_name)
+
+    early_stopping_tolerance = 5 if model_name in {'xgboost' or 'gboosting'} \
+            else None
     best_fit_model, mean_metric_score = \
-            sklearn_grid_search(model_name, train, test, cv_fold_generator) 
-    end = time.time()
-    run_time = end - start
+            sklearn_grid_search(model, grid_parameters, train, 
+            test, cv_fold_generator, early_stopping_tolerance, model_name) 
+
     preds, preds_probs = predict_with_model(test, best_fit_model)
     scores = return_scores(test.fire_bool, preds, preds_probs)
     log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
