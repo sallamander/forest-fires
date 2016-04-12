@@ -31,7 +31,10 @@ def output_json(year, geo_type):
 
     list_to_export = [add_geo_properties(row[1]) for row \
             in query_df.iterrows()]
-    return list_to_export
+
+    filename = str(year) + '_' + geo_type + '.json'
+    with open(filename, 'w+') as f: 
+    	f.write(json.dumps(list_to_export))
 
 def get_json_query(year, geo_type): 
     """Format a query for the inputted year and geo_type. 
