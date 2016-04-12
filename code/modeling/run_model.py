@@ -95,15 +95,23 @@ def predict_with_model(test_data, model):
 
     return predicted_probs
 
-def log_results(model_name, train, fitted_model, scores, best_roc_auc, run_time): 
-    '''
-    Input: String, Pandas DataFrame,  Dictionary, Numpy Array, Float  
-    Output: .txt file. 
+def log_results(model_name, train, best_fit_model, score, best_score): 
+    """Log the results of our best model run. 
 
-    Log the results of this run to a .txt file, saving the column names (so I know what features I used), 
-    the model name (so I know what model I ran), the parameters for that model, 
-    and the scores associated with it (so I know how well it did). 
-    '''
+    Args: 
+    ----
+        model_name: str
+        train: np.ndarray
+            Holds the training data, used to store the column names. 
+        fitted_model: variable 
+            Holds the best fit model, used to store the final parameters
+            of that model. 
+        score: float 
+            Score from the validation/hold out data set (not used at 
+            all during cross validation). 
+        best_roc_auc: float 
+            Best score from the fitted model. 
+    """
 
     st = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
     filename = 'code/modeling/model_output/logs/' + model_name + '.txt'
@@ -111,11 +119,10 @@ def log_results(model_name, train, fitted_model, scores, best_roc_auc, run_time)
         f.write(st + '\n')
         f.write('-' * 100 + '\n')
         f.write('Model Run: ' + model_name + '\n' * 2)
-        f.write('Params: ' + str(fitted_model.get_params()) + '\n' * 2)
+        f.write('Params: ' + str(best_fit_model.get_params()) + '\n' * 2)
         f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
         f.write('Scores: ' + str(scores) + '\n' * 2)
-        f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
-        f.write('Run time: ' + str(run_time) + '\n' * 2)
+        f.write('AUC Precision-Recall: ' + str(best_score) + '\n' * 2)
 
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
@@ -163,11 +170,10 @@ if __name__ == '__main__':
 
     early_stopping_tolerance = 5 if model_name in {'xgboost' or 'gboosting'} \
             else None
-    best_fit_model, mean_metric_score = \
+    best_fit_model, best_score = \
             sklearn_grid_search(model, grid_parameters, train, 
             test, cv_fold_generator, early_stopping_tolerance, model_name) 
 
     preds_probs = predict_with_model(test, best_fit_model)
     score = return_score(test.fire_bool, preds_probs)
-    log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
-            run_time)
+    log_results(model_name, train, best_fit_model, score, best_score)

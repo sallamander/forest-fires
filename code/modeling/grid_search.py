@@ -110,4 +110,4 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
     else: 
         grid_search.fit(features, target)
 
-    return grid_search.best_estimator_, grid_search.grid_scores_[0][1]
+    return grid_search.best_estimator_, grid_search.best_score_
