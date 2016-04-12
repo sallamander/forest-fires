@@ -8,6 +8,7 @@ although this will be built up over time.
 
 from preprocessing import get_target_features 
 from supervised.gboosting import Monitor
+from scoring import return_eval_metric
 
 def get_grid_params(model_name): 
     """Return the appropriate model parameters to search over. 
@@ -85,8 +86,9 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
     train_target, train_features = get_target_features(train)
     test_target, test_features = get_target_features(test)
 
+    eval_metric = return_eval_metric('auc_precision_recall')
     grid_search = GridSearchCV(estimator=model, param_grid=params, 
-            scoring='roc_auc', cv=cv_fold_generator)
+            scoring=eval_metric, cv=cv_fold_generator)
     
     # If this was passed in, a gradient boosting model is being fitted, 
     # and early stopping should be used. 
@@ -101,7 +103,7 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
         # XGboost for the win. It has early stopping built in. 
         elif model_name == 'xgboost': 
             grid_search.fit(train_features, train_target, 
-                (test_features, test_target), eval_metric='auc',
+                (test_features, test_target), eval_metric=eval_metric,
                 early_stopping_rounds = early_stopping_tolerance)
         else: 
             raise Exception('Must pass in model name to use early stopping.')

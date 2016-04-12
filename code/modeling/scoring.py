@@ -1,5 +1,26 @@
-from sklearn.metrics import accuracy_score, precision_score, roc_auc_score, recall_score
 import numpy as np
+from sklearn.metrics import auc, precision_recall_curve, make_scorer, 
+    accuracy_score, precision_score, roc_auc_score
+
+def return_eval_metric(name): 
+    """Return an eval_metric based off of an inputted string. 
+
+    For now this simply builds a metric that gives the AUC of the
+    precision recall curve. 
+
+    Args: 
+    ----
+        name: str
+
+    Return: 
+    ------
+        callable_metric: sklearn.metric object
+    """
+
+    if name == 'auc_precision_recall': 
+        callable_metric = make_scorer(auc(precision_recall_curve))
+
+    return callable_metric
 
 def return_scores(y_true, y_pred, y_pred_probs): 
 	'''
