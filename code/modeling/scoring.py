@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import auc, precision_recall_curve, make_scorer, 
+from sklearn.metrics import auc, precision_recall_curve, make_scorer
 
 def return_scorer(name): 
     """Return an eval_metric based off of an inputted string. 

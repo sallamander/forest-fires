@@ -63,7 +63,7 @@ class BaseTimeFold(object):
             Required to be passed in if `resample_y_pct` is passed in. 
     """
 
-    def __init__(self, df, step_size, max_folds, test_set_date, y_col=None
+    def __init__(self, df, step_size, max_folds, test_set_date, y_col=None, 
             resample_y_pct=None, resample_method=None):
         
         self.n_folds = 0
@@ -75,7 +75,7 @@ class BaseTimeFold(object):
         
         if resample_y_pct and not (resample_method and y_col) or \
                 resample_method and not (resample_y_pct and y_col):  
-            raise Exception('Must pass in both resample_y_pct and resample_method, or neither at all'.)
+            raise Exception('Must pass in both resample_y_pct and resample_method, or neither at all.')
 
         self.y_col = y_col
         self.resample_method = resample_method
@@ -175,7 +175,7 @@ class SequentialTimeFold(BaseTimeFold):
     be used as a generator passed to GridSearchCV. 
     """
 
-    def __init__(self, df, step_size, max_folds, test_set_date, y_col=None
+    def __init__(self, df, step_size, max_folds, test_set_date, y_col=None, 
             resample_y_pct=None, resample_method=None):
         super(SequentialTimeFold, self).__init__(df, step_size, max_folds, 
                 test_set_date, y_col, resample_y_pct, resample_method)

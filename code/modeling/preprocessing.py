@@ -5,6 +5,7 @@ the data before inputting it into models, but after any/all
 feature engineering is complete. 
 """
 
+import numpy as np
 from datetime import datetime, timedelta
 
 def normalize_df(input_df): 
@@ -45,7 +46,7 @@ def prep_data(input_df):
         output_df: Pandas DataFrame 
     """
 
-    output_df = df.fillna(-999)
+    output_df = input_df.fillna(-999)
     output_df.replace(np.inf, -999, inplace=True)
     output_df.drop('date_fire', inplace=True, axis=1)
 
@@ -70,8 +71,8 @@ def get_target_features(input_df):
             the `fire_bool` column. 
     """
 
-    target = df.fire_bool
-    features = df.drop('fire_bool', axis=1)
+    target = input_df.fire_bool
+    features = input_df.drop('fire_bool', axis=1)
     
     return target, features
 
@@ -111,7 +112,7 @@ def alter_nearby_fires_cols(input_df):
     # little bit of clarity and readability. 
     replace_dct = {0: ['all_nearby_count365', 'all_nearby_fires365'], 
                    365: ['all_nearby_count365', 'all_nearby_fires365', 
-                        'all_nearby_count730', 'all_nearby_fires730']
+                        'all_nearby_count730', 'all_nearby_fires730'], 
                    730: ['all_nearby_count365', 'all_nearby_fires365', 
                         'all_nearby_count730', 'all_nearby_fires730', 
                         'all_nearby_count1095', 'all_nearby_fires1095']}
@@ -120,7 +121,7 @@ def alter_nearby_fires_cols(input_df):
     for days_forward, col_names in replace_dct.iteritems(): 
         break_date = start_date + timedelta(days=days_forward)
         for col_name in col_names: 
-            output_df.loc[df['date_fire'] < break_date, col_name] \
+            output_df.loc[input_df['date_fire'] < break_date, col_name] \
                     = np.float('inf')
 
     return output_df 

@@ -6,9 +6,9 @@ from scoring import return_score
 from datetime import timedelta, datetime
 from time_val import SequentialTimeFold, StratifiedTimeFold
 from sklearn.grid_search import GridSearchCV
-from preprocessing import normalize_df, prep_data, alter_nearby_fires_cols, 
-    get_target_features
-from supervised_models import get_model 
+from preprocessing import normalize_df, prep_data, \
+        alter_nearby_fires_cols, get_target_features
+from supervised.supervised_models import get_model 
 from grid_search import sklearn_grid_search, get_grid_params 
 
 def get_train_test(df, date_col, test_date): 
@@ -42,7 +42,7 @@ def get_train_test(df, date_col, test_date):
     test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
         df[date_col] < max_test_date))[0]
     train_mask = np.where(np.logical_and(df[date_col] < test_date, 
-        df[date_col] >= min_train_date))
+        df[date_col] >= min_train_date))[0]
     train, test = df.ix[train_mask, :], df.ix[test_mask, :]
 
     return train, test
@@ -141,9 +141,9 @@ if __name__ == '__main__':
         # If this is 4, I'm expecting that a date was passed in that we want
         # to use for the day of our test set (i.e. the days fires that we are 
         # predicting). Otherwise, we'll use the most recent date in our df. 
-        date_parts = sys.argv[4].split('-')
-        test_set_date = datetime(date_parts[0], date_parts[1], date_parts[2],
-                0, 0, 0)
+        date_parts = sys.argv[3].split('-')
+        test_set_date = datetime(int(date_parts[0]), 
+                int(date_parts[1]), int(date_parts[2]), 0, 0, 0)
     else: 
         test_set_timestamp = input_df['date_fire'].max()
         test_set_date = datetime(test_set_timestamp.year, 
@@ -156,7 +156,6 @@ if __name__ == '__main__':
         train = normalize_df(train)
         test = normalize_df(test)
 
-        
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
     date_step_size = timedelta(days=1)
@@ -180,7 +179,7 @@ if __name__ == '__main__':
         test_target, test_features = get_target_features(test)
         model.fit(train_features, train_target, 
                 early_stopping=early_stopping_tolerance, X_test=test_features, 
-                y_test=test_target))
+                y_test=test_target)
 
     preds_probs = predict_with_model(test, best_fit_model)
     score = return_score(test.fire_bool, preds_probs)

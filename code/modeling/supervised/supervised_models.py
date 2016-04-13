@@ -17,7 +17,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from xgboost.sklearn import XGBClassifier
 from keras_net import KerasNet
 
-def get_model(model_name, **kwargs): 
+def get_model(model_name, kwargs): 
     """Return an instance of the supervised model to be learned. 
 
     Args: 
