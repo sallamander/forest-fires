@@ -1,11 +1,12 @@
 import sys
+import time
 import pickle
 import pandas as pd
 import numpy as np
-from scoring import return_score
+from scoring import return_scorer
 from datetime import timedelta, datetime
 from time_val import SequentialTimeFold, StratifiedTimeFold
-from sklearn.grid_search import GridSearchCV
+from sklearn.grid_search import GridSearchCV, ParameterGrid
 from preprocessing import normalize_df, prep_data, \
         alter_nearby_fires_cols, get_target_features
 from supervised.supervised_models import get_model 
@@ -41,9 +42,10 @@ def get_train_test(df, date_col, test_date):
     min_train_date = test_date - timedelta(days=14)
     test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
         df[date_col] < max_test_date))[0]
-    train_mask = np.where(np.logical_and(df[date_col] < test_date, 
-        df[date_col] >= min_train_date))[0]
-    train, test = df.ix[train_mask, :], df.ix[test_mask, :]
+     
+    train_mask = np.where(df[date_col] < test_date)[0]
+    train = df.ix[train_mask, :] 
+    test = df.ix[test_mask, :]
 
     return train, test
 
@@ -74,28 +76,6 @@ def get_model_args(model_name):
 
     return model_kwargs 
 
-def predict_with_model(test_data, model): 
-    """Make predictions on test data with the inputted model. 
-
-    Return the predicted probabilities for the `test_data`, using
-    the inputted `model`. 
-
-    Args: 
-    ----
-        test_data: pandas DataFrame
-        model: varied 
-            Holds a fitted, trained model to make predictions with.
-
-    Returns: 
-    -------
-        predicted_probs: np.ndarray
-    """
-
-    target, features = get_target_features(test_data)
-    predicted_probs = model.predict_proba(features)
-
-    return predicted_probs
-
 def log_results(model_name, train, best_fit_model, score, best_score): 
     """Log the results of our best model run. 
 
@@ -122,8 +102,8 @@ def log_results(model_name, train, best_fit_model, score, best_score):
         f.write('Model Run: ' + model_name + '\n' * 2)
         f.write('Params: ' + str(best_fit_model.get_params()) + '\n' * 2)
         f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
-        f.write('Scores: ' + str(scores) + '\n' * 2)
-        f.write('AUC Precision-Recall: ' + str(best_score) + '\n' * 2)
+        f.write('Test AUC_PR: ' + str(score) + '\n' * 2)
+        f.write('Train AUC_PR: ' + str(best_score) + '\n' * 2)
 
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
@@ -135,8 +115,8 @@ if __name__ == '__main__':
     with open('code/makefiles/columns_list.pkl') as f: 
         keep_columns = pickle.load(f)
 
-    input_df = base_input_df[keep_columns]
-    input_df = alter_nearby_fires_cols(input_df)
+    input_df = alter_nearby_fires_cols(base_input_df)
+    input_df = input_df[keep_columns]
     if len(sys.argv) == 4: 
         # If this is 4, I'm expecting that a date was passed in that we want
         # to use for the day of our test set (i.e. the days fires that we are 
@@ -149,7 +129,6 @@ if __name__ == '__main__':
         test_set_date = datetime(test_set_timestamp.year, 
                 test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
     train, test = get_train_test(input_df, 'date_fire', test_set_date)
-
     # sklearn logit uses regularization by default, so it'd be best 
     # to scale the variables in that case as well. 
     if model_name == 'neural_net' or model_name == 'logit': 
@@ -159,21 +138,21 @@ if __name__ == '__main__':
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
     date_step_size = timedelta(days=1)
-    cv_fold_generator = SequentialTimeFold(train, date_step_size, 20, 
-            test_set_date)
-    
-    train, test = prep_data(train), prep_data(test)
-    
     model_kwargs = get_model_args(model_name)
     model = get_model(model_name, model_kwargs)
     grid_parameters = get_grid_params(model_name)
 
+    cv_fold_generator = SequentialTimeFold(train, date_step_size, 14, 
+            test_set_date, 'fire_bool')
+    
+    train, test = prep_data(train), prep_data(test)
+    
     early_stopping_tolerance = 5 if model_name in {'xgboost','gboosting', 
                 'neural_net'} else None
     if model_name != 'neural_net': 
-        best_fit_model, best_score = \
+        best_fit_model, best_score, scores = \
                 sklearn_grid_search(model, grid_parameters, train, 
-                test, cv_fold_generator, early_stopping_tolerance, model_name) 
+                test, list(cv_fold_generator), early_stopping_tolerance, model_name)
     else: 
         train_target, train_features = get_target_features(train)
         test_target, test_features = get_target_features(test)
@@ -181,6 +160,7 @@ if __name__ == '__main__':
                 early_stopping=early_stopping_tolerance, X_test=test_features, 
                 y_test=test_target)
 
-    preds_probs = predict_with_model(test, best_fit_model)
-    score = return_score(test.fire_bool, preds_probs)
+    scorer = return_scorer()
+    test_target, test_features = get_target_features(test)
+    score = scorer(best_fit_model, test_features, test_target)
     log_results(model_name, train, best_fit_model, score, best_score)

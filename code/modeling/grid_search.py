@@ -6,6 +6,7 @@ holds functions for using the `sklearn.grid_search.GridSearchCV`,
 although this will be built up over time. 
 """
 
+from sklearn.grid_search import GridSearchCV
 from preprocessing import get_target_features 
 from supervised.gboosting import Monitor
 from scoring import return_scorer
@@ -108,6 +109,7 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
         else: 
             raise Exception('Must pass in model name to use early stopping.')
     else: 
-        grid_search.fit(features, target)
+        grid_search.fit(train_features, train_target)
 
-    return grid_search.best_estimator_, grid_search.best_score_
+    return grid_search.best_estimator_, grid_search.best_score_, \
+            grid_search.grid_scores_

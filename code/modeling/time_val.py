@@ -213,6 +213,9 @@ class SequentialTimeFold(BaseTimeFold):
                 self.all_dates < test_date_plus))[0]
             train_indices = np.where(self.all_dates < test_date)[0]
             self.test_date -= self.step_size
+
+            if len(np.unique(self.df.ix[test_indices, self.y_col])) != 2: 
+                test_indices = np.zeros((0))
         
         if self.resample_y_pct: 
             # If `self.resample_y_pct` is passed in, then perform re-sampling. 
@@ -309,6 +312,9 @@ class StratifiedTimeFold(BaseTimeFold):
             if training_perc_fire < self.cutoff_train_y_pct:  
                 train_indices = np.where(self.all_dates < self.test_date)[0]
             self.test_date -= self.step_size
+
+            if len(np.unique(self.df[self.y_col])) != 2: 
+                test_indices = np.zeros((0))
         
         training_perc_fire = self.df.ix[train_indices, 'fire_bool'].mean()
         train_indices = self._check_resample(train_indices)

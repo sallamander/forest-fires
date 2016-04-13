@@ -62,3 +62,4 @@ def get_model(model_name, kwargs):
     else: 
         raise Exception("Invalid model name! Try again...") 
 
+    return model 

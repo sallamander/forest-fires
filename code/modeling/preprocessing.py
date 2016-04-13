@@ -24,15 +24,14 @@ def normalize_df(input_df):
         output_df: Pandas DataFrame
             Holds the normalized data. 
     """
-        
-
+    
     output_df = input_df.copy()
     for col in input_df.columns: 
         if col not in ('fire_bool', 'date_fire'): 
             output_df[col] = (input_df[col] - input_df[col].mean()) \
-                / input_df[col].std()
+                / input_df[col].std() 
 
-    return output_df 
+    return output_df
 
 def prep_data(input_df): 
     """Fill in N/A's and inf. values, and drop the `date_fire` column. 

@@ -9,7 +9,7 @@ curve.
 import numpy as np
 from sklearn.metrics import auc, precision_recall_curve, make_scorer
 
-def return_scorer(name): 
+def return_scorer(name='auc_precision_recall'): 
     """Return an eval_metric based off of an inputted string. 
 
     For now this simply builds a metric that gives the AUC of the
@@ -29,25 +29,6 @@ def return_scorer(name):
         callable_metric = precision_recall_auc 
 
     return callable_metric
-
-def return_score(y_true, y_pred_probs, name='auc_precision_recall'): 
-    """Return the score from the inputted ground truth and predicted probabilities. 
-
-    Args: 
-    ----
-        y_true: np.ndarray
-        y_pred_probs: np.ndarray
-        name: str
-            Holds the name used to determine what score to use. 
-
-    Return: 
-    ------
-        score: float 
-    """
-
-    scorer = return_scorer(name)
-    score = scorer(y_true, y_pred_probs)
-    return score
 
 class PrecisionRecallAUC(object): 
     """A class for allowing precision recall AUC as a scorer metric. 
@@ -79,10 +60,10 @@ class PrecisionRecallAUC(object):
                 compared to the predictions from the estimator on `X_test`. 
         """
                 
-        y_preds = estimator.predict_proba(X_test)
-        precision, recall, thresholds = precision_recall_curve(y_test, y_preds)
+        y_preds = estimator.predict_proba(X_test)[:, 0]
+        prec, rec, thresholds = precision_recall_curve(y_test, y_preds)
 
-        pr_auc = auc(recall, precision)
+        pr_auc = auc(rec, prec)
         
         return pr_auc
 
