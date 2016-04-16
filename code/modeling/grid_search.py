@@ -26,26 +26,7 @@ def get_grid_params(model_name):
     """
 
     if model_name == 'logit': 
-        param_dct = {'penalty': ['l2'], 'C': [0.05, 0.1, 0.15]}
-    elif model_name == 'random_forest': 
-        param_dct = {'n_estimators': [100, 200], 
-                'max_depth': [2, 4]}
-    elif model_name == 'extra_trees': 
-        param_dct = {'n_estimators': [100], 
-                'max_depth': [2]}
-    elif model_name == 'gboosting': 
-        param_dct = {'n_estimators': [5000], 
-                'learning_rate': [0.1]}
-    elif model_name == 'xgboost': 
-        param_dct = {'learning_rate': [0.005, 0.01, 0.05], 
-                'n_estimators': [128, 256, 512, 1024], 
-                'max_depth': [2, 4, 8], 
-                'subsample': [0.9, 1.0], 
-                'colsample_bytree': [0.9, 1.0]}
-    '''
-
-    if model_name == 'logit': 
-        param_dct = {'penalty': ['l2'], 'C': [0.05, 0.1, 0.15]}
+        param_dct = {'penalty': ['l1', 'l2'], 'C': [0.00001, 0.0001, 0.001]}
     elif model_name == 'random_forest': 
         param_dct = {'n_estimators': [100, 200, 400, 800, 1600], 
                 'max_depth': [2, 4, 8, 16, 32]}
@@ -56,15 +37,14 @@ def get_grid_params(model_name):
         param_dct = {'n_estimators': [128, 256, 512, 1024], 
                 'learning_rate': [0.005, 0.01, 0.05], 
                 'max_depth': [2, 4, 8], 
-                'max_features': [0.9, 1.0], 
-                'subsample': [0.9, 1.0]}
+                'max_features': [0.5, 0.75, 1.0], 
+                'subsample': [0.5, 0.75, 1.0]}
     elif model_name == 'xgboost': 
         param_dct = {'eta': [0.005, 0.01, 0.05], 
                 'num_boost_round': [128, 256, 512, 1024], 
                 'max_depth': [2, 4, 8], 
-                'subsample': [0.9, 1.0], 
-                'colsample_bytree': [0.9, 1.0]}
-    '''
+                'subsample': [0.5, 0.75, 1.0], 
+                'colsample_bytree': [0.5, 0.75, 1.0]}
 
     return param_dct
 

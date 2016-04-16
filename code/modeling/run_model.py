@@ -1,12 +1,28 @@
+"""A driver module for running models. 
+
+This module exists as the driver program to run any number
+of models. It works through the following high level steps: 
+
+* Reads in the data to use as well as the model to be run 
+  from command line arguments
+* It breaks the data into a train/test (validation/hold out) 
+  split using an optionally inputted command line argument
+* It performs any preprocessing on the data that needs to be
+  done (e.g. normalization)
+* It creates an iterator to use for CV. 
+* It runs the model. 
+
+The imported, custom built modules help substantially with 
+all of this. 
+"""
 import sys
 import time
 import pickle
 import pandas as pd
 import numpy as np
-from scoring import return_scorer
 from datetime import timedelta, datetime
-from time_val import SequentialTimeFold, StratifiedTimeFold
-from sklearn.grid_search import GridSearchCV, ParameterGrid
+from scoring import return_scorer
+from time_val import SequentialTimeFold
 from preprocessing import normalize_df, prep_data, \
         alter_nearby_fires_cols, get_target_features
 from supervised.supervised_models import get_model 
