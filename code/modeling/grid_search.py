@@ -28,6 +28,25 @@ def get_grid_params(model_name):
     if model_name == 'logit': 
         param_dct = {'penalty': ['l2'], 'C': [0.05, 0.1, 0.15]}
     elif model_name == 'random_forest': 
+        param_dct = {'n_estimators': [100, 200], 
+                'max_depth': [2, 4]}
+    elif model_name == 'extra_trees': 
+        param_dct = {'n_estimators': [100], 
+                'max_depth': [2]}
+    elif model_name == 'gboosting': 
+        param_dct = {'n_estimators': [5000], 
+                'learning_rate': [0.1]}
+    elif model_name == 'xgboost': 
+        param_dct = {'learning_rate': [0.005, 0.01, 0.05], 
+                'n_estimators': [128, 256, 512, 1024], 
+                'max_depth': [2, 4, 8], 
+                'subsample': [0.9, 1.0], 
+                'colsample_bytree': [0.9, 1.0]}
+    '''
+
+    if model_name == 'logit': 
+        param_dct = {'penalty': ['l2'], 'C': [0.05, 0.1, 0.15]}
+    elif model_name == 'random_forest': 
         param_dct = {'n_estimators': [100, 200, 400, 800, 1600], 
                 'max_depth': [2, 4, 8, 16, 32]}
     elif model_name == 'extra_trees': 
@@ -45,6 +64,7 @@ def get_grid_params(model_name):
                 'max_depth': [2, 4, 8], 
                 'subsample': [0.9, 1.0], 
                 'colsample_bytree': [0.9, 1.0]}
+    '''
 
     return param_dct
 
@@ -87,29 +107,33 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
     train_target, train_features = get_target_features(train)
     test_target, test_features = get_target_features(test)
 
-    eval_metric = return_scorer('auc_precision_recall')
-    grid_search = GridSearchCV(estimator=model, param_grid=params, 
-            scoring=eval_metric, cv=cv_fold_generator)
     
-    # If this was passed in, a gradient boosting model is being fitted, 
-    # and early stopping should be used. 
     if early_stopping_tolerance: 
-        # Sklearn allows early stopping through the passing of something 
-        # to the `monitor` parameter. 
-        if model_name == 'sklearn': 
-            val_loss_monitor = Monitor(test_features, test_target, 
+        # The monitor callback and xgboost use code under the hood
+        # that requires these changes. 
+        test_target = test_target.values.astype('float32')  
+        test_features = test_features.values.astype('float32')
+        test_target = test_target.copy(order='C')
+        test_features = test_features.copy(order='C')
+        eval_metric = return_scorer('auc_precision_recall')
+
+        # Finally, we want to pass in these parameters not to the 
+        # constructor upon instantiation (like grid_search.fit does), 
+        # but to the `fit` method. The `fit_params` argument will allow
+        # us to do that. 
+        fit_params = {}
+        if model_name == 'gboosting': 
+            val_loss_monitor = Monitor(test_features, test_target,  
                     early_stopping_tolerance)
-            grid_search.fit(train_features, train_target, 
-                    monitor = val_loss_monitor)
-        # XGboost for the win. It has early stopping built in. 
+            fit_params['monitor'] = val_loss_monitor
         elif model_name == 'xgboost': 
-            grid_search.fit(train_features, train_target, 
-                (test_features, test_target), eval_metric=eval_metric,
-                early_stopping_rounds = early_stopping_tolerance)
-        else: 
-            raise Exception('Must pass in model name to use early stopping.')
-    else: 
-        grid_search.fit(train_features, train_target)
+            fit_params['early_stopping_rounds'] = early_stopping_tolerance
+            fit_params['eval_metric'] = 'logloss'
+            fit_params['eval_set'] = [(test_features, test_target)]
+
+    grid_search = GridSearchCV(estimator=model, param_grid=params, 
+            scoring=eval_metric, cv=cv_fold_generator, fit_params=fit_params)
+    grid_search.fit(train_features.values, train_target.values)
 
     return grid_search.best_estimator_, grid_search.best_score_, \
             grid_search.grid_scores_

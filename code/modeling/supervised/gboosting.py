@@ -80,7 +80,12 @@ class Monitor(object):
                 model.learning_rate, self.predictions)
         self.losses.append(model.loss_(self.y_test, self.predictions))
 
-        if len(self.losses) >= 2 and self.losses[-1] > self.losses[-2]:
+        # If the loss gets worse, or if it only increases by < 0.005, 
+        # count that as a consecutive decrease (e.g. one step closer to 
+        # stopping early). 
+        if len(self.losses) >= 2 and \
+                (self.losses[-1] >= self.losses[-2] or \
+                        abs(self.losses[-1] - self.losses[-2]) < 0.005): 
             self.consecutive_decreases += 1
         else:
             self.consecutive_decreases = 0
