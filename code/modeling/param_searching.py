@@ -18,7 +18,7 @@ from supervised.gboosting import Monitor
 from scoring import return_scorer
 
 def run_sklearn_param_search(model, train, test, cv_fold_generator, 
-        random=False, early_stopping_tolerance=None, model_name=None): 
+        random=False, model_name=None): 
     """Perform a model grid search over the inputted parameters and folds. 
     
     For the given model and the relevant grid parameters, perform a 
@@ -35,12 +35,6 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
             An object that generates folds to perform cross-validation over. 
         random: bool
             Holds whether or not to use RandomizedSearchCV or GridSearchCV. 
-        early_stopping_tolerance (optional): int
-            Holds the tolerance to pass to the `supervised.gboosting.Monitor`
-            object for the sklearn gradient boosting model, or to the `.fit` 
-            method on an xgboost model. This tolerance controls the number 
-            of training rounds that the validation error can increase/get
-            worse before stopping early.
         model_name (optional): str
             Holds the model_name, to be used to determine if it is a 
             boosting model, and whether or not to use early stopping. Must
@@ -48,10 +42,12 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
 
     Returns: 
     -------
-        best_model: GridSearchCV.best_estimator_
-            The best model as obtained through the grid search. 
+        best_model: sklearn.<searcher>.best_estimator_
+            The best model as obtained through the parameter search. 
         best_mean_score: float
-            The `mean_validation_score` from a GridSearchCV object. 
+            The `mean_validation_score` from a sklearn.<searcher> object. 
+        scores: list
+            The scores from each run of the paramateter search. 
     """
 
     train_target, train_features = get_target_features(train)
@@ -59,7 +55,7 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
     eval_metric = return_scorer('auc_precision_recall')
     
     fit_params = {}
-    if early_stopping_tolerance: 
+    if model_name == 'gboosting' or model_name == 'xgboost': 
         # The monitor callback and xgboost use code under the hood
         # that requires these changes. 
         test_target = test_target.values.astype('float32')  
@@ -67,6 +63,7 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
         test_target = test_target.copy(order='C')
         test_features = test_features.copy(order='C')
 
+        early_stopping_tolerance = 5
         fit_params = _prep_fit_params(model_name, fit_params, 
                 early_stopping_tolerance, test_features, test_target)
 
@@ -81,8 +78,11 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
                 scoring=eval_metric, cv=cv_fold_generator, fit_params=fit_params)
     grid_search.fit(train_features.values, train_target.values)
 
-    return grid_search.best_estimator_, grid_search.best_score_, \
-            grid_search.grid_scores_
+    best_model = grid_search.best_estimator_
+    best_mean_score = grid_search.best_score_
+    scores = grid_search.grid_scores_
+
+    return best_model, best_mean_score, scores
 
 def _get_grid_params(model_name): 
     """Return the appropriate model parameters to search over. 
@@ -177,8 +177,11 @@ def _prep_fit_params(model_name, fit_params,
             Dictionary that holds any current parameters to pass to 
             the `fit` method of a model, to be added to. 
         early_stopping_tolerance: int
-            Holds how many rounds in a boosting model to allow the 
-            evaluation metric to get no better before stopping. 
+            Holds the tolerance to pass to the `supervised.gboosting.Monitor`
+            object for the sklearn gradient boosting model, or to the `.fit` 
+            method on an xgboost model. This tolerance controls the number 
+            of training rounds that the validation error can increase/get
+            worse before stopping early.
 
     Return:
     ------

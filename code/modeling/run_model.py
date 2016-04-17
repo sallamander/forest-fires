@@ -178,11 +178,9 @@ if __name__ == '__main__':
     
     train, test = prep_data(train), prep_data(test)
     
-    early_stopping_tolerance = 5 if model_name in {'xgboost','gboosting', 
-                'neural_net'} else None
     if model_name != 'neural_net': 
         best_fit_model, best_score, scores = \
-            run_sklearn_grid_search(model, train, test, list(cv_fold_generator),
+            run_sklearn_param_search(model, train, test, list(cv_fold_generator),
                     rand_search, early_stopping_tolerance, model_name)
     else: 
         train_target, train_features = get_target_features(train)
@@ -193,7 +191,7 @@ if __name__ == '__main__':
         train_target = np_utils.to_categorical(train_target)
         model.fit(train_features.values, train_target, 
                 X_test=test_features.values, y_test=test_target, 
-                early_stopping=early_stopping_tolerance)
+                early_stopping=5)
 
     scorer = return_scorer()
     test_target, test_features = get_target_features(test)
