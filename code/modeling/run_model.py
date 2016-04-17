@@ -15,11 +15,13 @@ of models. It works through the following high level steps:
 The imported, custom built modules help substantially with 
 all of this. 
 """
+
 import sys
 import time
 import pickle
 import pandas as pd
 import numpy as np
+from keras.utils import np_utils
 from datetime import timedelta, datetime
 from scoring import return_scorer
 from time_val import SequentialTimeFold
@@ -65,7 +67,7 @@ def get_train_test(df, date_col, test_date):
 
     return train, test
 
-def get_model_args(model_name): 
+def get_model_args(model_name, train): 
     """Return the dictionary holding the kwargs passed to get_model.
 
     For the time being, this really just holds the args controlling the 
@@ -86,9 +88,14 @@ def get_model_args(model_name):
     # This will be used as the random seed for all models. 
     model_kwargs['rand_seed'] = 24
 
-    if model_kwargs == 'neural_net': 
-        layer_1 = {'num': 1, 'nodes': 128, 'activation': 'relu'}
+    if model_name == 'neural_net': 
+        # The -2 in the 'input_dim' below is because the `date_fire` and 
+        # `fire_bool` column get dropped later, but are still in train at 
+        # this point. 
+        layer_1 = {'num': 1, 'nodes': 2, 'activation': 'softmax', 
+                'input_dim': train.shape[1] - 2}
         model_kwargs['layer_1'] = layer_1
+        model_kwargs['num_layers'] = 1
 
     return model_kwargs 
 
@@ -154,9 +161,12 @@ if __name__ == '__main__':
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
     date_step_size = timedelta(days=1)
-    model_kwargs = get_model_args(model_name)
+    model_kwargs = get_model_args(model_name, train)
+
     model = get_model(model_name, model_kwargs)
-    grid_parameters = get_grid_params(model_name)
+    
+    if model_name != 'neural_net': 
+        grid_parameters = get_grid_params(model_name)
 
     cv_fold_generator = SequentialTimeFold(train, date_step_size, 14, 
             test_set_date, 'fire_bool')
@@ -171,10 +181,10 @@ if __name__ == '__main__':
                 test, list(cv_fold_generator), early_stopping_tolerance, model_name)
     else: 
         train_target, train_features = get_target_features(train)
-        test_target, test_features = get_target_features(test)
-        model.fit(train_features, train_target, 
-                early_stopping=early_stopping_tolerance, X_test=test_features, 
-                y_test=test_target)
+        train_target = train_target.astype(int)
+        train_target = np_utils.to_categorical(train_target)
+        model.fit(train_features.values, train_target, 
+                early_stopping=early_stopping_tolerance)
 
     scorer = return_scorer()
     test_target, test_features = get_target_features(test)

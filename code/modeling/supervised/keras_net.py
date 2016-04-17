@@ -44,7 +44,7 @@ class KerasNet(object):
             http://keras.io/layers/core/#dropout
     """
 
-    def __init__(self, **kwargs): 
+    def __init__(self, kwargs): 
         
         self.num_layers = kwargs.pop('num_layers', None) 
         assert self.num_layers, "Need a 'num_layers' argument passed in."
@@ -52,12 +52,13 @@ class KerasNet(object):
         
         assert_str = """Number of layers doesn't align with the numbers of the 
             other arguments (activations, weight inits, ect.).""".replace('\n', '')
+        self.layers = []
         for num_layer in xrange(1, self.num_layers + 1): 
-            layer = kwargs.pop('layer_' + num_layer, None)
+            layer = kwargs.pop('layer_' + str(num_layer), None)
             assert layer, assert_str
             self.layers.append(layer)
         
-        model = self._build_net()
+        self.model = self._build_net()
     
     def _build_net(self): 
         """Build the Keras network according to the specifications.
@@ -144,19 +145,18 @@ class KerasNet(object):
 
         self.model.compile(loss=loss, optimizer=optimizer)
 
-        nb_epoch = kwargs.pop('nb_epoch', 10)
-        batch_size = kwargs.pop('batch_size', 256)
+        nb_epoch = kwargs.pop('nb_epoch', 2)
+        batch_size = kwargs.pop('batch_size', 32)
         X_test = kwargs.pop('X_test', None)
         y_test = kwargs.pop('y_test', None)
 
-        if X_test and y_test: 
+        if X_test is not None and y_test is not None:
             validation_data = (X_test, y_test)
 
         if early_stopping: 
             early_stopper = EarlyStopping(monitor='val_loss', 
                     patience=early_stopping, verbose=1)
-        model.fit(X_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, 
-                validation_data=validation_data, verbose=1, 
-                callbacks=early_stopper)
+        self.model.fit(X_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, 
+                verbose=1)
         
 
