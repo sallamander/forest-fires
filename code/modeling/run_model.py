@@ -1,212 +1,122 @@
+"""A driver module for running models. 
+
+This module exists as the driver program to run any number
+of models. It works through the following high level steps: 
+
+* Reads in the data to use as well as the model to be run 
+  from command line arguments
+* It breaks the data into a train/test (validation/hold out) 
+  split using an optionally inputted command line argument
+* It performs any preprocessing on the data that needs to be
+  done (e.g. normalization)
+* It creates an iterator to use for CV. 
+* It runs the model. 
+
+The imported, custom built modules help substantially with 
+all of this. 
+"""
+
 import sys
+import time
 import pickle
 import pandas as pd
 import numpy as np
-import keras
-import time
-from scoring import return_scores
-from datetime import timedelta, datetime
-from time_val import SequentialTimeFold, StratifiedTimeFold
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.grid_search import GridSearchCV
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation
-from keras.optimizers import SGD, RMSprop
 from keras.utils import np_utils
+from datetime import timedelta, datetime
+from scoring import return_scorer
+from time_val import SequentialTimeFold
+from preprocessing import normalize_df, prep_data, \
+        alter_nearby_fires_cols, get_target_features
+from supervised.supervised_models import get_model 
+from grid_search import sklearn_grid_search, get_grid_params, \
+        get_random_params, sklearn_random_search
 
 def get_train_test(df, date_col, test_date): 
-    '''
-    Input: Pandas DataFrame, String, Integer
-    Output: Pandas DataFrame, Pandas DataFrame
+    """Return a train/test split based off the inputted test_date
 
-    For the inputted DataFrame, take the max date (from the date_col), go 
-    back days_back, and then split into train and test at that point. 
-    All rows with a date prior to that split point are train and all rows 
-    with a date after that split point are test. 
-    '''
-    
+    For the inputted DataFrame, break it into a train/test split, 
+    where the train is all those rows prior to the test_date, and 
+    the test is all the rows that fall on that day. 
+
+    Args: 
+    ----
+        df: Pandas DataFrame
+        date_col: str
+            Holds the name of the date column in the `df` that 
+            the train/test split will be made on. 
+        test_date: datime.datime
+
+    Return: 
+    ------
+        train: Pandas DataFrame
+        test: Pandas DataFrame
+    """
+
     # In the case that we are putting in a test_date for training, we 
     # want to make sure to only grab that day (and not days that are greater
     # than it, which will be present in training). 
     max_test_date = test_date + timedelta(days=1)
+
+    # We're only going to go back 14 days to perform CV over. 
+    min_train_date = test_date - timedelta(days=14)
     test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
         df[date_col] < max_test_date))[0]
+     
     train_mask = np.where(df[date_col] < test_date)[0]
-    train, test = df.ix[train_mask, :], df.ix[test_mask, :]
+    train = df.ix[train_mask, :] 
+    test = df.ix[test_mask, :]
 
     return train, test
 
-def normalize_df(input_df): 
-    '''
-    Input: Pandas DataFrame
-    Output: Pandas DataFrame
-    '''
+def get_model_args(model_name, train): 
+    """Return the dictionary holding the kwargs passed to get_model.
 
-    input_df2 = input_df.copy()
-    for col in input_df.columns: 
-        if col not in ('fire_bool', 'date_fire'): 
-            input_df2[col] = (input_df[col] - input_df[col].mean()) \
-                / input_df[col].std()
+    For the time being, this really just holds the args controlling the 
+    fitting of the KerasNet (`supervised.keras_net.py`). 
 
-    return input_df2
+    Args: 
+    ----
+        model_name: str
 
-def prep_data(df): 
-    '''
-    Input: Pandas DataFrame 
-    Output: Pandas DataFrame
+    Return: 
+    ------
+        model_kwargs: dct 
+            Holds what kwargs to pass when instantiating the 
+            inputted model type. 
+    """
 
-    Fill in N/A's and inf. values, and make sure to drop the 'date_fire'
-    column. 
-    '''
+    model_kwargs = {}
+    # This will be used as the random seed for all models. 
+    model_kwargs['rand_seed'] = 24
 
-    df.fillna(-999, inplace=True)
-    df.replace(np.inf, -999, inplace=True)
-    df.drop('date_fire', inplace=True, axis=1)
+    if model_name == 'neural_net': 
+        # The -2 in the 'input_dim' below is because the `date_fire` and 
+        # `fire_bool` column get dropped later, but are still in train at 
+        # this point. 
+        layer_1 = {'num': 1, 'nodes': 2, 'activation': 'softmax', 
+                'input_dim': train.shape[1] - 2}
+        model_kwargs['layer_1'] = layer_1
+        model_kwargs['num_layers'] = 1
 
-    return df
+    return model_kwargs 
 
-def sklearn_grid_search(model_name, train_data, test_data, cv_fold_generator): 
-    '''
-    Input: String, Pandas DataFrame, Pandas DataFrame
-    Output: Best fit model from grid search parameters. 
+def log_results(model_name, train, best_fit_model, score, best_score): 
+    """Log the results of our best model run. 
 
-    For the given model name, grab a model and the relevant grid parameters, 
-    perform a grid search with those grid parameters, and return the best 
-    model. 
-    '''
-
-    model = get_model(model_name, train_data)
-    if isinstance(model, keras.models.Sequential): 
-        model = fit_neural_net(model, train_data, test_data)
-        return model
-    grid_parameters = get_grid_params(model_name)
-    grid_search = GridSearchCV(estimator=model, param_grid=grid_parameters, 
-            scoring='roc_auc', cv=cv_fold_generator)
-    target, features = get_target_features(train_data)
-    grid_search.fit(features, target)
-
-    return grid_search.best_estimator_, grid_search.grid_scores_[0][1]
-
-def get_model(model_name, train_data): 
-    '''
-    Input: String, Pandas DataFrame
-    Output: Instantiated Model
-    '''
-    random_seed=24
-    if model_name == 'logit': 
-        return LogisticRegression(random_state=random_seed)
-    elif model_name == 'random_forest': 
-        return RandomForestClassifier(random_state=random_seed, n_jobs=2)
-    elif model_name == 'gradient_boosting': 
-        return GradientBoostingClassifier(random_state=random_seed)
-    elif model_name == 'neural_net': 
-        return get_neural_net(train_data)
-
-def get_neural_net(train_data): 
-    '''
-    Input: Integer, Pandas DataFrame
-    Output: Instantiated Neural Network model
-
-    Instantiate the neural net model and output it to train with. 
-    '''
-
-    np.random.seed(24)
-    hlayer_1_nodes = 250
-    hlayer_2_nodes = 115
-    hlayer_3_nodes = 100
-    hlayer_4_nodes = 100
-    model = Sequential()
-    
-    input_dim = train_data.shape[1] - 1 
-    model.add(Dense(hlayer_1_nodes, input_dim=input_dim, init='uniform'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.35))
-    model.add(Dense(hlayer_2_nodes, init='uniform'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.35))
-    model.add(Dense(hlayer_3_nodes, init='uniform'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.35))
-    model.add(Dense(2, init='uniform'))
-    model.add(Activation('softmax'))
-
-    model.compile(loss='categorical_crossentropy', optimizer='RMSprop')
-
-    return model
-
-def get_grid_params(model_name): 
-    '''
-    Input: String
-    Output: Dictionary
-    '''
-    if model_name == 'logit': 
-        return {'penalty': ['l2'], 'C': [0.05, 0.1, 0.15]}
-    elif model_name == 'random_forest': 
-        return {'n_estimators': [800, 1000, 1200], 
-                'max_depth': [10, 15, 20]}
-    elif model_name == 'gradient_boosting': 
-        return {'n_estimators': [250], 
-                'learning_rate': [0.01, 0.05, 0.1], 
-                'min_samples_leaf': [200, 250, 300]}
-
-def get_target_features(df): 
-    '''
-    Input: Pandas DataFrame
-    Output: Numpy Array, Numpy Array
-
-    For the given dataframe, grab the target and features (fire bool versus 
-    all else) and return them. 
-    '''
-
-    target = df.fire_bool
-    features = df.drop('fire_bool', axis=1)
-    return target, features
-
-def fit_neural_net(model, train_data, test_data):  
-    '''
-    Input: Instantiated Neural Network, Pandas DataFrame, Pandas DataFrame
-    Output: Fitted model 
-    '''
-
-    np.random.seed(24)
-    train_target, train_features = get_target_features(train_data)
-    test_target, test_features = get_target_features(test_data)
-    train_target = np_utils.to_categorical(train_target, 2) 
-    test_target = np_utils.to_categorical(test_target, 2) 
-    train_features, test_features = train_features.values, test_features.values
-    model.fit(train_features, train_target, batch_size=100, 
-            nb_epoch=10, verbose=1)
-    return model
-
-def predict_with_model(test_data, model): 
-    '''
-    Input: Pandas DataFrame, Fitted Model
-    Output: Numpy Array of Predictions
-
-    Using the fitted model, make predictions with the test data and return those predictions. 
-    '''
-
-    if isinstance(model, keras.models.Sequential): 
-        target, features = get_target_features(test_data)
-        predictions = model.predict(features.values)[:, 1] > 0.50 
-        predicted_probs = model.predict_proba(features.values)
-    else: 
-        target, features = get_target_features(test_data)
-        predictions = model.predict(features)
-        predicted_probs = model.predict_proba(features)
-
-    return predictions, predicted_probs
-
-def log_results(model_name, train, fitted_model, scores, best_roc_auc, run_time): 
-    '''
-    Input: String, Pandas DataFrame,  Dictionary, Numpy Array, Float  
-    Output: .txt file. 
-
-    Log the results of this run to a .txt file, saving the column names (so I know what features I used), 
-    the model name (so I know what model I ran), the parameters for that model, 
-    and the scores associated with it (so I know how well it did). 
-    '''
+    Args: 
+    ----
+        model_name: str
+        train: np.ndarray
+            Holds the training data, used to store the column names. 
+        fitted_model: variable 
+            Holds the best fit model, used to store the final parameters
+            of that model. 
+        score: float 
+            Score from the validation/hold out data set (not used at 
+            all during cross validation). 
+        best_roc_auc: float 
+            Best score from the fitted model. 
+    """
 
     st = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
     filename = 'code/modeling/model_output/logs/' + model_name + '.txt'
@@ -214,11 +124,10 @@ def log_results(model_name, train, fitted_model, scores, best_roc_auc, run_time)
         f.write(st + '\n')
         f.write('-' * 100 + '\n')
         f.write('Model Run: ' + model_name + '\n' * 2)
-        f.write('Params: ' + str(fitted_model.get_params()) + '\n' * 2)
+        f.write('Params: ' + str(best_fit_model.get_params()) + '\n' * 2)
         f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
-        f.write('Scores: ' + str(scores) + '\n' * 2)
-        f.write('Validation ROC AUC: ' + str(best_roc_auc) + '\n' * 2)
-        f.write('Run time: ' + str(run_time) + '\n' * 2)
+        f.write('Test AUC_PR: ' + str(score) + '\n' * 2)
+        f.write('Train AUC_PR: ' + str(best_score) + '\n' * 2)
 
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
@@ -230,45 +139,68 @@ if __name__ == '__main__':
     with open('code/makefiles/columns_list.pkl') as f: 
         keep_columns = pickle.load(f)
 
-    input_df = base_input_df[keep_columns]
+    input_df = alter_nearby_fires_cols(base_input_df)
+    input_df = input_df[keep_columns]
     if len(sys.argv) == 4: 
         # If this is 4, I'm expecting that a date was passed in that we want
         # to use for the day of our test set (i.e. the days fires that we are 
         # predicting). Otherwise, we'll use the most recent date in our df. 
-        date_parts = sys.argv[4].split('-')
-        test_set_date = datetime(date_parts[0], date_parts[1], date_parts[2],
-                0, 0, 0)
+        date_parts = sys.argv[3].split('-')
+        test_set_date = datetime(int(date_parts[0]), 
+                int(date_parts[1]), int(date_parts[2]), 0, 0, 0)
     else: 
         test_set_timestamp = input_df['date_fire'].max()
         test_set_date = datetime(test_set_timestamp.year, 
                 test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
     train, test = get_train_test(input_df, 'date_fire', test_set_date)
-
-    if model_name == 'neural_net': 
+    # sklearn logit uses regularization by default, so it'd be best 
+    # to scale the variables in that case as well. 
+    if model_name == 'neural_net' or model_name == 'logit': 
         train = normalize_df(train)
         test = normalize_df(test)
+    
+    # If 'random' was passed in, then perform a random search from parameter
+    # distributions, and else just do a grid search. 
+    rand_search = True if len(sys.argv) == 5 and sys.argv[4] == 'random' \
+            else False 
 
-        
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
     date_step_size = timedelta(days=1)
-    '''
-    cv_fold_generator = SequentialTimeFold(train, date_step_size, 20, 
-            test_set_date)
-    '''
-    cv_fold_generator = StratifiedTimeFold(train, date_step_size, 20, 
-            test_set_date, 14)
+    model_kwargs = get_model_args(model_name, train)
+
+    model = get_model(model_name, model_kwargs)
     
-    '''
-    train = prep_data(train)
-    test = prep_data(test)
-    start = time.time()
-    best_fit_model, mean_metric_score = \
-            sklearn_grid_search(model_name, train, test, cv_fold_generator) 
-    end = time.time()
-    run_time = end - start
-    preds, preds_probs = predict_with_model(test, best_fit_model)
-    scores = return_scores(test.fire_bool, preds, preds_probs)
-    log_results(model_name, train, best_fit_model, scores, mean_metric_score, 
-            run_time)
-    '''
+    if model_name != 'neural_net': 
+        model_parameters = get_grid_params(model_name) if not rand_search \
+                else get_random_params(model_name)
+
+    cv_fold_generator = SequentialTimeFold(train, date_step_size, 14, 
+            test_set_date, 'fire_bool')
+    
+    train, test = prep_data(train), prep_data(test)
+    
+    early_stopping_tolerance = 5 if model_name in {'xgboost','gboosting', 
+                'neural_net'} else None
+    if model_name != 'neural_net': 
+        if not rand_search: 
+            best_fit_model, best_score, scores = \
+                    sklearn_grid_search(model, model_parameters, train, 
+                    test, list(cv_fold_generator), 
+                    early_stopping_tolerance, model_name)
+        else: 
+            best_fit_model, best_score, scores = \
+                sklearn_random_search(model, model_parameters, train, 
+                        test, list(cv_fold_generator), 5,
+                        early_stopping_tolerance, model_name)
+    else: 
+        train_target, train_features = get_target_features(train)
+        train_target = train_target.astype(int)
+        train_target = np_utils.to_categorical(train_target)
+        model.fit(train_features.values, train_target, 
+                early_stopping=early_stopping_tolerance)
+
+    scorer = return_scorer()
+    test_target, test_features = get_target_features(test)
+    score = scorer(best_fit_model, test_features, test_target)
+    log_results(model_name, train, best_fit_model, score, best_score)
