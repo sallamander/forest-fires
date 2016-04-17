@@ -165,7 +165,9 @@ if __name__ == '__main__':
             else False 
 
     # We need to reset the index so the time folds produced work correctly.
+    # the test index is reset to get it to work below with Keras. 
     train.reset_index(drop=True, inplace=True)
+    test.reset_index(drop=True, inplace=True)
     date_step_size = timedelta(days=1)
     model_kwargs = get_model_args(model_name, train)
 
@@ -195,9 +197,13 @@ if __name__ == '__main__':
                         early_stopping_tolerance, model_name)
     else: 
         train_target, train_features = get_target_features(train)
+        test_target, test_features = get_target_features(test)
+        test_target = test_target.astype(int)
+        test_target = np_utils.to_categorical(test_target)
         train_target = train_target.astype(int)
         train_target = np_utils.to_categorical(train_target)
         model.fit(train_features.values, train_target, 
+                X_test=test_features.values, y_test=test_target, 
                 early_stopping=early_stopping_tolerance)
 
     scorer = return_scorer()

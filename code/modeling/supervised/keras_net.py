@@ -157,6 +157,6 @@ class KerasNet(object):
             early_stopper = EarlyStopping(monitor='val_loss', 
                     patience=early_stopping, verbose=1)
         self.model.fit(X_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, 
-                verbose=1)
+                verbose=1, validation_data=validation_data)
         
 
