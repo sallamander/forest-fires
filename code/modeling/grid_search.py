@@ -6,7 +6,7 @@ holds functions for using the `sklearn.grid_search.GridSearchCV`,
 although this will be built up over time. 
 """
 
-from sklearn.grid_search import GridSearchCV
+from sklearn.grid_search import GridSearchCV, RandomSearchCV
 from preprocessing import get_target_features 
 from supervised.gboosting import Monitor
 from scoring import return_scorer
@@ -45,6 +45,47 @@ def get_grid_params(model_name):
                 'max_depth': [2, 4, 8], 
                 'subsample': [0.5, 0.75, 1.0], 
                 'colsample_bytree': [0.5, 0.75, 1.0]}
+
+    return param_dct
+
+def get_random_params(model_name): 
+    """Return some random model parameters to search over. 
+
+    These parameters will be chosen randomly from uniform 
+    distribution, allowing for use in RandomSearchCV
+
+    Args: 
+    ----
+        model_name: str
+            Holds the name of the model type that will be fit, 
+            which defines the parameters to search over, and the 
+            distributions for each. 
+
+    Return: 
+    ------
+        param_dct: dct
+    """
+
+    if model_name == 'logit': 
+        param_dct = {'penalty': ['l1', 'l2'], 'C': 10 ** np.random.uniform(-5, -2)}
+    elif model_name == 'random_forest': 
+        param_dct = {'n_estimators': np.random.uniform(400, 1200), 
+                'max_depth': np.randint(1, 32)}
+    elif model_name == 'extra_trees': 
+        param_dct = {'n_estimators': np.random.uniform(400, 1200), 
+                'max_depth': 2 ** np.randint(2, 5)}
+    elif model_name == 'gradient_boosting': 
+        param_dct = {'n_estimators': np.random.uniform(400, 1200), 
+                'learning_rate': 10 ** np.random.uniform(-4, -1), 
+                'max_depth': np.randint(1, 8), 
+                'max_features': np.random.uniform(0.5, 1.0), 
+                'subsample': np.random.uniform(0.5, 1.0)}
+    elif model_name == 'xgboost': 
+        param_dct = {'eta': 10 ** np.random.uniform(-4, -1), 
+                'num_boost_round': np.random.uniform(400, 1200), 
+                'max_depth': np.randint(1, 8), 
+                'subsample': np.random.uniform(0.5, 1.0), 
+                'colsample_bytree': np.random.uniform(0.5, 1.0)}
 
     return param_dct
 
@@ -117,3 +158,7 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
 
     return grid_search.best_estimator_, grid_search.best_score_, \
             grid_search.grid_scores_
+
+def sklearn_random_search(model, params, train, test, cv_fold_generator, 
+        num_iterations=1, early_stopping_tolerance=None, model_name=None): 
+    pass

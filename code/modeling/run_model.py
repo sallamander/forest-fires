@@ -28,7 +28,8 @@ from time_val import SequentialTimeFold
 from preprocessing import normalize_df, prep_data, \
         alter_nearby_fires_cols, get_target_features
 from supervised.supervised_models import get_model 
-from grid_search import sklearn_grid_search, get_grid_params 
+from grid_search import sklearn_grid_search, get_grid_params, \
+        get_random_params
 
 def get_train_test(df, date_col, test_date): 
     """Return a train/test split based off the inputted test_date
@@ -166,7 +167,8 @@ if __name__ == '__main__':
     model = get_model(model_name, model_kwargs)
     
     if model_name != 'neural_net': 
-        grid_parameters = get_grid_params(model_name)
+        model_parameters = get_grid_params(model_name) if not rand_search \
+                else get_random_params(model_name)
 
     cv_fold_generator = SequentialTimeFold(train, date_step_size, 14, 
             test_set_date, 'fire_bool')
@@ -176,9 +178,13 @@ if __name__ == '__main__':
     early_stopping_tolerance = 5 if model_name in {'xgboost','gboosting', 
                 'neural_net'} else None
     if model_name != 'neural_net': 
-        best_fit_model, best_score, scores = \
-                sklearn_grid_search(model, grid_parameters, train, 
-                test, list(cv_fold_generator), early_stopping_tolerance, model_name)
+        if not rand_search: 
+            best_fit_model, best_score, scores = \
+                    sklearn_grid_search(model, model_parameters, train, 
+                    test, list(cv_fold_generator), early_stopping_tolerance, model_name)
+            best_fit_model, best_score, scores = \
+                sklearn_random_search(model, model_parameters, train, 
+                    test, list(cv_fold_generator), early_stopping_tolerance, model_name)
     else: 
         train_target, train_features = get_target_features(train)
         train_target = train_target.astype(int)
