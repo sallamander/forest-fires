@@ -29,7 +29,7 @@ from preprocessing import normalize_df, prep_data, \
         alter_nearby_fires_cols, get_target_features
 from supervised.supervised_models import get_model 
 from grid_search import sklearn_grid_search, get_grid_params, \
-        get_random_params
+        get_random_params, sklearn_random_search
 
 def get_train_test(df, date_col, test_date): 
     """Return a train/test split based off the inputted test_date
@@ -158,6 +158,11 @@ if __name__ == '__main__':
     if model_name == 'neural_net' or model_name == 'logit': 
         train = normalize_df(train)
         test = normalize_df(test)
+    
+    # If 'random' was passed in, then perform a random search from parameter
+    # distributions, and else just do a grid search. 
+    rand_search = True if len(sys.argv) == 5 and sys.argv[4] == 'random' \
+            else False 
 
     # We need to reset the index so the time folds produced work correctly.
     train.reset_index(drop=True, inplace=True)
@@ -181,10 +186,13 @@ if __name__ == '__main__':
         if not rand_search: 
             best_fit_model, best_score, scores = \
                     sklearn_grid_search(model, model_parameters, train, 
-                    test, list(cv_fold_generator), early_stopping_tolerance, model_name)
+                    test, list(cv_fold_generator), 
+                    early_stopping_tolerance, model_name)
+        else: 
             best_fit_model, best_score, scores = \
                 sklearn_random_search(model, model_parameters, train, 
-                    test, list(cv_fold_generator), early_stopping_tolerance, model_name)
+                        test, list(cv_fold_generator), 5,
+                        early_stopping_tolerance, model_name)
     else: 
         train_target, train_features = get_target_features(train)
         train_target = train_target.astype(int)

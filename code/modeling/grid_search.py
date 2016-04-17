@@ -2,11 +2,12 @@
 
 This module provides a number of helper functions for 
 selecting how to grid search. For the time being, it simply
-holds functions for using the `sklearn.grid_search.GridSearchCV`, 
-although this will be built up over time. 
+holds functions for using the `sklearn.grid_search.GridSearchCV` 
+and `sklearn.grid_search.RandomizedSearchCV`.
 """
 
-from sklearn.grid_search import GridSearchCV, RandomSearchCV
+from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
+import scipy.stats as scs
 from preprocessing import get_target_features 
 from supervised.gboosting import Monitor
 from scoring import return_scorer
@@ -67,25 +68,25 @@ def get_random_params(model_name):
     """
 
     if model_name == 'logit': 
-        param_dct = {'penalty': ['l1', 'l2'], 'C': 10 ** np.random.uniform(-5, -2)}
+        param_dct = {'penalty': ['l1', 'l2'], 'C': scs.uniform(0.00001, 0.01)}
     elif model_name == 'random_forest': 
-        param_dct = {'n_estimators': np.random.uniform(400, 1200), 
-                'max_depth': np.randint(1, 32)}
+        param_dct = {'n_estimators': scs.uniform(400, 1200), 
+                'max_depth': scs.randint(2, 32)}
     elif model_name == 'extra_trees': 
-        param_dct = {'n_estimators': np.random.uniform(400, 1200), 
-                'max_depth': 2 ** np.randint(2, 5)}
+        param_dct = {'n_estimators': scs.uniform(400, 1200), 
+                'max_depth': scs.randint(2, 32)}
     elif model_name == 'gradient_boosting': 
-        param_dct = {'n_estimators': np.random.uniform(400, 1200), 
-                'learning_rate': 10 ** np.random.uniform(-4, -1), 
-                'max_depth': np.randint(1, 8), 
-                'max_features': np.random.uniform(0.5, 1.0), 
-                'subsample': np.random.uniform(0.5, 1.0)}
+        param_dct = {'n_estimators': scs.uniform(400, 1200), 
+                'learning_rate': scs.uniform(0.001, 0.1), 
+                'max_depth': scs.randint(1, 8), 
+                'max_features': scs.uniform(0.5, 1.0), 
+                'subsample': scs.uniform(0.5, 1.0)}
     elif model_name == 'xgboost': 
-        param_dct = {'eta': 10 ** np.random.uniform(-4, -1), 
-                'num_boost_round': np.random.uniform(400, 1200), 
-                'max_depth': np.randint(1, 8), 
-                'subsample': np.random.uniform(0.5, 1.0), 
-                'colsample_bytree': np.random.uniform(0.5, 1.0)}
+        param_dct = {'eta': 10 ** scs.uniform(-4, -1), 
+                'num_boost_round': scs.uniform(400, 1200), 
+                'max_depth': scs.randint(1, 8), 
+                'subsample': scs.random.uniform(0.5, 1.0), 
+                'colsample_bytree': scs.uniform(0.5, 1.0)}
 
     return param_dct
 
@@ -127,8 +128,9 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
 
     train_target, train_features = get_target_features(train)
     test_target, test_features = get_target_features(test)
-
+    eval_metric = return_scorer('auc_precision_recall')
     
+    fit_params = {}
     if early_stopping_tolerance: 
         # The monitor callback and xgboost use code under the hood
         # that requires these changes. 
@@ -136,13 +138,11 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
         test_features = test_features.values.astype('float32')
         test_target = test_target.copy(order='C')
         test_features = test_features.copy(order='C')
-        eval_metric = return_scorer('auc_precision_recall')
 
         # Finally, we want to pass in these parameters not to the 
         # constructor upon instantiation (like grid_search.fit does), 
         # but to the `fit` method. The `fit_params` argument will allow
         # us to do that. 
-        fit_params = {}
         if model_name == 'gboosting': 
             val_loss_monitor = Monitor(test_features, test_target,  
                     early_stopping_tolerance)
@@ -160,7 +160,7 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
             grid_search.grid_scores_
 
 def sklearn_random_search(model, params, train, test, cv_fold_generator, 
-        num_iterations=1, early_stopping_tolerance=None, model_name=None): 
+        num_iterations=2, early_stopping_tolerance=None, model_name=None): 
     """Perform a model search over random parameters an inputted number of times.  
     
     For the given model and the relevant parameters, perform a search
@@ -178,6 +178,9 @@ def sklearn_random_search(model, params, train, test, cv_fold_generator,
         test: np.ndarray
         cv_fold_generator: SequentialTimeFold/StratifiedTimeFold object 
             An object that generates folds to perform cross-validation over. 
+        num_iterations (optional): int
+            Holds the number of times to iterate over random parameter 
+            sets (defaults to 2). 
         early_stopping_tolerance (optional): int
             Holds the tolerance to pass to the `supervised.gboosting.Monitor`
             object for the sklearn gradient boosting model, or to the `.fit` 
@@ -199,8 +202,10 @@ def sklearn_random_search(model, params, train, test, cv_fold_generator,
 
     train_target, train_features = get_target_features(train)
     test_target, test_features = get_target_features(test)
+    eval_metric = return_scorer('auc_precision_recall')
 
     
+    fit_params = {}
     if early_stopping_tolerance: 
         # The monitor callback and xgboost use code under the hood
         # that requires these changes. 
@@ -208,13 +213,11 @@ def sklearn_random_search(model, params, train, test, cv_fold_generator,
         test_features = test_features.values.astype('float32')
         test_target = test_target.copy(order='C')
         test_features = test_features.copy(order='C')
-        eval_metric = return_scorer('auc_precision_recall')
 
         # Finally, we want to pass in these parameters not to the 
         # constructor upon instantiation (like grid_search.fit does), 
         # but to the `fit` method. The `fit_params` argument will allow
         # us to do that. 
-        fit_params = {}
         if model_name == 'gboosting': 
             val_loss_monitor = Monitor(test_features, test_target,  
                     early_stopping_tolerance)
@@ -224,8 +227,9 @@ def sklearn_random_search(model, params, train, test, cv_fold_generator,
             fit_params['eval_metric'] = 'logloss'
             fit_params['eval_set'] = [(test_features, test_target)]
 
-    grid_search = RandomSearchCV(estimator=model, param_distributions=params, 
-            scoring=eval_metric, cv=cv_fold_generator, fit_params=fit_params)
+    grid_search = RandomizedSearchCV(estimator=model, param_distributions=params, 
+            scoring=eval_metric, cv=cv_fold_generator, fit_params=fit_params, 
+            n_iter=num_iterations)
     grid_search.fit(train_features.values, train_target.values)
 
     return grid_search.best_estimator_, grid_search.best_score_, \
