@@ -161,4 +161,72 @@ def sklearn_grid_search(model, params, train, test, cv_fold_generator,
 
 def sklearn_random_search(model, params, train, test, cv_fold_generator, 
         num_iterations=1, early_stopping_tolerance=None, model_name=None): 
-    pass
+    """Perform a model search over random parameters an inputted number of times.  
+    
+    For the given model and the relevant parameters, perform a search
+    by randomly sampling from the given distributions for those parameters, 
+    and fit the model with those. Do this the inputted `num_iterations` 
+    number of times, and return some statistics. 
+
+    Args: 
+    ----
+        model: varied
+            Holds the model to perform the grid search over. Expected 
+            to implement the sklearn model interface. 
+        params: dct
+        train: np.ndarray
+        test: np.ndarray
+        cv_fold_generator: SequentialTimeFold/StratifiedTimeFold object 
+            An object that generates folds to perform cross-validation over. 
+        early_stopping_tolerance (optional): int
+            Holds the tolerance to pass to the `supervised.gboosting.Monitor`
+            object for the sklearn gradient boosting model, or to the `.fit` 
+            method on an xgboost model. This tolerance controls the number 
+            of training rounds that the validation error can increase/get
+            worse before stopping early.
+        model_name (optional): str
+            Holds the model_name, to be used to determine if it is a 
+            boosting model, and whether or not to use early stopping. Must
+            be passed in if `early_stopping_tolerance` is passed in. 
+
+    Returns: 
+    -------
+        best_model: GridSearchCV.best_estimator_
+            The best model as obtained through the grid search. 
+        best_mean_score: float
+            The `mean_validation_score` from a GridSearchCV object. 
+    """
+
+    train_target, train_features = get_target_features(train)
+    test_target, test_features = get_target_features(test)
+
+    
+    if early_stopping_tolerance: 
+        # The monitor callback and xgboost use code under the hood
+        # that requires these changes. 
+        test_target = test_target.values.astype('float32')  
+        test_features = test_features.values.astype('float32')
+        test_target = test_target.copy(order='C')
+        test_features = test_features.copy(order='C')
+        eval_metric = return_scorer('auc_precision_recall')
+
+        # Finally, we want to pass in these parameters not to the 
+        # constructor upon instantiation (like grid_search.fit does), 
+        # but to the `fit` method. The `fit_params` argument will allow
+        # us to do that. 
+        fit_params = {}
+        if model_name == 'gboosting': 
+            val_loss_monitor = Monitor(test_features, test_target,  
+                    early_stopping_tolerance)
+            fit_params['monitor'] = val_loss_monitor
+        elif model_name == 'xgboost': 
+            fit_params['early_stopping_rounds'] = early_stopping_tolerance
+            fit_params['eval_metric'] = 'logloss'
+            fit_params['eval_set'] = [(test_features, test_target)]
+
+    grid_search = RandomSearchCV(estimator=model, param_distributions=params, 
+            scoring=eval_metric, cv=cv_fold_generator, fit_params=fit_params)
+    grid_search.fit(train_features.values, train_target.values)
+
+    return grid_search.best_estimator_, grid_search.best_score_, \
+            grid_search.grid_scores_
