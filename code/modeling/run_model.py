@@ -181,18 +181,11 @@ if __name__ == '__main__':
     if model_name != 'neural_net': 
         best_fit_model, best_score, scores = \
             run_sklearn_param_search(model, train, test, list(cv_fold_generator),
-                    rand_search, early_stopping_tolerance, model_name)
+                    rand_search, model_name)
     else: 
-        train_target, train_features = get_target_features(train)
-        test_target, test_features = get_target_features(test)
-        test_target = test_target.astype(int)
-        test_target = np_utils.to_categorical(test_target)
-        train_target = train_target.astype(int)
-        train_target = np_utils.to_categorical(train_target)
-        model.fit(train_features.values, train_target, 
-                X_test=test_features.values, y_test=test_target, 
-                early_stopping=5)
-
+        best_fit_model, best_score, scores = \
+            run_keras_param_search(model, train, test, list(cv_fold_generator))
+                    
     scorer = return_scorer()
     test_target, test_features = get_target_features(test)
     score = scorer(best_fit_model, test_features, test_target)

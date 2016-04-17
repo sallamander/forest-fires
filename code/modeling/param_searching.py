@@ -84,6 +84,58 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
 
     return best_model, best_mean_score, scores
 
+def run_keras_param_search(model, train, test, cv_fold_generator, 
+        n_iter=5): 
+    """Run parameter tuning with a keras model over the inputted folds. 
+
+    Obtain a dictionary that will be used to generate parameter values
+    randomly for each one of the folds in the cv_fold_generator. Then
+    cycle over the `cv_fold_generator` `n_iter` number of times, each time 
+    sampling from the dictionary a set of paramter values to use for 
+    that particular iteration. 
+
+    Along the way, save up the scores of each one of the iterations. When
+    finished, fit the model using the best set of the paramters, and return 
+    the "best model", a mean validation score across that model, and the 
+    scores across all iterations (this is similar to what `GridSearchCV` 
+    and `RandomizedSearchCV` from sklearn can return. 
+
+    Args: 
+    ----
+        model: Keras model 
+            A pre-built Keras model to be compiled and fit.  
+        train: np.ndarry
+        test: np.ndarry
+        cv_fold_generator: list of tuples 
+            Holds the train/test splits to be used for each fold during 
+            cross-validation. 
+
+    Returns: 
+    -------
+        best_model: Keras model. 
+            The best model as obtained through the parameter search. 
+        best_mean_score: float
+            The mean validation score over the folds, from the best_model.  
+        scores: list
+            The scores from each run of the paramateter search over the 
+            folds. 
+    """
+    
+    train_features, train_target, test_features, test_target = \
+            _prep_keras_inputs(train, test)
+
+    for iteration in xrange(n_iter): 
+        for train_split, test_split in cv_fold_generator: 
+            X_train = train_features[train_split]
+            y_train = train_target[train_split]
+            X_test = train_features[test_split]
+            y_test = train_target[test_split]
+
+            model.fit(X_train, y_train, X_test=test_features, 
+                    y_test=test_target, early_stopping=5)
+            score = model.evaluate(X_test, y_test)
+            scores.append(score)
+
 def _get_grid_params(model_name): 
     """Return the appropriate model parameters to search over. 
 
@@ -201,3 +253,39 @@ def _prep_fit_params(model_name, fit_params,
     
 
     return fit_params
+
+def _prep_keras_inputs(train, test): 
+    """Get the train/test data into the right format for Keras. 
+
+    First, split the train and test into features and target.
+    Next, since keras models only accept np.ndarray's, format the 
+    training/test data to meet that. In addition, since this is a 
+    classification problem and a `softmax` will be used at the final 
+    layer, the test set needs to be fed in as two dimensional. 
+
+    Args: 
+    ----
+        train: pandas DataFrame
+        test: pandas DataFrame
+
+    Return: 
+    ------
+        train_features: np.ndarray
+        train_target: np.ndarray
+        test_features: np.ndarray
+        test_target: np.ndarray
+    """
+    
+    # Break out the DataFrames. 
+    train_target, train_features = get_target_features(train)
+    test_target, test_features = get_target_features(test)
+    
+    # Format everything. 
+    train_target = train_target.astype(int)
+    train_target = np_utils.to_categorical(train_target)
+
+    test_target = test_target.astype(int)
+    test_target = np_utils.to_categorical(test_target)
+
+    return train_features, train_target, test_features, test_target
+
