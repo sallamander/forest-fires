@@ -28,7 +28,7 @@ from time_val import SequentialTimeFold
 from preprocessing import normalize_df, prep_data, \
         alter_nearby_fires_cols, get_target_features
 from supervised.supervised_models import get_model 
-from grid_search import sklearn_grid_search, get_grid_params, \
+from param_searching import sklearn_grid_search, get_grid_params, \
         get_random_params, sklearn_random_search
 
 def get_train_test(df, date_col, test_date): 
