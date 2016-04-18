@@ -126,7 +126,6 @@ def log_results(model_name, train, best_fit_model, score, best_score, scores):
         f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
         f.write('Validation AUC_PR: ' + str(score) + '\n' * 2)
         f.write('Train AUC_PR: ' + str(best_score) + '\n' * 2)
-        f.write('\n' * 2)
         for score in scores: 
             str_to_write = str(score[0]) + ' : ' + str(score[1]) + '\n'
             f.write(str_to_write)

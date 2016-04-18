@@ -14,3 +14,4 @@ data/zipped_files
 code/eda-viz/in_proj/data/
 code/eda-viz/in_proj/testing_notebooks
 code/app/static/scripts/data/*
+code/modeling/model_output/*
