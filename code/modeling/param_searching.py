@@ -1,14 +1,11 @@
 """A module for selecting grid search options.
 
 This module provides a number of helper functions for 
-selecting how to grid search. This holds functions for
+selecting how to grid search. This holds a function for
 using the `sklearn.grid_search.GridSearchCV` and 
-`sklearn.grid_search.RandomizedSearchCV`. The two - 
-`run_sklearn_grid_search` and `run_sklearn_random_search`
-are effectively just wrappers around `GridSearchCV` and 
-`RandomizedSearchCV`, and are the only two meant to be 
-called externally. The other functions are used as helpers
-to either get parameters to search over, or prep the data.
+`sklearn.grid_search.RandomizedSearchCV` (a wrapper around 
+the two), as well as a custom function for performing 
+parameter searching over a Keras model using cross-validation. 
 """
 
 from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
@@ -67,7 +64,7 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
         fit_params = _prep_fit_params(model_name, fit_params, 
                 early_stopping_tolerance, test_features, test_target)
 
-    if random=True: 
+    if random: 
         params = _get_random_params(model_name)
         grid_search = RandomizedSearchCV(estimator=model, param_distributions=params, 
                 scoring=eval_metric, cv=cv_fold_generator, fit_params=fit_params, 

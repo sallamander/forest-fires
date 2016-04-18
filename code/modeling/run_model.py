@@ -28,8 +28,7 @@ from time_val import SequentialTimeFold
 from preprocessing import normalize_df, prep_data, \
         alter_nearby_fires_cols, get_target_features
 from supervised.supervised_models import get_model 
-from param_searching import run_sklearn_grid_search, \
-    run_sklearn_random_search
+from param_searching import run_sklearn_param_search
 
 def get_train_test(df, date_col, test_date): 
     """Return a train/test split based off the inputted test_date
@@ -57,11 +56,8 @@ def get_train_test(df, date_col, test_date):
     # than it, which will be present in training). 
     max_test_date = test_date + timedelta(days=1)
 
-    # We're only going to go back 14 days to perform CV over. 
-    min_train_date = test_date - timedelta(days=14)
     test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
         df[date_col] < max_test_date))[0]
-     
     train_mask = np.where(df[date_col] < test_date)[0]
     train = df.ix[train_mask, :] 
     test = df.ix[test_mask, :]
@@ -100,7 +96,7 @@ def get_model_args(model_name, train):
 
     return model_kwargs 
 
-def log_results(model_name, train, best_fit_model, score, best_score): 
+def log_results(model_name, train, best_fit_model, score, best_score, scores): 
     """Log the results of our best model run. 
 
     Args: 
@@ -116,6 +112,8 @@ def log_results(model_name, train, best_fit_model, score, best_score):
             all during cross validation). 
         best_roc_auc: float 
             Best score from the fitted model. 
+        scores: list 
+            Scores from each model fit on the folds during cross-validation.
     """
 
     st = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -126,8 +124,12 @@ def log_results(model_name, train, best_fit_model, score, best_score):
         f.write('Model Run: ' + model_name + '\n' * 2)
         f.write('Params: ' + str(best_fit_model.get_params()) + '\n' * 2)
         f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
-        f.write('Test AUC_PR: ' + str(score) + '\n' * 2)
+        f.write('Validation AUC_PR: ' + str(score) + '\n' * 2)
         f.write('Train AUC_PR: ' + str(best_score) + '\n' * 2)
+        f.write('\n' * 2)
+        for score in scores: 
+            str_to_write = str(score[0]) + ' : ' + str(score[1]) + '\n'
+            f.write(str_to_write)
 
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
@@ -152,22 +154,31 @@ if __name__ == '__main__':
         test_set_timestamp = input_df['date_fire'].max()
         test_set_date = datetime(test_set_timestamp.year, 
                 test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
-    train, test = get_train_test(input_df, 'date_fire', test_set_date)
+    validation, hold_out = get_train_test(input_df, 'date_fire', test_set_date)
+
+    # We need to reset the index so we can perform another split. 
+    validation.reset_index(drop=True, inplace=True)
+    hold_out.reset_index(drop=True, inplace=True)
+    train, test = get_train_test(validation, 'date_fire', 
+            test_set_date - timedelta(days=1))
+
+    # We need to reset the index so the time folds produced work correctly.
+    # the test index is reset to get it to work below with Keras. 
+    train.reset_index(drop=True, inplace=True)
+    test.reset_index(drop=True, inplace=True)
+
     # sklearn logit uses regularization by default, so it'd be best 
     # to scale the variables in that case as well. 
     if model_name == 'neural_net' or model_name == 'logit': 
         train = normalize_df(train)
         test = normalize_df(test)
+        hold_out = normalize_df(hold_out)
     
     # If 'random' was passed in, then perform a random search from parameter
     # distributions, and else just do a grid search. 
     rand_search = True if len(sys.argv) == 5 and sys.argv[4] == 'random' \
             else False 
 
-    # We need to reset the index so the time folds produced work correctly.
-    # the test index is reset to get it to work below with Keras. 
-    train.reset_index(drop=True, inplace=True)
-    test.reset_index(drop=True, inplace=True)
     date_step_size = timedelta(days=1)
     model_kwargs = get_model_args(model_name, train)
 
@@ -176,7 +187,7 @@ if __name__ == '__main__':
     cv_fold_generator = SequentialTimeFold(train, date_step_size, 14, 
             test_set_date, 'fire_bool')
     
-    train, test = prep_data(train), prep_data(test)
+    train, test, hold_out = prep_data(train), prep_data(test), prep_data(hold_out)
     
     if model_name != 'neural_net': 
         best_fit_model, best_score, scores = \
@@ -187,6 +198,6 @@ if __name__ == '__main__':
             run_keras_param_search(model, train, test, list(cv_fold_generator))
                     
     scorer = return_scorer()
-    test_target, test_features = get_target_features(test)
-    score = scorer(best_fit_model, test_features, test_target)
-    log_results(model_name, train, best_fit_model, score, best_score)
+    hold_out_target, hold_out_features = get_target_features(hold_out)
+    score = scorer(best_fit_model, hold_out_features, hold_out_target)
+    log_results(model_name, train, best_fit_model, score, best_score, scores)
