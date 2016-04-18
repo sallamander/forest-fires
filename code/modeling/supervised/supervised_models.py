@@ -52,7 +52,7 @@ def get_model(model_name, kwargs):
         model = RandomForestClassifier(random_state=rand_seed, 
                  n_jobs=n_usable_cores)
     elif model_name == 'extra_trees': 
-        model = ExtraTreesClassifier(random_state=rand_seed)
+        model = ExtraTreesClassifier(random_state=rand_seed, n_jobs=n_usable_cores)
     elif model_name == 'gboosting': 
         model = GradientBoostingClassifier(random_state=rand_seed)
     elif model_name == 'neural_net': 
