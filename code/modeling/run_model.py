@@ -131,7 +131,7 @@ def log_results(model_name, train, best_fit_model, score, best_score, scores):
             f.write(str_to_write)
 
 def log_scores(best_fit_model, hold_out_features, hold_out_target, 
-        model_name, date_parts): 
+        model_name, date_parts, hold_out_feats_pre_norm): 
     """Predict using the best fit model and save the scores. 
 
     Args: 
@@ -146,17 +146,22 @@ def log_scores(best_fit_model, hold_out_features, hold_out_target,
         date_parts: list of strings 
             Holds the date used for the hold out set, used for the 
             filepath purposes. 
+        hold_out_feats_pre_norm: pandas DataFrame
+            Holds the unormalized values (if necessary) to be merged
+            back on. The merged values will be meaningless. 
     """
 
+    st = datetime.fromtimestamp(time.time())
     preds_probs = best_fit_model.predict_proba(hold_out_features)
     preds_probs_df = pd.DataFrame(data=preds_probs, columns=['preds_probs_0', 
         'preds_probs_1'])
     hold_out_target_df = pd.DataFrame(data=hold_out_target, columns=['fire_bool'])
     
-    master_df = pd.concat([hold_out_features, hold_out_target_df, preds_probs_df], 
-            axis=1)
+    master_df = pd.concat([hold_out_feats_pre_norm, 
+        hold_out_target_df, preds_probs_df], axis=1)
     save_fp = 'code/modeling/model_output/preds/' + model_name + \
-            '/preds_df_' + '-'.join(date_parts)
+            '/preds_df_' + '-'.join([str(st.year), str(st.month), str(st.day)
+                , str(st.hour), str(st.minute)])
     master_df.to_csv(save_fp, index=False)
 
 if __name__ == '__main__': 
@@ -197,6 +202,7 @@ if __name__ == '__main__':
 
     # sklearn logit uses regularization by default, so it'd be best 
     # to scale the variables in that case as well. 
+    train_pre_norm, test_pre_norm, hold_out_pre_norm = train, test, hold_out
     if model_name == 'neural_net' or model_name == 'logit': 
         train = normalize_df(train)
         test = normalize_df(test)
@@ -227,7 +233,9 @@ if __name__ == '__main__':
                     
     scorer = return_scorer()
     hold_out_target, hold_out_features = get_target_features(hold_out)
+    hold_out_t_pre_norm, hold_out_feats_pre_norm = \
+            get_target_features(hold_out_pre_norm)
     score = scorer(best_fit_model, hold_out_features, hold_out_target)
     log_results(model_name, train, best_fit_model, score, best_score, scores)
     log_scores(best_fit_model, hold_out_features, hold_out_target, model_name, 
-            date_parts)
+            date_parts, hold_out_feats_pre_norm)
