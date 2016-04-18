@@ -131,6 +131,35 @@ def log_results(model_name, train, best_fit_model, score, best_score, scores):
             str_to_write = str(score[0]) + ' : ' + str(score[1]) + '\n'
             f.write(str_to_write)
 
+def log_scores(best_fit_model, hold_out_features, hold_out_target, 
+        model_name, date_parts): 
+    """Predict using the best fit model and save the scores. 
+
+    Args: 
+    ----
+        best_fit_model: varied
+            Holds a model that has a `fit` method. 
+        hold_out_features: pandas DataFrame
+        hold_out_target: pandas Series
+        model_name: str
+            Holds the name of the model fit, used for filepath 
+            purposes. 
+        date_parts: list of strings 
+            Holds the date used for the hold out set, used for the 
+            filepath purposes. 
+    """
+
+    preds_probs = best_fit_model.predict_proba(hold_out_features)
+    preds_probs_df = pd.DataFrame(data=preds_probs, columns=['preds_probs_0', 
+        'preds_probs_1'])
+    hold_out_target_df = pd.DataFrame(data=hold_out_target, columns=['fire_bool'])
+    
+    master_df = pd.concat([hold_out_features, hold_out_target_df, preds_probs_df], 
+            axis=1)
+    save_fp = 'code/modeling/model_output/preds/' + model_name + \
+            '/preds_df_' + '-'.join(date_parts)
+    master_df.to_csv(save_fp, index=False)
+
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
     # random forest, etc.), and sys.argv[2] will hold our input dataframe 
@@ -201,3 +230,5 @@ if __name__ == '__main__':
     hold_out_target, hold_out_features = get_target_features(hold_out)
     score = scorer(best_fit_model, hold_out_features, hold_out_target)
     log_results(model_name, train, best_fit_model, score, best_score, scores)
+    log_scores(best_fit_model, hold_out_features, hold_out_target, model_name, 
+            date_parts)
