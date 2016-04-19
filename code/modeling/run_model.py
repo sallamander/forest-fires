@@ -54,7 +54,7 @@ def get_train_test(df, date_col, test_date):
     # In the case that we are putting in a test_date for training, we 
     # want to make sure to only grab that day (and not days that are greater
     # than it, which will be present in training). 
-    max_test_date = test_date + timedelta(days=1)
+    max_test_date = test_date + timedelta(days=365)
 
     test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
         df[date_col] < max_test_date))[0]
@@ -96,7 +96,7 @@ def get_model_args(model_name, train):
 
     return model_kwargs 
 
-def log_results(model_name, train, best_fit_model, score, best_score, scores): 
+def log_results(model_name, train, best_fit_model, best_score, scores): 
     """Log the results of our best model run. 
 
     Args: 
@@ -107,9 +107,6 @@ def log_results(model_name, train, best_fit_model, score, best_score, scores):
         fitted_model: variable 
             Holds the best fit model, used to store the final parameters
             of that model. 
-        score: float 
-            Score from the validation/hold out data set (not used at 
-            all during cross validation). 
         best_roc_auc: float 
             Best score from the fitted model. 
         scores: list 
@@ -124,7 +121,6 @@ def log_results(model_name, train, best_fit_model, score, best_score, scores):
         f.write('Model Run: ' + model_name + '\n' * 2)
         f.write('Params: ' + str(best_fit_model.get_params()) + '\n' * 2)
         f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
-        f.write('Validation AUC_PR: ' + str(score) + '\n' * 2)
         f.write('Train AUC_PR: ' + str(best_score) + '\n' * 2)
         for score in scores: 
             str_to_write = str(score[0]) + ' : ' + str(score[1]) + '\n'
@@ -189,39 +185,29 @@ if __name__ == '__main__':
                 test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
     validation, hold_out = get_train_test(input_df, 'date_fire', test_set_date)
 
-    # We need to reset the index so we can perform another split. 
+    # We need to reset the index so cross-validation happens appropriately. 
     validation.reset_index(drop=True, inplace=True)
-    hold_out.reset_index(drop=True, inplace=True)
-    train, test = get_train_test(validation, 'date_fire', 
-            test_set_date - timedelta(days=1))
-
-    # We need to reset the index so the time folds produced work correctly.
-    # the test index is reset to get it to work below with Keras. 
-    train.reset_index(drop=True, inplace=True)
-    test.reset_index(drop=True, inplace=True)
 
     # sklearn logit uses regularization by default, so it'd be best 
     # to scale the variables in that case as well. 
-    train_pre_norm, test_pre_norm, hold_out_pre_norm = train, test, hold_out
     if model_name == 'neural_net' or model_name == 'logit': 
-        train = normalize_df(train)
-        test = normalize_df(test)
-        hold_out = normalize_df(hold_out)
+        validation = normalize_df(validation)
     
     # If 'random' was passed in, then perform a random search from parameter
     # distributions, and else just do a grid search. 
     rand_search = True if len(sys.argv) == 5 and sys.argv[4] == 'random' \
             else False 
 
-    date_step_size = timedelta(days=1)
-    model_kwargs = get_model_args(model_name, train)
+    date_step_size = timedelta(days=30)
+    model_kwargs = get_model_args(model_name, validation)
 
     model = get_model(model_name, model_kwargs)
     
-    cv_fold_generator = SequentialTimeFold(train, date_step_size, 14, 
-            test_set_date, 'fire_bool')
-    
-    train, test, hold_out = prep_data(train), prep_data(test), prep_data(hold_out)
+    cv_fold_generator = SequentialTimeFold(df=validation, step_size=date_step_size, 
+            max_folds=11, test_set_date=test_set_date,  
+            days_forward=30, y_col='fire_bool')
+
+    validation = prep_data(validation)
     
     if model_name != 'neural_net': 
         best_fit_model, best_score, scores = \
@@ -231,11 +217,6 @@ if __name__ == '__main__':
         best_fit_model, best_score, scores = \
             run_keras_param_search(model, train, test, list(cv_fold_generator))
                     
-    scorer = return_scorer()
-    hold_out_target, hold_out_features = get_target_features(hold_out)
-    hold_out_t_pre_norm, hold_out_feats_pre_norm = \
-            get_target_features(hold_out_pre_norm)
-    score = scorer(best_fit_model, hold_out_features, hold_out_target)
-    log_results(model_name, train, best_fit_model, score, best_score, scores)
-    log_scores(best_fit_model, hold_out_features, hold_out_target, model_name, 
-            date_parts, hold_out_feats_pre_norm)
+    log_results(model_name, train, best_fit_model, best_score, scores)
+    # log_scores(best_fit_model, hold_out_features, hold_out_target, model_name, 
+    # date_parts, hold_out_feats_pre_norm)

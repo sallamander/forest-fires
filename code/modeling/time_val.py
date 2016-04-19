@@ -175,10 +175,11 @@ class SequentialTimeFold(BaseTimeFold):
     be used as a generator passed to GridSearchCV. 
     """
 
-    def __init__(self, df, step_size, max_folds, test_set_date, y_col=None, 
-            resample_y_pct=None, resample_method=None):
+    def __init__(self, df, step_size, max_folds, test_set_date, days_forward=1, 
+            y_col=None, resample_y_pct=None, resample_method=None):
         super(SequentialTimeFold, self).__init__(df, step_size, max_folds, 
                 test_set_date, y_col, resample_y_pct, resample_method)
+        self.days_forward = days_forward
 
     def next(self):
         """Generate integer indices corresponding to train/test sets. 
@@ -207,7 +208,7 @@ class SequentialTimeFold(BaseTimeFold):
             # given that the date column has hours/minutes/seconds and strict
             # equality wouldn't work. 
             test_date = self.test_date
-            test_date_plus = test_date + timedelta(days=1)
+            test_date_plus = test_date + timedelta(days=self.days_forward)
 
             test_indices = np.where(np.logical_and(self.all_dates >= test_date, 
                 self.all_dates < test_date_plus))[0]
