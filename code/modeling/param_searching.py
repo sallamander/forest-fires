@@ -14,8 +14,8 @@ from preprocessing import get_target_features
 from supervised.gboosting import Monitor
 from scoring import return_scorer
 
-def run_sklearn_param_search(model, train, test, cv_fold_generator, 
-        random=False, model_name=None): 
+def run_sklearn_param_search(model, train, cv_fold_generator, 
+        random=False, model_name=None, test=None): 
     """Perform a model grid search over the inputted parameters and folds. 
     
     For the given model and the relevant grid parameters, perform a 
@@ -27,7 +27,6 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
             Holds the model to perform the grid search over. Expected 
             to implement the sklearn model interface. 
         train: np.ndarray
-        test: np.ndarray
         cv_fold_generator: SequentialTimeFold/StratifiedTimeFold object 
             An object that generates folds to perform cross-validation over. 
         random: bool
@@ -36,6 +35,8 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
             Holds the model_name, to be used to determine if it is a 
             boosting model, and whether or not to use early stopping. Must
             be passed in if `early_stopping_tolerance` is passed in. 
+        test (optional): np.ndarray
+            To be used for early stopping if passed in. 
 
     Returns: 
     -------
@@ -48,11 +49,11 @@ def run_sklearn_param_search(model, train, test, cv_fold_generator,
     """
 
     train_target, train_features = get_target_features(train)
-    test_target, test_features = get_target_features(test)
     eval_metric = return_scorer('auc_precision_recall')
-    
-    fit_params = {}
-    if model_name == 'gboosting' or model_name == 'xgboost': 
+
+    fit_params={}
+    if test and (model_name == 'gboosting' or model_name == 'xgboost'):
+        test_target, test_features = get_target_features(test)
         # The monitor callback and xgboost use code under the hood
         # that requires these changes. 
         test_target = test_target.values.astype('float32')  

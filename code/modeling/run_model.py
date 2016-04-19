@@ -211,12 +211,12 @@ if __name__ == '__main__':
     
     if model_name != 'neural_net': 
         best_fit_model, best_score, scores = \
-            run_sklearn_param_search(model, train, test, list(cv_fold_generator),
+            run_sklearn_param_search(model, validation, list(cv_fold_generator),
                     rand_search, model_name)
     else: 
         best_fit_model, best_score, scores = \
-            run_keras_param_search(model, train, test, list(cv_fold_generator))
+            run_keras_param_search(model, validation, list(cv_fold_generator))
                     
-    log_results(model_name, train, best_fit_model, best_score, scores)
+    log_results(model_name, validation, best_fit_model, best_score, scores)
     # log_scores(best_fit_model, hold_out_features, hold_out_target, model_name, 
     # date_parts, hold_out_feats_pre_norm)
