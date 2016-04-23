@@ -212,7 +212,7 @@ if __name__ == '__main__':
     if model_name != 'neural_net': 
         best_fit_model, best_score, scores = \
             run_sklearn_param_search(model, validation, list(cv_fold_generator),
-                    rand_search, model_name)
+                    rand_search, model_name=model_name)
     else: 
         best_fit_model, best_score, scores = \
             run_keras_param_search(model, validation, list(cv_fold_generator))

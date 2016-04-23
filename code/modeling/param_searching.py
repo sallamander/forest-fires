@@ -15,7 +15,7 @@ from supervised.gboosting import Monitor
 from scoring import return_scorer
 
 def run_sklearn_param_search(model, train, cv_fold_generator, 
-        random=False, model_name=None, test=None): 
+        random=False, num_iterations=10, model_name=None, test=None): 
     """Perform a model grid search over the inputted parameters and folds. 
     
     For the given model and the relevant grid parameters, perform a 
@@ -29,8 +29,10 @@ def run_sklearn_param_search(model, train, cv_fold_generator,
         train: np.ndarray
         cv_fold_generator: SequentialTimeFold/StratifiedTimeFold object 
             An object that generates folds to perform cross-validation over. 
-        random: bool
+        random (optional): bool
             Holds whether or not to use RandomizedSearchCV or GridSearchCV. 
+        num_iterations (optional): int
+            Number of iterations to use for random searching (if used). 
         model_name (optional): str
             Holds the model_name, to be used to determine if it is a 
             boosting model, and whether or not to use early stopping. Must
