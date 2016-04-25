@@ -3,7 +3,11 @@ import pickle
 time_transforms_dict = {'year': {'transformation': 'all_dummies', 
                                  'col': 'year'}, 
                         'month': {'transformation': 'all_dummies', 
-                                  'col': 'month'}
+                                  'col': 'month'}, 
+                        'sat_src': {'transformation': 'all_dummies', 
+                                  'col': 'sat_src'}, 
+                        'src': {'transformation': 'all_dummies', 
+                                  'col': 'src'}
                        }
 
 geo_transforms_dict = {'land_water_ratio': {'transformation': 'create_new_col', 
