@@ -180,7 +180,8 @@ do
                     # and geometry. 
                     if [ "$boundary_type" = "fire" ]
                     then 
-                        on_query_part="${on_query_part} AND points.date = polys.date_"
+                        on_query_part="(ST_Distance_Sphere(points.wkb_geometry, polys.wkb_geometry) < 500)"
+                        on_query_part="${on_query_part} AND points.date >= polys.date_ AND points.date <= (polys.date_ + INTERVAL '3 days')"
                         select_distinct_on="(lat, long, date)"
                     fi 
 
