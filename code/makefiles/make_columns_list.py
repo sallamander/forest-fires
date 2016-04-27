@@ -11,7 +11,9 @@ columns_list = ['lat', 'long', 'gmt', 'temp', 'conf', 'frp',
         'all_nearby_fires730', 'all_nearby_count1095', 'all_nearby_fires1095', 
         'year_2014', 'year_2013', 'year_2012', 'year_2015', 'month_1', 
         'month_2', 'month_3', 'month_4', 'month_5', 'month_6', 'month_7', 
-        'month_8', 'month_9', 'month_10', 'month_11', 'month_12', 'date_fire', 'fire_bool']
+        'month_8', 'month_9', 'month_10', 'month_11', 'month_12', 'date_fire',
+        'fire_bool', 'sat_src_A', 'sat_src_T', 'src_gsfc', 'src_gsfc_drl', 
+        'src_rsac', 'src_ssec', 'src_uaf']
 
 """
 columns_list = ['lat', 'long', 'frp', 'date_fire', 'fire_bool', 
