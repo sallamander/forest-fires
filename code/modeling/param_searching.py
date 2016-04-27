@@ -153,11 +153,13 @@ def _get_grid_params(model_name):
     if model_name == 'logit': 
         param_dct = {'penalty': ['l1', 'l2'], 'C': [0.000001, 0.00001, 0.0001]}
     elif model_name == 'random_forest': 
-        param_dct = {'n_estimators': [128, 256, 512, 1024], 
-                'max_depth': [2, 4, 8, 16, 32]}
+        param_dct = {'n_estimators': [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], 
+                'max_depth': [2, 4, 8, 16, 32], 
+                'max_features': ['sqrt', 'log2']}
     elif model_name == 'extra_trees': 
-        param_dct = {'n_estimators': [128, 256, 512, 1024], 
-                'max_depth': [2, 4, 8, 16, 32]}
+        param_dct = {'n_estimators': [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], 
+                'max_depth': [2, 4, 8, 16, 32], 
+                'max_features': ['sqrt', 'log2']}
     elif model_name == 'gboosting': 
         param_dct = {'n_estimators': [128, 256, 512, 1024], 
                 'learning_rate': [0.001, 0.01, 0.1], 
