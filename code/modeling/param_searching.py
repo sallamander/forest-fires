@@ -291,3 +291,22 @@ def _prep_keras_inputs(train, test):
 
     return train_features, train_target, test_features, test_target
 
+def get_best_params(model_name): 
+    """Return the model parameters to use for the final model.
+
+    Args: 
+    ----
+        model_name: str
+    """
+
+    if model_name == 'random_forest': 
+        best_params = {'n_estimators': 1, 
+                'max_depth': 2}
+    elif model_name == 'extra_trees': 
+        best_params = {'n_estimators': 1, 
+                'max_depth': 2}
+
+    return best_params
+
+
+    

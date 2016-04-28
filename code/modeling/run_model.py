@@ -28,7 +28,7 @@ from time_val import SequentialTimeFold
 from preprocessing import normalize_df, prep_data, \
         alter_nearby_fires_cols, get_target_features
 from supervised.supervised_models import get_model 
-from param_searching import run_sklearn_param_search
+from param_searching import run_sklearn_param_search, get_best_params
 
 def format_date(dt): 
     """Return a datetime object from the inputted string. 
@@ -242,3 +242,23 @@ if __name__ == '__main__':
     else: 
         beg_dt, end_dt = sys.argv[3], sys.argv[4]
         beg_date, end_date = format_date(beg_dt), format_date(end_dt)
+
+        model = get_model(model_name, {})
+
+        best_params = get_best_params(model_name)
+        model.set_params(**best_params)
+
+        dt_range = pd.date_range(beg_date, end_date)
+        for dt in dt_range: 
+            validation, hold_out = get_train_test(input_df, 'date_fire', dt)
+            validation, hold_out = prep_data(validation), prep_data(hold_out)
+            Y_train, X_train = get_target_features(validation)
+            Y_test, X_test = get_target_features(hold_out)
+            model.fit(X_train, Y_train)
+            model.predict(X_test)
+            print 'Done'
+            # split data
+            # fit model on train
+            # predict on test
+            # store results 
+            pass
