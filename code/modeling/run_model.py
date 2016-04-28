@@ -30,6 +30,25 @@ from preprocessing import normalize_df, prep_data, \
 from supervised.supervised_models import get_model 
 from param_searching import run_sklearn_param_search
 
+def format_date(dt): 
+    """Return a datetime object from the inputted string. 
+
+    Args: 
+    ----
+        dt: str
+            String in the format of Year-Month-Day. 
+
+    Return: 
+    ------
+        formatted_date: datetime.datetime object
+    """
+
+    date_parts = dt.split('-')
+    formatted_date = datetime(int(date_parts[0]), 
+            int(date_parts[1]), int(date_parts[2]), 0, 0, 0)
+    
+    return formatted_date
+
 def get_train_test(df, date_col, test_date): 
     """Return a train/test split based off the inputted test_date
 
@@ -177,9 +196,8 @@ if __name__ == '__main__':
             # If this is 4, I'm expecting that a date was passed in that we want
             # to use for the day of our test set (i.e. the days fires that we are 
             # predicting). Otherwise, we'll use the most recent date in our df. 
-            date_parts = sys.argv[3].split('-')
-            test_set_date = datetime(int(date_parts[0]), 
-                    int(date_parts[1]), int(date_parts[2]), 0, 0, 0)
+            dt = sys.argv[3]
+            test_set_date = format_date(dt)
         else: 
             test_set_timestamp = input_df['date_fire'].max()
             test_set_date = datetime(test_set_timestamp.year, 
@@ -222,6 +240,5 @@ if __name__ == '__main__':
         # log_scores(best_fit_model, hold_out_features, hold_out_target, model_name, 
         # date_parts, hold_out_feats_pre_norm)
     else: 
-        beg_date = sys.argv[3]
-        end_date = sys.argv[4]
-
+        beg_dt, end_dt = sys.argv[3], sys.argv[4]
+        beg_date, end_date = format_date(beg_dt), format_date(end_dt)
