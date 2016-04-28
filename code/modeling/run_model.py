@@ -182,7 +182,7 @@ def log_scores(best_fit_model, hold_out_features, hold_out_target,
                 , str(st.hour), str(st.minute)])
     master_df.to_csv(save_fp, index=False)
 
-def log_test_results(dt, preds_probs, roc_auc, pr_auc): 
+def log_test_results(dt, y_true, preds_probs, roc_auc, pr_auc): 
     """Log all of the passed in results.  
     
     Store the predicted probabilities as a '.csv', and log the ROC_AUC
@@ -192,6 +192,7 @@ def log_test_results(dt, preds_probs, roc_auc, pr_auc):
     Args: 
     ----
         dt: datetime.datetime
+        y_true: 1d np.ndarray
         preds_probs: 1d np.ndarray
         roc_auc: float
         pr_auc: float
@@ -201,10 +202,14 @@ def log_test_results(dt, preds_probs, roc_auc, pr_auc):
     base_fp = 'code/modeling/model_output/'
     preds_probs_fp = base_fp + 'pred_probs/preds_probs_{}.csv'.format(save_dt)
     np.savetxt(preds_probs_fp, preds_probs, delimiter=',')
+   
+    num_obs = y_true.shape[0]
+    num_fires = y_true.sum()
 
     metrics_fp = base_fp + 'metrics.csv'
     with open(metrics_fp, 'a+') as f: 
-        out_str = ','.join([str(save_dt), str(roc_auc), str(pr_auc), '\n'])
+        out_str = ','.join([str(save_dt), str(num_obs), str(num_fires), 
+            str(roc_auc), str(pr_auc)]) + '\n'
         f.write(out_str)
 
 if __name__ == '__main__': 
@@ -284,10 +289,13 @@ if __name__ == '__main__':
             validation, hold_out = prep_data(validation), prep_data(hold_out)
             Y_train, X_train = get_target_features(validation)
             Y_test, X_test = get_target_features(hold_out)
-            model.fit(X_train, Y_train)
-            pred_probs = model.predict_proba(X_test)[:, 1]
-            roc_auc, pr_auc = None, None
-            if Y_test.sum() != 0: 
-                roc_auc = return_score('auc_roc', pred_probs, Y_test)
-                pr_auc = return_score('auc_precision_recall', pred_probs, Y_test)
-            log_test_results(dt, pred_probs, roc_auc, pr_auc)
+            # Don't run models if there are no obs
+            if X_train.shape[0] and X_test.shape[0]: 
+                model.fit(X_train, Y_train)
+                pred_probs = model.predict_proba(X_test)[:, 1]
+                roc_auc, pr_auc = None, None
+                # We can't get area under the curve if there are no fires :(. 
+                if Y_test.sum() != 0: 
+                    roc_auc = return_score('auc_roc', pred_probs, Y_test)
+                    pr_auc = return_score('auc_precision_recall', pred_probs, Y_test)
+                log_test_results(dt, Y_test, pred_probs, roc_auc, pr_auc)
