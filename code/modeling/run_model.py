@@ -121,7 +121,7 @@ def log_results(model_name, train, best_fit_model, best_score, scores):
         f.write('Model Run: ' + model_name + '\n' * 2)
         f.write('Params: ' + str(best_fit_model.get_params()) + '\n' * 2)
         f.write('Features: ' + ', '.join(train.columns) + '\n' * 2)
-        f.write('Train AUC_PR: ' + str(best_score) + '\n' * 2)
+        f.write('Train ROC_AUC: ' + str(best_score) + '\n' * 2)
         for score in scores: 
             str_to_write = str(score[0]) + ' : ' + str(score[1]) + '\n'
             f.write(str_to_write)

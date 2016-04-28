@@ -75,7 +75,7 @@ def run_sklearn_param_search(model, train, cv_fold_generator,
     else: 
         params = _get_grid_params(model_name)
         grid_search = GridSearchCV(estimator=model, param_grid=params, 
-                scoring=eval_metric, cv=cv_fold_generator, fit_params=fit_params)
+                scoring='roc_auc', cv=cv_fold_generator, fit_params=fit_params)
     grid_search.fit(train_features.values, train_target.values)
 
     best_model = grid_search.best_estimator_
