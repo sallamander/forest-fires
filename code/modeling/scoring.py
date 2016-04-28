@@ -7,7 +7,31 @@ it offers a class for calculating the area under a precision recall
 curve.
 """
 import numpy as np
-from sklearn.metrics import auc, precision_recall_curve, make_scorer
+from sklearn.metrics import auc, precision_recall_curve, make_scorer, \
+        roc_auc_score
+
+def return_score(name, y_preds, y_test): 
+    """Return the evaluation metric score given by the name. 
+
+    Args: 
+    ----
+        name: str
+            Holds the evaluation metric to use for scoring. 
+        preds: 1d np.ndarray 
+        Y_test: 1d np.ndarray
+    
+    Return: 
+    ------
+        score: float
+    """
+
+    if name == 'auc_precision_recall': 
+        prec, rec, thresholds = precision_recall_curve(y_test, y_preds)
+        score = auc(rec, prec)
+    elif name == 'auc_roc': 
+        score =roc_auc_score(y_test, y_preds)
+
+    return score 
 
 def return_scorer(name='auc_precision_recall'): 
     """Return an eval_metric based off of an inputted string. 
