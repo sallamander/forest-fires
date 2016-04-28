@@ -49,7 +49,7 @@ def format_date(dt):
     
     return formatted_date
 
-def get_train_test(df, date_col, test_date): 
+def get_train_test(df, date_col, test_date, train): 
     """Return a train/test split based off the inputted test_date
 
     For the inputted DataFrame, break it into a train/test split, 
@@ -63,6 +63,8 @@ def get_train_test(df, date_col, test_date):
             Holds the name of the date column in the `df` that 
             the train/test split will be made on. 
         test_date: datime.datime
+        train (optional): bool
+            Holds whether we are training or using the best model. 
 
     Return: 
     ------
@@ -73,8 +75,9 @@ def get_train_test(df, date_col, test_date):
     # In the case that we are putting in a test_date for training, we 
     # want to make sure to only grab that day (and not days that are greater
     # than it, which will be present in training). 
-    max_test_date = test_date + timedelta(days=365)
-
+    max_test_date = test_date + timedelta(days=365) if train else \
+        test_date + timedelta(days=1)
+    
     test_mask = np.where(np.logical_and(df[date_col] >= test_date, 
         df[date_col] < max_test_date))[0]
     train_mask = np.where(df[date_col] < test_date)[0]
@@ -194,14 +197,14 @@ def log_test_results(dt, preds_probs, roc_auc, pr_auc):
         pr_auc: float
     """
    
-    save_dt = '-'.join([str(dt.year), str(dt.month), str(dt.day)]) 
+    save_dt = '-'.join([str(dt.year), str(dt.month), str(dt.day)])
     base_fp = 'code/modeling/model_output/'
     preds_probs_fp = base_fp + 'pred_probs/preds_probs_{}.csv'.format(save_dt)
     np.savetxt(preds_probs_fp, preds_probs, delimiter=',')
 
     metrics_fp = base_fp + 'metrics.csv'
     with open(metrics_fp, 'a+') as f: 
-        out_str = ','.join([str(save_dt), str(roc_auc), str(pr_auc)])
+        out_str = ','.join([str(save_dt), str(roc_auc), str(pr_auc), '\n'])
         f.write(out_str)
 
 if __name__ == '__main__': 
@@ -227,7 +230,8 @@ if __name__ == '__main__':
             test_set_timestamp = input_df['date_fire'].max()
             test_set_date = datetime(test_set_timestamp.year, 
                     test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
-        validation, hold_out = get_train_test(input_df, 'date_fire', test_set_date)
+        validation, hold_out = get_train_test(input_df, 'date_fire', test_set_date, 
+                train=True)
 
         # We need to reset the index so cross-validation happens appropriately. 
         validation.reset_index(drop=True, inplace=True)
@@ -275,12 +279,15 @@ if __name__ == '__main__':
 
         dt_range = pd.date_range(beg_date, end_date)
         for dt in dt_range: 
-            validation, hold_out = get_train_test(input_df, 'date_fire', dt)
+            validation, hold_out = get_train_test(input_df, 'date_fire', dt,
+                    train=False)
             validation, hold_out = prep_data(validation), prep_data(hold_out)
             Y_train, X_train = get_target_features(validation)
             Y_test, X_test = get_target_features(hold_out)
             model.fit(X_train, Y_train)
             pred_probs = model.predict_proba(X_test)[:, 1]
-            roc_auc = return_score('auc_roc', pred_probs, Y_test)
-            pr_auc = return_score('auc_precision_recall', pred_probs, Y_test)
+            roc_auc, pr_auc = None, None
+            if Y_test.sum() != 0: 
+                roc_auc = return_score('auc_roc', pred_probs, Y_test)
+                pr_auc = return_score('auc_precision_recall', pred_probs, Y_test)
             log_test_results(dt, pred_probs, roc_auc, pr_auc)

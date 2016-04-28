@@ -300,11 +300,11 @@ def get_best_params(model_name):
     """
 
     if model_name == 'random_forest': 
-        best_params = {'n_estimators': 1, 
-                'max_depth': 2}
+        best_params = {'n_estimators': 2, 
+                'max_depth': 32}
     elif model_name == 'extra_trees': 
-        best_params = {'n_estimators': 1, 
-                'max_depth': 2}
+        best_params = {'n_estimators': 2, 
+                'max_depth': 32}
 
     return best_params
 
