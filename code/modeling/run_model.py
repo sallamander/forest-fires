@@ -172,51 +172,56 @@ if __name__ == '__main__':
 
     input_df = alter_nearby_fires_cols(base_input_df)
     input_df = input_df[keep_columns]
-    if len(sys.argv) == 4: 
-        # If this is 4, I'm expecting that a date was passed in that we want
-        # to use for the day of our test set (i.e. the days fires that we are 
-        # predicting). Otherwise, we'll use the most recent date in our df. 
-        date_parts = sys.argv[3].split('-')
-        test_set_date = datetime(int(date_parts[0]), 
-                int(date_parts[1]), int(date_parts[2]), 0, 0, 0)
+    if 'train' in sys.argv: 
+        if len(sys.argv) == 4: 
+            # If this is 4, I'm expecting that a date was passed in that we want
+            # to use for the day of our test set (i.e. the days fires that we are 
+            # predicting). Otherwise, we'll use the most recent date in our df. 
+            date_parts = sys.argv[3].split('-')
+            test_set_date = datetime(int(date_parts[0]), 
+                    int(date_parts[1]), int(date_parts[2]), 0, 0, 0)
+        else: 
+            test_set_timestamp = input_df['date_fire'].max()
+            test_set_date = datetime(test_set_timestamp.year, 
+                    test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
+        validation, hold_out = get_train_test(input_df, 'date_fire', test_set_date)
+
+        # We need to reset the index so cross-validation happens appropriately. 
+        validation.reset_index(drop=True, inplace=True)
+
+        # sklearn logit uses regularization by default, so it'd be best 
+        # to scale the variables in that case as well. 
+        if model_name == 'neural_net' or model_name == 'logit': 
+            validation = normalize_df(validation)
+        
+        # If 'random' was passed in, then perform a random search from parameter
+        # distributions, and else just do a grid search. 
+        rand_search = True if len(sys.argv) == 5 and sys.argv[4] == 'random' \
+                else False 
+
+        date_step_size = timedelta(days=30)
+        model_kwargs = get_model_args(model_name, validation)
+
+        model = get_model(model_name, model_kwargs)
+        
+        cv_fold_generator = SequentialTimeFold(df=validation, step_size=date_step_size, 
+                max_folds=11, test_set_date=test_set_date,  
+                days_forward=30, y_col='fire_bool')
+
+        validation = prep_data(validation)
+        
+        if model_name != 'neural_net': 
+            best_fit_model, best_score, scores = \
+                run_sklearn_param_search(model, validation, list(cv_fold_generator),
+                        rand_search, model_name=model_name)
+        else: 
+            best_fit_model, best_score, scores = \
+                run_keras_param_search(model, validation, list(cv_fold_generator))
+                        
+        log_results(model_name, validation, best_fit_model, best_score, scores)
+        # log_scores(best_fit_model, hold_out_features, hold_out_target, model_name, 
+        # date_parts, hold_out_feats_pre_norm)
     else: 
-        test_set_timestamp = input_df['date_fire'].max()
-        test_set_date = datetime(test_set_timestamp.year, 
-                test_set_timestamp.month, test_set_timestamp.day, 0, 0, 0)
-    validation, hold_out = get_train_test(input_df, 'date_fire', test_set_date)
+        beg_date = sys.argv[3]
+        end_date = sys.argv[4]
 
-    # We need to reset the index so cross-validation happens appropriately. 
-    validation.reset_index(drop=True, inplace=True)
-
-    # sklearn logit uses regularization by default, so it'd be best 
-    # to scale the variables in that case as well. 
-    if model_name == 'neural_net' or model_name == 'logit': 
-        validation = normalize_df(validation)
-    
-    # If 'random' was passed in, then perform a random search from parameter
-    # distributions, and else just do a grid search. 
-    rand_search = True if len(sys.argv) == 5 and sys.argv[4] == 'random' \
-            else False 
-
-    date_step_size = timedelta(days=30)
-    model_kwargs = get_model_args(model_name, validation)
-
-    model = get_model(model_name, model_kwargs)
-    
-    cv_fold_generator = SequentialTimeFold(df=validation, step_size=date_step_size, 
-            max_folds=11, test_set_date=test_set_date,  
-            days_forward=30, y_col='fire_bool')
-
-    validation = prep_data(validation)
-    
-    if model_name != 'neural_net': 
-        best_fit_model, best_score, scores = \
-            run_sklearn_param_search(model, validation, list(cv_fold_generator),
-                    rand_search, model_name=model_name)
-    else: 
-        best_fit_model, best_score, scores = \
-            run_keras_param_search(model, validation, list(cv_fold_generator))
-                    
-    log_results(model_name, validation, best_fit_model, best_score, scores)
-    # log_scores(best_fit_model, hold_out_features, hold_out_target, model_name, 
-    # date_parts, hold_out_feats_pre_norm)
