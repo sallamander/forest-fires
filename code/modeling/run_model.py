@@ -212,6 +212,38 @@ def log_test_results(dt, y_true, preds_probs, roc_auc, pr_auc):
             str(roc_auc), str(pr_auc)]) + '\n'
         f.write(out_str)
 
+def log_feat_importances(model, X_train, dt): 
+    """Log the feature importances for a model fit on a given date. 
+
+    Args: 
+    ----
+        model: varied tree-based model
+            Fit tree-based model that has a `feature_importances_` 
+            attribute`.
+        X_train: 2d np.ndarray
+            Used to obtain the names of the columns corresponding 
+            to the features. 
+        dt: datetime.datetime
+    """
+
+    save_dt = '-'.join([str(dt.year), str(dt.month), str(dt.day)])
+    feat_importances = model.feature_importances_
+    feats_sorted = np.argsort(feat_importances)
+
+    feat_names = X_train.columns[feats_sorted]
+    feats_vals_ordered = feat_importances[feats_sorted]
+    feats_vals_ordered = feats_vals_ordered / feats_vals_ordered.max() * 100
+
+    feats_df = pd.DataFrame()
+    feats_df['feat_names'] = feat_names
+    feats_df['importance'] = feats_vals_ordered
+    feats_df['num_obs'] = X_train.shape[0]
+
+    save_fp = 'code/modeling/model_output/feat_importances/feats_' + \
+            save_dt + '.csv'
+
+    feats_df.to_csv(save_fp, index=False)
+
 if __name__ == '__main__': 
     # sys.argv[1] will hold the name of the model we want to run (logit, 
     # random forest, etc.), and sys.argv[2] will hold our input dataframe 
@@ -298,4 +330,5 @@ if __name__ == '__main__':
                 if Y_test.sum() != 0: 
                     roc_auc = return_score('auc_roc', pred_probs, Y_test)
                     pr_auc = return_score('auc_precision_recall', pred_probs, Y_test)
+                log_feat_importances(model, X_train, dt)
                 log_test_results(dt, Y_test, pred_probs, roc_auc, pr_auc)
