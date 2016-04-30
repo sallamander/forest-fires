@@ -1,5 +1,6 @@
 """A module for working with the results from modeling"""
 
+import os
 import sys
 import pandas as pd
 
@@ -49,8 +50,29 @@ def gen_weighted_metrics(metrics_df):
 
     return metrics_df
 
+def read_df(feats_dir_path, filepath):
+    """Read in the .csv at the given filepath
+
+    Args: 
+    ----
+        filepath: str
+
+    Returns: 
+    -------
+        df: Pandas DataFrame
+    """
+
+    dt = filepath.split('_')[1][:-4]
+    df = pd.read_csv(feats_dir_path + filepath)
+    df.drop('num_obs', inplace=True, axis=1)
+    df.set_index('feat_names', inplace=True)
+    df.rename(columns={'importance':dt}, inplace=True)
+
+    return df
+
 if __name__ == '__main__':
     df_path = sys.argv[1]
+    feats_dir_path = sys.argv[2]
 
     metrics_df = pd.read_csv(df_path, header=None, names=['dt', 'num_obs', 
         'num_fires', 'roc_auc', 'pr_auc'], na_values=['None'])
@@ -62,3 +84,7 @@ if __name__ == '__main__':
     print 'Total Weighted PR AUC: {}'.format(metrics_df.tweighted_pr_auc.sum())
     print 'Fire Weighted ROC AUC: {}'.format(metrics_df.fweighted_roc_auc.sum())
     print 'Fire Weighted PR AUC: {}'.format(metrics_df.fweighted_pr_auc.sum())
+
+    final_df = pd.concat((read_df(feats_dir_path, filepath) for filepath 
+            in os.listdir(feats_dir_path)), axis=1)
+
