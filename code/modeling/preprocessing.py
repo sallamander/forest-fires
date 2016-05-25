@@ -1,8 +1,7 @@
 """A module for preprocessing a DataFrame before modeling. 
 
-This is a module containing functions for preprocessing 
-the data before inputting it into models, but after any/all
-feature engineering is complete. 
+This is a module containing functions for preprocessing the data before inputting 
+it into models, but after any/all feature engineering is complete. 
 """
 
 import numpy as np
@@ -11,13 +10,12 @@ from datetime import datetime, timedelta
 def normalize_df(input_df): 
     """Perform a normalization on all numerical columns that aren't Y.
 
-    Specfically, perform a normalization on each column by subtracting
-    off its mean and dividing by its standard deviation. 
+    Specfically, perform a normalization on each column by subtracting off its 
+    mean and dividing by its standard deviation. 
 
     Args: 
     ----
         input_df: Pandas DataFrame
-            Holds the unnormalized data. 
 
     Return: 
     ------
@@ -79,20 +77,19 @@ def alter_nearby_fires_cols(input_df):
     """Correct for incorrect values in input_df. 
 
     When constructing the columns for `all_nearby_count365`, 
-    `all_nearby_fires365`, and their equivalents for 2 and 3 years, 
-    the fact that some obs. in the dataset did not have that many 
-    years of data prior to them was not accounted for. 
+    `all_nearby_fires365`, and their equivalents for 2 and 3 years, the fact that 
+    some obs. in the dataset did not have that many years of data prior to them 
+    was not accounted for. 
     
-    These columns hold the number of nearby obs. or fires that were 
-    around the ob. in space and time, where the # in the column name 
-    gives the time in terms of days. Thus, 365 refers to any obs. 
-    around them in space, up to 365 days prior. For all of the observations
-    in 2012, this isn't actually possible (since it's the first year). 
-    Similarly, this isn't possible for the 730 days column for any
-    observations in 2012 or 2013, or for the 1095 column for any obs. 
-    in 2012-2014. This function will correct that by filling in `Nans` for 
+    These columns hold the number of nearby obs. or fires that were around the 
+    ob. in space and time, where the # in the column name gives the time in terms 
+    of days. Thus, 365 refers to any obs. around them in space, up to 365 days 
+    prior. For all of the observations in 2012, this isn't actually possible 
+    (since it's the first year). Similarly, this isn't possible for the 730 days 
+    column for any observations in 2012 or 2013, or for the 1095 column for any 
+    obs. in 2012-2014. This function will correct that by filling in `Nans` for 
     these values (although those `Nans` will be filled in later when the 
-    `prep_data` function from above is called on the DataFrame. 
+    `prep_data` function from above is called on the DataFrame). 
 
     Args: 
     ----

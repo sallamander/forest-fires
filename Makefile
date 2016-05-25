@@ -303,7 +303,6 @@ detected_fires_VIIRS: $(zipped_folder)$(detected_fires_VIIRS_2012).zip \
 				$(zipped_folder)$(detected_fires_VIIRS_2014).zip \
 				$(zipped_folder)$(detected_fires_VIIRS_2015).zip
 
-
 get_data: .data_folder_structure_sentinel county_boundaries state_boundaries region_boundaries \
 			 urban_area_boundaries fire_perimeter_boundaries detected_fires_MODIS \
 			 detected_fires_VIIRS
@@ -345,26 +344,22 @@ prep_data: .data_prep_sentinel
 
 data: get_data prep_data
 
-.features_sentinel: code/makefiles/time_transforms_dict.pkl \
-	code/makefiles/time_transforms_dict.pkl code/makefiles/year_list.pkl \
+code/makefiles/time_transforms_dict.pkl: code/makefiles/make_columns_dict.py
+	python code/makefiles/make_columns_dict.py
+code/makefiles/geo_transforms_dict.pkl: code/makefiles/make_columns_dict.py
+	python code/makefiles/make_columns_dict.py
+code/makefiles/year_list.pkl: code/makefiles/make_year_list.py
+	python code/makefiles/make_year_list.py
+
+code/modeling/model_input/geo_time_done.csv: code/makefiles/time_transforms_dict.pkl \
+	code/makefiles/geo_transforms_dict.pkl code/makefiles/year_list.pkl \
 	
 	if [ ! -d code/modeling/model_input ]; then \
 		mkdir code/modeling/model_input; \
 		chmod 777 code/modeling/model_input; \
 	fi 
+
 	python code/feature_engineering/create_inputs.py geo time
-	touch .features_sentinel
 
-features: .features_sentinel
-
-models: .models_sentinel
-	if [ ! -d code/modeling/model_output ]; then \
-			mkdir -p code/modeling/model_output/logs; \
-			chmod 777 -R code/modeling/model_output; \
-	fi 
-
-	bash code/modeling/run_models.sh
-
-.models_sentinel: 
-	touch .models_sentinel
+features: code/modeling/model_input/geo_time_done.csv 
 

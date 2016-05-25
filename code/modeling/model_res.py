@@ -96,13 +96,6 @@ if __name__ == '__main__':
     metrics_df = gen_weights(metrics_df, by_month=True)
     metrics_df = gen_weighted_metrics(metrics_df)
 
-    '''
-    print 'Total Weighted ROC AUC: {}'.format(metrics_df.tweighted_roc_auc.sum())
-    print 'Total Weighted PR AUC: {}'.format(metrics_df.tweighted_pr_auc.sum())
-    print 'Fire Weighted ROC AUC: {}'.format(metrics_df.fweighted_roc_auc.sum())
-    print 'Fire Weighted PR AUC: {}'.format(metrics_df.fweighted_pr_auc.sum())
-    '''
-
     for month in range(3, 13): 
         print month
         print '-' * 50

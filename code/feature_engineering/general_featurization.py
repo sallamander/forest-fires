@@ -1,19 +1,15 @@
 """A module for basic data processing tasks. 
 
-This module contains general, fairly standard functions
-that can be run in data processing tasks. This includes 
-one for creating dummy variables (`return_all_dummies`) and
-one for creating a new column based on an `eval` string 
-(`create_new_col`). These are the only two meant to be 
-called externally from the module (`add_date_col` is simply 
-a helper function). 
+This module contains general, fairly standard functions that can be run in data 
+processing tasks. This includes one for creating dummy variables 
+(`return_all_dummies`) and one for creating a new column based on an `eval` 
+string (`create_new_col`). These are the only two meant to be called externally 
+from the module (`_add_date_col` is simply a helper function). 
 
-In the first two functions mentioned above, there is a use of 
-a kwargs argument in a somewhat non-traditional way. This has 
-to do with how the `create_inputs.py` module calls the functions
-in this one. To allow for flexibility in the function calls 
-in the `create_inputs.py` module, a somewhat non-traditional use 
-of kwargs helped. 
+In the first two functions mentioned above, there is a use of a kwargs argument 
+in a somewhat non-traditional way. This has to do with how the `create_inputs.py` 
+module calls the functions. To allow for flexibility in the function calls in the 
+`create_inputs.py` module, a somewhat non-traditional use of kwargs helped. 
 """
 
 import pandas as pd
@@ -22,22 +18,20 @@ import numpy as np
 def return_all_dummies(df, kwargs): 
     """Create dummy variables for an inputted column. 
 
-    Grab the column to dummy from the `col` key in **kwargs, 
-    create dummies for every value in that column, and 
-    concat those onto the inputted DataFrame. 
+    Grab the column to dummy from the `col` key in **kwargs, create dummies for 
+    every value in that column, and concat those onto the inputted DataFrame. 
 
     Args: 
     ----
-        df: Pandas Dataframe 
+        df: Pandas DataFrame 
         kwargs: dct
-            Holds arguments to use in the function. Here we 
-            expect the `col` keyword to be passed in. See the 
-            module docstring for an explanation of the kwargs 
-            variable here. 
+            Holds arguments to use in the function. Here we expect the `col` 
+            keyword to be passed in. See the module docstring for an explanation 
+            of the use of kwargs here. 
 
     Return: 
     ------
-        df: Pandas Dataframe
+        df: Pandas DataFrame
     """
 
     col = kwargs.pop('col', None)
@@ -45,8 +39,8 @@ def return_all_dummies(df, kwargs):
         raise RuntimeError('Need to pass a column name to dummy for \
                 return_all_dummies')
 
-    # For both year and month, these are only implicitly in the df 
-    # via the date column. We need to explicity add them to dummy them. 
+    # For both year and month, these are only implicitly in the df via the date 
+    # column. We need to explicity add them to dummy them. 
     if col in ['year', 'month']: 
         df = _add_date_col(df, col)	
 
@@ -59,18 +53,16 @@ def return_all_dummies(df, kwargs):
 def create_new_col(df, kwargs): 
     """Create a new column in the df based off the inputted specifications. 
 
-    Create a new column in the df based off an inputted `eval` statement
-    passed in `kwargs`. Name the column the inputted `new_col_name` 
-    passed in `kwargs`. 
+    Create a new column in the df based off an inputted `eval` statement passed 
+    in `kwargs`. Name the column the inputted `new_col_name` passed in `kwargs`. 
 
     Args: 
     ----
         df: Pandas DataFrame 
         kwargs: dct
-            Holds optional arguments to use in the function. Here 
-            we expect the `eval_string` and `new_col_name` arguments
-            to be passed in. See the module docstring for an 
-            explanation of the kwargs variable here. 
+            Holds optional arguments to use in the function. Here we expect the 
+            `eval_string` and `new_col_name` arguments to be passed in. See the 
+            module docstring for an explanation of the use of kwargs here. 
 
     Return: 
     ------
@@ -94,9 +86,8 @@ def create_new_col(df, kwargs):
 def _add_date_col(df, col_name): 
     """Create a new date-based column in the inputted DataFrame. 
 
-    Add either a year or month column into the explicitly, 
-    using the `date_fire` column to do so. This is meant to be a 
-    helper function to `return_all_dummies`. 
+    Add either a year or month column into the `df`, using the `date_fire` 
+    column to do so. This is meant to be a helper function to `return_all_dummies`. 
 
     Args: 
     ----

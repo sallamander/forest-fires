@@ -1,30 +1,31 @@
+"""A tiny script to pickle the list of columns to include in the models being run."""
 import pickle
 
-columns_list = ['lat', 'long', 'gmt', 'temp', 'conf', 'frp', 
-        'urban_areas_bool', 'state_fips', 'land_water_ratio', 
-        'all_nearby_count0', 'all_nearby_count1', 'all_nearby_count2', 
-        'all_nearby_count3', 'all_nearby_count4', 'all_nearby_count5', 
-        'all_nearby_count6', 'all_nearby_count7', 'all_nearby_fires1', 
-        'all_nearby_fires2', 'all_nearby_fires3', 'all_nearby_fires4', 
-        'all_nearby_fires5', 'all_nearby_fires6', 'all_nearby_fires7', 
-        'all_nearby_count365', 'all_nearby_fires365', 'all_nearby_count730', 
-        'all_nearby_fires730', 'all_nearby_count1095', 'all_nearby_fires1095', 
-        'year_2014', 'year_2013', 'year_2012', 'year_2015', 'month_1', 
-        'month_2', 'month_3', 'month_4', 'month_5', 'month_6', 'month_7', 
-        'month_8', 'month_9', 'month_10', 'month_11', 'month_12', 'date_fire',
-        'fire_bool', 'sat_src_A', 'sat_src_T', 'src_gsfc', 'src_gsfc_drl', 
-        'src_rsac', 'src_ssec', 'src_uaf']
+columns_list = [u'lat', u'long', u'gmt', u'temp', u'spix', u'tpix',
+                u'conf', u'frp', u'fire_bool', u'urban_areas_bool',
+                u'region_aland', u'region_awater', u'region_lsad',
+                u'county_lsad', u'state_aland', u'state_awater', 
+                u'state_lsad', u'date_fire', u'land_water_ratio',
+                u'all_nearby_count0', u'all_nearby_fires0', 
+                u'all_nearby_count1', u'all_nearby_fires1',
+                u'all_nearby_count2', u'all_nearby_fires2', 
+                u'all_nearby_count3', u'all_nearby_fires3', 
+                u'all_nearby_count4', u'all_nearby_fires4',
+                u'all_nearby_count5', u'all_nearby_fires5', 
+                u'all_nearby_count6', u'all_nearby_fires6', 
+                u'all_nearby_count7', u'all_nearby_fires7',
+                u'all_nearby_count365', u'all_nearby_fires365',
+                u'all_nearby_count730', u'all_nearby_fires730',
+                u'all_nearby_count1095', u'all_nearby_fires1095', 
+                u'perc_fires0', u'perc_fires1', u'perc_fires2',
+                u'perc_fires3', u'perc_fires4', u'perc_fires5', 
+                u'perc_fires6', u'perc_fires7', u'perc_fires365', 
+                u'perc_fires730', u'perc_fires1095', u'sat_src_A', u'sat_src_T',
+                u'src_gsfc', u'src_gsfc_drl', u'src_rsac', u'src_ssec', u'src_uaf',
+                u'year_2012', u'year_2013', u'year_2014', u'year_2015', u'month_1',
+                u'month_2', u'month_3', u'month_4', u'month_5', u'month_6',
+                u'month_7', u'month_8', u'month_9', u'month_10', u'month_11',
+                u'month_12']
 
-"""
-columns_list = ['lat', 'long', 'frp', 'date_fire', 'fire_bool', 
-        'urban_areas_bool', 'land_water_ratio', 'gmt', 'temp', 'conf',
-        'all_nearby_fires1', 'all_nearby_fires2', 'all_nearby_fires3', 
-        'all_nearby_fires4', 'all_nearby_fires5', 'all_nearby_fires6', 
-        'all_nearby_fires7', 'year_2012', 'year_2013', 'year_2014', 
-        'year_2015', 'month_1', 'month_2', 'month_3', 'month_4', 'month_5', 
-        'month_6', 'month_7', 'month_8', 'month_9', 'month_10', 'month_11', 
-        'month_12']
-"""
-
-with open('makefiles/columns_list.pkl', 'w+') as f: 
+with open('code/makefiles/columns_list.pkl', 'w+') as f: 
 	pickle.dump(columns_list, f)
