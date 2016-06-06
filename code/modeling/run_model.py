@@ -86,6 +86,9 @@ if __name__ == '__main__':
         keep_columns = pickle.load(f)
 
     input_df = alter_nearby_fires_cols(base_input_df)
+    # Create separate df of columns we want associated with predicted probs.
+    geo_keep_cols = ['state_name', 'state_fips', 'county_name', 'county_fips', 'lat', 'long', 'date']
+    geo_cols_df = input_df[geo_keep_cols]
     input_df = input_df[keep_columns]
     if 'train' in sys.argv: 
         if len(sys.argv) == 4: 
@@ -151,4 +154,4 @@ if __name__ == '__main__':
                     roc_auc = return_score('auc_roc', pred_probs, Y_test)
                     pr_auc = return_score('auc_precision_recall', pred_probs, Y_test)
                 log_feat_importances(model, X_train, dt)
-                log_test_results(dt, Y_test, pred_probs, roc_auc, pr_auc)
+                log_test_results(dt, geo_cols_df, Y_test, pred_probs, roc_auc, pr_auc)

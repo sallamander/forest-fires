@@ -31,16 +31,18 @@ def log_train_results(model_name, train, best_fit_model, best_score,
         f.write('Features: {}\n\n'.format(', '.join(train.columns)))
         f.write('Train {}: {}\n\n'.format(score_type, best_score))
 
-def log_test_results(dt, y_true, preds_probs, roc_auc, pr_auc): 
+def log_test_results(dt, geo_cols_df, y_true, preds_probs, roc_auc, pr_auc): 
     """Log all of the passed in results.  
     
-    Store the predicted probabilities as a '.csv', and log the ROC_AUC
-    and PR_AUC in A CSV file with a date column and two columns for 
-    the metrics. 
+    Store the predicted probabilities as a '.csv' with all of the geo columns, 
+    and log the ROC_AUC and PR_AUC in A CSV file with a date column and two 
+    columns for the metrics, along with all geo columns of the training data. 
 
     Args: 
     ----
         dt: datetime.datetime
+        preds_probs_df: 2d np.ndarray
+            Holds the geographical info. to merge onto the predicted probs.
         y_true: 1d np.ndarray
         preds_probs: 1d np.ndarray
         roc_auc: float
@@ -50,7 +52,11 @@ def log_test_results(dt, y_true, preds_probs, roc_auc, pr_auc):
     save_dt = '-'.join([str(dt.year), str(dt.month), str(dt.day)])
     base_fp = 'code/modeling/model_output/'
     preds_probs_fp = base_fp + 'pred_probs/preds_probs_{}.csv'.format(save_dt)
-    np.savetxt(preds_probs_fp, preds_probs, delimiter=',')
+    y_true_df = pd.DataFrame(y_true, columns=['fire_bool'])
+    preds_probs_df = pd.DataFrame(preds_probs, columns=['preds_probs'], index=y_true.index)
+
+    output_df = y_true_df.join([preds_probs_df, geo_cols_df])
+    output_df.to_csv(preds_probs_fp, index=False)
    
     num_obs = y_true.shape[0]
     num_fires = y_true.sum()
