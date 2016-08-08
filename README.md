@@ -10,13 +10,13 @@ We can aggregate this data set to the year level, and see that a map of all dete
 
 <img src="./readme_imgs/readme_2.png" align="right" width=300>
 
-Each day, states submit forest-fire perimeter boundaries. If we compare the latitude/longitude coordinates of the dectected fires with the forest-fire perimeter boundaries, we can pare down the detected fires data set to only those fires which are forest fires. The problem with this, though, is that we are doing it historically / after-the-fact. What if we wanted to do this in real time? This is where data science comes in... 
+Each day, states submit forest-fire perimeter boundaries. If we compare the latitude/longitude coordinates of the detected fires with the forest-fire perimeter boundaries, we can pare down the detected fires data set to only those fires which are forest fires. The problem with this, though, is that we are doing it historically / after-the-fact. What if we wanted to do this in real time? This is where data science comes in... 
 
 Using data science and machine learning, we can build a model that takes in the detected fires data set and tells us which of those detected fires are actually forest fires.  My current methodology has focused upon using the detected fires data set, along with geographical features, to fit the best predictive model as measured by ROC area under the curve. 
 
 ## Current Status / Next steps
 
-I'm currently in the modeling phase of this project, and working on cleaning up some of the code and reworking it in a couple of places to make things more efficient and to hopefully get better results. 
+At this point in time, I will not be taking any next steps. I have obtained pretty good results and believe that even better results could be obtained with additional steps (see [forest_fires.pdf](forest_fires.pdf) for a detailed discussion). However, I am concerned about this project's usefulness. I have had several conversations with different people at forest services, and none were able to say that they would use the results of the models fit here. As such, I will not be continuing work on this project. 
 
 ### Want to follow along, add to my work, or improve on it?
 
@@ -28,4 +28,4 @@ After this, you can run the command `make features`, which will create for you a
 
 ### Get in touch 
 
-Feel free to email me anytime at sean.sall@galvanize.com. 
+Feel free to email me anytime at ssall@alumni.nd.edu. 
